@@ -10,6 +10,7 @@
     "better-auth": "^1.2.4",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.1",
+    "drizzle-zod": "^0.7.0",
     "hono": "^4.7.4",
     "hono-openapi": "^0.4.6",
     "pg": "^8.14.1",
