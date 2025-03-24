@@ -1,13 +1,13 @@
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { membersTable } from "./members-schema";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { user } from "./auth-schema";
 
 export const vehiclesTable = pgTable("vehicles", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   uuid: uuid("uuid").defaultRandom(),
   ownerId: integer("ownerId")
     .notNull()
-    .references(() => membersTable.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: "cascade" }),
   vin: text("vin").notNull().unique(),
   make: text("make").notNull(),
   model: text("model").notNull(),
