@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db";
+import { bearer, jwt } from "better-auth/plugins";
 
 export const auth = betterAuth({
   user: {
@@ -27,4 +28,5 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: ["http://localhost:5173", "http://localhost:3000"],
+  plugins: [jwt(), bearer()],
 });
