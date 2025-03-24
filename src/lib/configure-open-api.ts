@@ -8,6 +8,20 @@ export default function configureOpenAPI(app: Hono) {
       "/openapi",
       openAPISpecs(app, {
         documentation: {
+          components: {
+            securitySchemes: {
+              bearerAuth: {
+                type: "http",
+                scheme: "bearer",
+                bearerFormat: "JWT",
+              },
+            },
+          },
+          security: [
+            {
+              bearerAuth: [],
+            },
+          ],
           info: {
             title: "CarSense",
             version: "1.0.0",
