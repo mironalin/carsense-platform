@@ -5,7 +5,7 @@ import { user } from "./auth-schema";
 export const vehiclesTable = pgTable("vehicles", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   uuid: uuid("uuid").defaultRandom(),
-  ownerId: integer("ownerId")
+  ownerId: text("ownerId")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   vin: text("vin").notNull().unique(),
