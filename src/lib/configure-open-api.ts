@@ -3,6 +3,8 @@ import { openAPISpecs } from "hono-openapi";
 
 import type { AppOpenApi } from "./types";
 
+import packageJSON from "../../package.json";
+
 export default function configureOpenAPI(app: AppOpenApi) {
   app
     .get(
@@ -25,7 +27,7 @@ export default function configureOpenAPI(app: AppOpenApi) {
           ],
           info: {
             title: "CarSense",
-            version: "1.0.0",
+            version: packageJSON.version,
             description: "CarSense API",
           },
           servers: [
