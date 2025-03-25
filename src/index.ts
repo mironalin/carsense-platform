@@ -1,5 +1,7 @@
 import { Hono } from "hono";
+import { hc } from "hono/client";
 import { logger } from "hono/logger";
+import { notFound, onError } from "stoker/middlewares";
 
 import configureOpenAPI from "@/lib/configure-open-api";
 import { authRoute } from "@/routes/auth-route";
@@ -22,7 +24,7 @@ import { vehiclesRoute } from "@/routes/vehicles-route";
 //   }
 // }
 
-const app = new Hono().use(logger());
+const app = new Hono().use(logger()).notFound(notFound).onError(onError);
 
 configureOpenAPI(app);
 
