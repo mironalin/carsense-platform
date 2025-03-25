@@ -5,12 +5,13 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { vehiclesTable } from "./vehicles-schema";
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
+
+import { vehiclesTable } from "@/db/schema/vehicles-schema";
 
 export const locationsTable = pgTable("locations", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

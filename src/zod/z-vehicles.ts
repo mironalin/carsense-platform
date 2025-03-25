@@ -1,4 +1,4 @@
-import { insertVehicleSchema } from "../db/schema/vehicles-schema";
+import { insertVehicleSchema } from "@/db/schema/vehicles-schema";
 
 export const zVehicleInsertSchema = insertVehicleSchema.omit({
   uuid: true,

@@ -4,7 +4,8 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import { user } from "./auth-schema";
+
+import { user } from "@/db/schema/auth-schema";
 
 export const vehiclesTable = pgTable("vehicles", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

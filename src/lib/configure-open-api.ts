@@ -1,6 +1,7 @@
-import { Hono } from "hono";
-import { openAPISpecs } from "hono-openapi";
+import type { Hono } from "hono";
+
 import { apiReference } from "@scalar/hono-api-reference";
+import { openAPISpecs } from "hono-openapi";
 
 export default function configureOpenAPI(app: Hono) {
   app

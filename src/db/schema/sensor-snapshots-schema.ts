@@ -6,12 +6,13 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { diagnosticsTable } from "./diagnostics-schema";
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
+
+import { diagnosticsTable } from "@/db/schema/diagnostics-schema";
 
 export const sensorSourceEnum = pgEnum("source", [
   "obd2",

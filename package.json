@@ -1,7 +1,9 @@
 {
-  "name": "my-app",
+  "name": "carsense-backend",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "bun run lint --fix"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.3",
@@ -19,10 +21,13 @@
     "zod-openapi": "^4.2.3"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^4.11.0",
     "@types/bun": "latest",
     "@types/pg": "^8.11.11",
     "@types/ws": "^8.18.0",
     "drizzle-kit": "^0.30.5",
+    "eslint": "^9.23.0",
+    "eslint-plugin-format": "^1.0.1",
     "tsx": "^4.19.3"
   }
 }

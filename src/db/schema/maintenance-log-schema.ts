@@ -12,8 +12,9 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import { vehiclesTable } from "./vehicles-schema";
-import { serviceWorkshopsTable } from "./service-workshops-schema";
+
+import { serviceWorkshopsTable } from "@/db/schema/service-workshops-schema";
+import { vehiclesTable } from "@/db/schema/vehicles-schema";
 
 export const serviceTypeEnum = pgEnum("serviceType", [
   "oil_change",
@@ -58,11 +59,11 @@ export const maintenanceLogTable = pgTable("maintenanceLog", {
     .notNull(),
 });
 
-export const insertMaintenanceLogSchema =
-  createInsertSchema(maintenanceLogTable);
+export const insertMaintenanceLogSchema
+  = createInsertSchema(maintenanceLogTable);
 
-export const selectMaintenanceLogSchema =
-  createSelectSchema(maintenanceLogTable);
+export const selectMaintenanceLogSchema
+  = createSelectSchema(maintenanceLogTable);
 
-export const updateMaintenanceLogSchema =
-  createUpdateSchema(maintenanceLogTable);
+export const updateMaintenanceLogSchema
+  = createUpdateSchema(maintenanceLogTable);

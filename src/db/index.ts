@@ -1,7 +1,8 @@
-import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 import { config } from "dotenv";
-import * as schema from "./schema/auth-schema";
+import { drizzle } from "drizzle-orm/neon-http";
+
+import * as schema from "@/db/schema/auth-schema";
 
 config({ path: ".env" });
 

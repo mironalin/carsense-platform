@@ -1,11 +1,12 @@
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { vehiclesTable } from "./vehicles-schema";
-import { user } from "./auth-schema";
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
+
+import { user } from "@/db/schema/auth-schema";
+import { vehiclesTable } from "@/db/schema/vehicles-schema";
 
 export const ownershipTransfersTable = pgTable("ownershipTransfers", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

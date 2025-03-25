@@ -1,24 +1,21 @@
+import { and, eq, isNull } from "drizzle-orm";
 import { Hono } from "hono";
-import { getSessionAndUser } from "../middleware/get-session-and-user";
+import { describeRoute } from "hono-openapi";
+import { resolver, validator as zValidator } from "hono-openapi/zod";
+
+import { db } from "@/db";
+import {
+  insertOwnershipTransferSchema,
+  ownershipTransfersTable,
+} from "@/db/schema/ownership-transfers";
 import {
   insertVehicleSchema,
   selectVehicleSchema,
   updateVehicleSchema,
   vehiclesTable,
-} from "../db/schema/vehicles-schema";
-import { and, desc, eq, isNull } from "drizzle-orm";
-import { db } from "../db";
-import { describeRoute } from "hono-openapi";
-import { resolver, validator as zValidator } from "hono-openapi/zod";
-
-import { config } from "dotenv";
-import { zVehicleInsertSchema } from "../zod/zVehicles";
-import { z } from "zod";
-import {
-  insertOwnershipTransferSchema,
-  ownershipTransfersTable,
-} from "../db/schema/ownership-transfers";
-config({ path: ".env" });
+} from "@/db/schema/vehicles-schema";
+import { getSessionAndUser } from "@/middleware/get-session-and-user";
+import { zVehicleInsertSchema } from "@/zod/z-vehicles";
 
 export const vehiclesRoute = new Hono()
   .use(getSessionAndUser)
@@ -122,7 +119,7 @@ export const vehiclesRoute = new Hono()
         .from(vehiclesTable)
         .where(eq(vehiclesTable.vin, vehicle.vin));
 
-      const deletedVehicle = existing.find((v) => v.deletedAt !== null);
+      const deletedVehicle = existing.find(v => v.deletedAt !== null);
 
       // console.log(deletedVehicle);
 
@@ -154,7 +151,7 @@ export const vehiclesRoute = new Hono()
           .set(updatedVehicle)
           .where(eq(vehiclesTable.id, deletedVehicle.id))
           .returning()
-          .then((res) => res[0]);
+          .then(res => res[0]);
 
         return c.json({ vehicle: updated, restored: true });
       }
@@ -168,7 +165,7 @@ export const vehiclesRoute = new Hono()
         .insert(vehiclesTable)
         .values(validatedVehicle)
         .returning()
-        .then((res) => res[0]);
+        .then(res => res[0]);
 
       c.status(201);
 
@@ -233,7 +230,7 @@ export const vehiclesRoute = new Hono()
         .select()
         .from(vehiclesTable)
         .where(eq(vehiclesTable.uuid, uuid))
-        .then((res) => res[0]);
+        .then(res => res[0]);
 
       if (!vehicle) {
         return c.json({ error: "Vehicle not found" }, 404);
@@ -316,7 +313,7 @@ export const vehiclesRoute = new Hono()
         .select()
         .from(vehiclesTable)
         .where(eq(vehiclesTable.uuid, vehicleUUID))
-        .then((res) => res[0]);
+        .then(res => res[0]);
 
       if (!vehicle) {
         return c.json({ error: "Vehicle not found" }, 404);
@@ -353,7 +350,7 @@ export const vehiclesRoute = new Hono()
         .set(validatedVehicleUpdate)
         .where(eq(vehiclesTable.uuid, vehicleUUID))
         .returning()
-        .then((res) => res[0]);
+        .then(res => res[0]);
 
       return c.json(updatedVehicle);
     },
@@ -441,7 +438,7 @@ export const vehiclesRoute = new Hono()
         .select()
         .from(vehiclesTable)
         .where(eq(vehiclesTable.uuid, vehicleUUID))
-        .then((res) => res[0]);
+        .then(res => res[0]);
 
       if (!vehicle) {
         return c.json({ error: "Vehicle not found" }, 404);

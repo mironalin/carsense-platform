@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import { auth } from "../lib/auth";
+
+import { auth } from "@/lib/auth";
 
 export const authRoute = new Hono<{
   Variables: {
@@ -20,4 +21,4 @@ export const authRoute = new Hono<{
     c.set("session", session.session);
     return next();
   })
-  .on(["POST", "GET"], "/", (c) => auth.handler(c.req.raw));
+  .on(["POST", "GET"], "/", c => auth.handler(c.req.raw));

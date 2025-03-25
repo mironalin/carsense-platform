@@ -1,11 +1,10 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { authRoute } from "./routes/authRoute";
-import { testRoute } from "./routes/testRoute";
-import configureOpenAPI from "./lib/configure-open-api";
-import { vehiclesRoute } from "./routes/vehiclesRoute";
-import { auth } from "./lib/auth";
-import { APIError } from "better-call";
+
+import configureOpenAPI from "@/lib/configure-open-api";
+import { authRoute } from "@/routes/auth-route";
+import { testRoute } from "@/routes/test-route";
+import { vehiclesRoute } from "@/routes/vehicles-route";
 
 // try {
 //   const result = await auth.api.signInEmail({
@@ -27,7 +26,7 @@ const app = new Hono().use(logger());
 
 configureOpenAPI(app);
 
-const apiRoutes = app
+export const apiRoutes = app
   .basePath("/api")
   .route("/auth/**", authRoute)
   .route("/test", testRoute)

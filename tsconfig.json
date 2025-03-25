@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
-    "strict": true,
+    "target": "ES2017",
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "target": "ES2017",
+    "module": "ESNext",
     "moduleResolution": "Node",
-    "module": "ESNext"
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "strict": true
   }
 }
