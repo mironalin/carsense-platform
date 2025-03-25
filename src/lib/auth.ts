@@ -4,6 +4,8 @@ import { bearer, jwt } from "better-auth/plugins";
 
 import { db } from "@/db";
 
+import env from "../../env";
+
 export const auth = betterAuth({
   user: {
     additionalFields: {
@@ -24,8 +26,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
   trustedOrigins: ["http://localhost:5173", "http://localhost:3000"],
