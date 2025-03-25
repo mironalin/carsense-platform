@@ -1,9 +1,9 @@
-import type { Hono } from "hono";
-
 import { apiReference } from "@scalar/hono-api-reference";
 import { openAPISpecs } from "hono-openapi";
 
-export default function configureOpenAPI(app: Hono) {
+import type { AppOpenApi } from "./types";
+
+export default function configureOpenAPI(app: AppOpenApi) {
   app
     .get(
       "/openapi",
@@ -41,9 +41,7 @@ export default function configureOpenAPI(app: Hono) {
       "/docs",
       apiReference({
         theme: "saturn",
-        spec: {
-          url: "/openapi",
-        },
+        url: "/openapi",
       }),
     );
 }
