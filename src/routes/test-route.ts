@@ -30,6 +30,9 @@ export const testRoute = new Hono().get(
   zValidator("query", querySchema),
   (c) => {
     const query = c.req.valid("query");
-    return c.text(`Hello ${query?.name ?? "Hono"}!`);
+    return c.json({
+      message: `Hello ${query.name
+      ?? "World"}! This is a test route for Hono!`,
+    });
   },
 );
