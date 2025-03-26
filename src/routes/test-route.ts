@@ -4,6 +4,8 @@ import { resolver, validator as zValidator } from "hono-openapi/zod";
 import { z } from "zod";
 import "zod-openapi/extend";
 
+import type { AppBindings } from "@/lib/types";
+
 const querySchema = z
   .object({
     name: z.string().optional().openapi({ example: "Steven" }),
@@ -12,7 +14,7 @@ const querySchema = z
 
 const responseSchema = z.string().openapi({ example: "Hello Steven!" });
 
-export const testRoute = new Hono().get(
+export const testRoute = new Hono<AppBindings>().get(
   "/",
   describeRoute({
     description: "Say hello to the user",
@@ -30,6 +32,9 @@ export const testRoute = new Hono().get(
   zValidator("query", querySchema),
   (c) => {
     const query = c.req.valid("query");
+    const logger = c.get("logger");
+    logger.info({ query }, "Processing test route request");
+
     return c.json({
       message: `Hello ${query.name
       ?? "World"}! This is a test route for Hono!`,
