@@ -7,7 +7,9 @@ import type { AppBindings } from "@/lib/types";
 import { pinoLogger } from "@/middleware/pino-logger";
 
 export function createApp() {
-  const app = new Hono<AppBindings>({ strict: false })
+  const app = new Hono<AppBindings>(
+    // { strict: false }
+  )
     .use(serveEmojiFavicon("😡"))
     .use(requestId())
     .use(pinoLogger())
