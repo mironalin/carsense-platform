@@ -53,11 +53,12 @@ export const vehiclesRoute = new Hono<AppBindings>()
       const logger = c.get("logger");
 
       if (!user) {
-        logger.warn("Unauthorized attempt to access vehicles list");
+        logger.warn("Unauthorized access attempt - vehicles list");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      logger.info({ userId: user.id, role: user.role }, "Fetching vehicles list");
+      // Only log essential information and at lower levels for frequent operations
+      logger.debug({ userId: user.id, role: user.role }, "Fetching vehicles");
 
       const vehicles = await db
         .select()
@@ -71,7 +72,11 @@ export const vehiclesRoute = new Hono<AppBindings>()
           ),
         );
 
-      logger.info({ count: vehicles.length }, "Vehicles fetched successfully");
+      // Only log count, not the entire response
+      if (vehicles.length > 0) {
+        logger.debug({ count: vehicles.length }, "Vehicles found");
+      }
+
       return c.json(vehicles);
     },
   )
@@ -112,12 +117,14 @@ export const vehiclesRoute = new Hono<AppBindings>()
       const logger = c.get("logger");
 
       if (!user) {
-        logger.warn("Unauthorized attempt to create a vehicle");
+        logger.warn("Unauthorized vehicle creation attempt");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
       const vehicle = c.req.valid("json");
-      logger.info({ userId: user.id, vin: vehicle.vin }, "Attempting to create a vehicle");
+
+      // Log only minimal data on creation attempt - VIN is a unique identifier
+      logger.debug({ vin: vehicle.vin }, "Vehicle creation requested");
 
       const existing = await db
         .select()
@@ -127,10 +134,11 @@ export const vehiclesRoute = new Hono<AppBindings>()
       const deletedVehicle = existing.find(v => v.deletedAt !== null);
 
       if (deletedVehicle) {
-        logger.info({ vehicleId: deletedVehicle.id, vin: vehicle.vin }, "Found deleted vehicle with matching VIN");
+        // This is an unusual flow, so logging at info level is appropriate
+        logger.info({ vin: vehicle.vin }, "Restoring previously deleted vehicle");
 
         if (deletedVehicle.ownerId !== user.id) {
-          // Log ownership transfer
+          // Ownership transfer is important to log
           const ownershipTransfer = insertOwnershipTransferSchema.parse({
             vehicleId: deletedVehicle.id,
             fromUserId: deletedVehicle.ownerId,
@@ -141,10 +149,9 @@ export const vehiclesRoute = new Hono<AppBindings>()
           await db.insert(ownershipTransfersTable).values(ownershipTransfer);
 
           logger.info({
-            vehicleId: deletedVehicle.id,
             fromUserId: deletedVehicle.ownerId,
             toUserId: user.id,
-          }, "Ownership transfer logged");
+          }, "Ownership transferred");
         }
 
         // Reactivate and reassign
@@ -162,7 +169,6 @@ export const vehiclesRoute = new Hono<AppBindings>()
           .returning()
           .then(res => res[0]);
 
-        logger.info({ vehicleId: updated.id, vin: updated.vin }, "Vehicle restored successfully");
         return c.json({ vehicle: updated, restored: true });
       }
 
@@ -179,7 +185,8 @@ export const vehiclesRoute = new Hono<AppBindings>()
 
       c.status(201);
 
-      logger.info({ vehicleId: created.id, vin: created.vin }, "Vehicle created successfully");
+      // Log success with minimal data
+      logger.info({ id: created.id, vin: created.vin }, "Vehicle created");
       return c.json({ vehicle: created, created: true });
     },
   )
@@ -208,11 +215,12 @@ export const vehiclesRoute = new Hono<AppBindings>()
       const uuid = c.req.param("vehicleUUID");
 
       if (!user) {
-        logger.warn({ vehicleUUID: uuid }, "Unauthorized attempt to get vehicle details");
+        logger.warn("Unauthorized vehicle detail access");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      logger.info({ userId: user.id, vehicleUUID: uuid }, "Fetching vehicle by UUID");
+      // Use debug level for routine operations
+      logger.debug({ uuid }, "Vehicle detail request");
 
       const vehicle = await db
         .select()
@@ -221,20 +229,21 @@ export const vehiclesRoute = new Hono<AppBindings>()
         .then(res => res[0]);
 
       if (!vehicle) {
-        logger.warn({ vehicleUUID: uuid }, "Vehicle not found");
+        // Log not found at debug level - likely just user error
+        logger.debug({ uuid }, "Vehicle not found");
         return c.json({ error: "Vehicle not found" }, 404);
       }
 
       if (user.role !== "admin" && vehicle.ownerId !== user.id) {
+        // Log security issues at warn level
         logger.warn({
           userId: user.id,
-          vehicleId: vehicle.id,
           vehicleOwnerId: vehicle.ownerId,
-        }, "User not authorized to view this vehicle");
+        }, "Access denied to vehicle details");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      logger.info({ vehicleId: vehicle.id, vin: vehicle.vin }, "Vehicle fetched successfully");
+      // No need to log successful routine operations
       return c.json(vehicle);
     },
   )
@@ -272,14 +281,15 @@ export const vehiclesRoute = new Hono<AppBindings>()
       const logger = c.get("logger");
 
       if (!user) {
-        logger.warn("Unauthorized attempt to update a vehicle");
+        logger.warn("Unauthorized vehicle update attempt");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
       const vehicleBody = c.req.valid("json");
       const vehicleUUID = c.req.param("vehicleUUID");
 
-      logger.info({ userId: user.id, vehicleUUID }, "Attempting to update vehicle");
+      // Debug level for routine operations
+      logger.debug({ uuid: vehicleUUID }, "Vehicle update request");
 
       const vehicle = await db
         .select()
@@ -288,27 +298,26 @@ export const vehiclesRoute = new Hono<AppBindings>()
         .then(res => res[0]);
 
       if (!vehicle) {
-        logger.warn({ vehicleUUID }, "Vehicle not found for update");
+        logger.debug({ uuid: vehicleUUID }, "Vehicle not found for update");
         return c.json({ error: "Vehicle not found" }, 404);
       }
 
       if (user.role !== "admin" && vehicle.ownerId !== user.id) {
+        // Security concerns get warn level
         logger.warn({
           userId: user.id,
-          vehicleId: vehicle.id,
           vehicleOwnerId: vehicle.ownerId,
-        }, "User not authorized to update this vehicle");
+        }, "Access denied for vehicle update");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      // If ownerId is being updated, log transfer
+      // If ownerId is being updated, log transfer - important business event
       if (vehicleBody.ownerId && vehicleBody.ownerId !== vehicle.ownerId) {
         if (user.role !== "admin") {
           logger.warn({
             userId: user.id,
-            vehicleId: vehicle.id,
             attemptedOwnerId: vehicleBody.ownerId,
-          }, "Non-admin user attempted ownership transfer");
+          }, "Non-admin ownership transfer attempt");
           return c.json({ error: "Only admins can transfer ownership" }, 403);
         }
 
@@ -320,8 +329,8 @@ export const vehiclesRoute = new Hono<AppBindings>()
         });
 
         await db.insert(ownershipTransfersTable).values(ownershipTransfer);
+        // Important business event - use info level
         logger.info({
-          vehicleId: vehicle.id,
           fromUserId: vehicle.ownerId,
           toUserId: vehicleBody.ownerId,
         }, "Vehicle ownership transferred");
@@ -331,8 +340,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
         ...vehicleBody,
       });
 
-      logger.debug({ vehicleId: vehicle.id, update: validatedVehicleUpdate }, "Validated vehicle update");
-
+      // Don't need to log all updates at a higher level than debug
       const updatedVehicle = await db
         .update(vehiclesTable)
         .set(validatedVehicleUpdate)
@@ -340,7 +348,6 @@ export const vehiclesRoute = new Hono<AppBindings>()
         .returning()
         .then(res => res[0]);
 
-      logger.info({ vehicleId: updatedVehicle.id }, "Vehicle updated successfully");
       return c.json(updatedVehicle);
     },
   )
@@ -368,12 +375,13 @@ export const vehiclesRoute = new Hono<AppBindings>()
       const logger = c.get("logger");
 
       if (!user) {
-        logger.warn("Unauthorized attempt to delete a vehicle");
+        logger.warn("Unauthorized vehicle deletion attempt");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
       const vehicleUUID = c.req.param("vehicleUUID");
-      logger.info({ userId: user.id, vehicleUUID }, "Attempting to delete vehicle");
+      // Use debug for routine operations
+      logger.debug({ uuid: vehicleUUID }, "Vehicle deletion request");
 
       const vehicle = await db
         .select()
@@ -382,16 +390,16 @@ export const vehiclesRoute = new Hono<AppBindings>()
         .then(res => res[0]);
 
       if (!vehicle) {
-        logger.warn({ vehicleUUID }, "Vehicle not found for deletion");
+        logger.debug({ uuid: vehicleUUID }, "Vehicle not found for deletion");
         return c.json({ error: "Vehicle not found" }, 404);
       }
 
       if (vehicle.ownerId !== user.id) {
+        // Security concerns get warn level
         logger.warn({
           userId: user.id,
-          vehicleId: vehicle.id,
           vehicleOwnerId: vehicle.ownerId,
-        }, "User not authorized to delete this vehicle");
+        }, "Access denied for vehicle deletion");
         return c.json({ error: "Unauthorized" }, 401);
       }
 
@@ -401,7 +409,8 @@ export const vehiclesRoute = new Hono<AppBindings>()
 
       await db.update(vehiclesTable).set(softDeleteVehicle);
 
-      logger.info({ vehicleId: vehicle.id, vin: vehicle.vin }, "Vehicle soft deleted successfully");
+      // Vehicle deletion is significant enough to log at info level
+      logger.info({ vin: vehicle.vin }, "Vehicle soft deleted");
       return c.json({
         message: "Vehicle soft deleted successfully",
         vehicleUUID: vehicle.uuid,
@@ -430,25 +439,25 @@ export const vehiclesRoute = new Hono<AppBindings>()
     const vehicleUUID = c.req.param("vehicleUUID");
 
     if (!user) {
-      logger.warn({ vehicleUUID }, "Unauthorized attempt to restore a vehicle");
+      logger.warn("Unauthorized vehicle restore attempt");
       return c.json({ error: "Unauthorized" }, 401);
     }
 
-    logger.info({ userId: user.id, vehicleUUID }, "Attempting to restore vehicle");
+    logger.debug({ uuid: vehicleUUID }, "Vehicle restore request");
 
     const vehicle = await db.select().from(vehiclesTable).where(eq(vehiclesTable.uuid, vehicleUUID)).then(res => res[0]);
 
     if (!vehicle) {
-      logger.warn({ vehicleUUID }, "Vehicle not found for restoration");
+      logger.debug({ uuid: vehicleUUID }, "Vehicle not found for restoration");
       return c.json({ error: "Vehicle not found" }, 404);
     }
 
     if (vehicle.ownerId !== user.id) {
+      // Security concerns get warn level
       logger.warn({
         userId: user.id,
-        vehicleId: vehicle.id,
         vehicleOwnerId: vehicle.ownerId,
-      }, "User not authorized to restore this vehicle");
+      }, "Access denied for vehicle restoration");
       return c.json({ error: "Unauthorized" }, 401);
     }
 
@@ -459,6 +468,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
 
     const restoredVehicle = await db.update(vehiclesTable).set(restoredVehicleUpdate).where(eq(vehiclesTable.uuid, vehicleUUID)).returning().then(res => res[0]);
 
-    logger.info({ vehicleId: restoredVehicle.id, vin: restoredVehicle.vin }, "Vehicle restored successfully");
+    // Vehicle restoration is significant enough to log at info level
+    logger.info({ vin: restoredVehicle.vin }, "Vehicle restored");
     return c.json({ vehicle: restoredVehicle, restored: true });
   });
