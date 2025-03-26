@@ -33,11 +33,14 @@ export const testRoute = new Hono<AppBindings>().get(
   (c) => {
     const query = c.req.valid("query");
     const logger = c.get("logger");
-    logger.info({ query }, "Processing test route request");
+
+    // Only log when there's a name parameter for clearer tracking
+    if (query.name) {
+      logger.debug({ name: query.name }, "Greeting user by name");
+    }
 
     return c.json({
-      message: `Hello ${query.name
-      ?? "World"}! This is a test route for Hono!`,
+      message: `Hello ${query.name ?? "World"}! This is a test route for Hono!`,
     });
   },
 );
