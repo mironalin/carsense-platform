@@ -15,7 +15,15 @@ import {
   vehiclesTable,
 } from "@/db/schema/vehicles-schema";
 import { getSessionAndUser } from "@/middleware/get-session-and-user";
-import { zVehicleInsertSchema } from "@/zod/z-vehicles";
+import { unauthorizedResponseObject, vehicleNotFoundResponseObject } from "@/zod/z-api-responses";
+import {
+  zVehicleDeleteResponseSchema,
+  zVehicleGetResponseSchema,
+  zVehicleInsertSchema,
+  zVehicleRestoreResponseSchema,
+  zVehiclesListResponseSchema,
+  zVehicleUpdateResponseSchema,
+} from "@/zod/z-vehicles";
 
 export const vehiclesRoute = new Hono()
   .use(getSessionAndUser)
@@ -31,24 +39,11 @@ export const vehiclesRoute = new Hono()
           description: "OK",
           content: {
             "application/json": {
-              schema: resolver(selectVehicleSchema),
+              schema: resolver(zVehiclesListResponseSchema),
             },
           },
         },
-        401: {
-          description: "Unauthorized",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  error: { type: "string", example: "Unauthorized" },
-                },
-                required: ["error"],
-              },
-            },
-          },
-        },
+        401: unauthorizedResponseObject,
       },
     }),
     async (c) => {
@@ -121,8 +116,6 @@ export const vehiclesRoute = new Hono()
 
       const deletedVehicle = existing.find(v => v.deletedAt !== null);
 
-      // console.log(deletedVehicle);
-
       if (deletedVehicle) {
         if (deletedVehicle.ownerId !== user.id) {
           // Log ownership transfer
@@ -183,38 +176,12 @@ export const vehiclesRoute = new Hono()
           description: "Vehicle found",
           content: {
             "application/json": {
-              schema: resolver(selectVehicleSchema),
-            },
-          },
-          401: {
-            description: "Unauthorized",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    error: { type: "string", example: "Unauthorized" },
-                  },
-                  required: ["error"],
-                },
-              },
-            },
-          },
-          404: {
-            description: "Vehicle not found",
-            content: {
-              "application/json": {
-                schema: {
-                  type: "object",
-                  properties: {
-                    error: { type: "string", example: "Vehicle not found" },
-                  },
-                  required: ["error"],
-                },
-              },
+              schema: resolver(zVehicleGetResponseSchema),
             },
           },
         },
+        401: unauthorizedResponseObject,
+        404: vehicleNotFoundResponseObject,
       },
     }),
     async (c) => {
@@ -254,38 +221,12 @@ export const vehiclesRoute = new Hono()
           description: "Vehicle updated",
           content: {
             "application/json": {
-              schema: resolver(selectVehicleSchema),
+              schema: resolver(zVehicleUpdateResponseSchema),
             },
           },
         },
-        401: {
-          description: "Unauthorized",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  error: { type: "string", example: "Unauthorized" },
-                },
-                required: ["error"],
-              },
-            },
-          },
-        },
-        404: {
-          description: "Vehicle not found",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  error: { type: "string", example: "Vehicle not found" },
-                },
-                required: ["error"],
-              },
-            },
-          },
-        },
+        401: unauthorizedResponseObject,
+        404: vehicleNotFoundResponseObject,
       },
     }),
     zValidator(
@@ -361,68 +302,17 @@ export const vehiclesRoute = new Hono()
       description: "Delete a vehicle",
       summary: "Delete a vehicle",
       tags: ["Vehicles"],
-      parameters: [
-        {
-          name: "vehicleUUID",
-          in: "path",
-          description: "UUID of the vehicle to delete",
-          required: true,
-          schema: { type: "string" },
-        },
-      ],
       responses: {
         200: {
           description: "Vehicle deleted",
           content: {
             "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  message: {
-                    type: "string",
-                    example: "Vehicle soft deleted successfully",
-                  },
-                  vehicleUUID: {
-                    type: "string",
-                    example: "123e4567-e89b-12d3-a456-426614174000",
-                  },
-                },
-              },
+              schema: resolver(zVehicleDeleteResponseSchema),
             },
           },
         },
-        401: {
-          description: "Unauthorized",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  error: {
-                    type: "string",
-                    example: "Unauthorized",
-                  },
-                },
-              },
-            },
-          },
-        },
-        404: {
-          description: "Vehicle not found",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  error: {
-                    type: "string",
-                    example: "Vehicle not found",
-                  },
-                },
-              },
-            },
-          },
-        },
+        401: unauthorizedResponseObject,
+        404: vehicleNotFoundResponseObject,
       },
     }),
     async (c) => {
@@ -459,4 +349,47 @@ export const vehiclesRoute = new Hono()
         vehicleUUID: vehicle.uuid,
       });
     },
-  );
+  )
+  .post("/:vehicleUUID/restore", describeRoute({
+    tags: ["Vehicles"],
+    description: "Restore a vehicle",
+    summary: "Restore a vehicle",
+    responses: {
+      200: {
+        description: "Vehicle restored",
+        content: {
+          "application/json": {
+            schema: resolver(zVehicleRestoreResponseSchema),
+          },
+        },
+      },
+      401: unauthorizedResponseObject,
+      404: vehicleNotFoundResponseObject,
+    },
+  }), async (c) => {
+    const user = c.get("user");
+    const vehicleUUID = c.req.param("vehicleUUID");
+
+    if (!user) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const vehicle = await db.select().from(vehiclesTable).where(eq(vehiclesTable.uuid, vehicleUUID)).then(res => res[0]);
+
+    if (!vehicle) {
+      return c.json({ error: "Vehicle not found" }, 404);
+    }
+
+    if (vehicle.ownerId !== user.id) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const restoredVehicleUpdate = updateVehicleSchema.parse({
+      deletedAt: null,
+      updatedAt: new Date(),
+    });
+
+    const restoredVehicle = await db.update(vehiclesTable).set(restoredVehicleUpdate).where(eq(vehiclesTable.uuid, vehicleUUID)).returning().then(res => res[0]);
+
+    return c.json({ vehicle: restoredVehicle, restored: true });
+  });
