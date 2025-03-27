@@ -64,13 +64,13 @@ export const vehiclesRoute = new Hono<AppBindings>()
         .select()
         .from(vehiclesTable)
         .where(
-          and(
             user.role === "user"
-              ? eq(vehiclesTable.ownerId, user.id)
-              : undefined,
-            isNull(vehiclesTable.deletedAt),
-          ),
-        );
+              ? and(
+                  eq(vehiclesTable.ownerId, user.id),
+                  isNull(vehiclesTable.deletedAt),
+                )
+            : undefined,
+        )
 
       // Only log count, not the entire response
       if (vehicles.length > 0) {
