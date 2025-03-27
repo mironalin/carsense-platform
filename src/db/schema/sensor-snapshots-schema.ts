@@ -1,6 +1,5 @@
 import {
   integer,
-  jsonb,
   pgEnum,
   pgTable,
   timestamp,
@@ -28,11 +27,10 @@ export const sensorSnapshotsTable = pgTable("sensorSnapshots", {
     onDelete: "cascade",
   }),
   source: sensorSourceEnum("source").default(sensorSourceEnum.enumValues[0]),
-  sensors: jsonb("sensors").notNull(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
-    .$onUpdate(() => new Date())
-    .notNull(),
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const insertSensorSnapshot = createInsertSchema(sensorSnapshotsTable);

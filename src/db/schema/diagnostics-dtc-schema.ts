@@ -14,7 +14,7 @@ import {
 import { diagnosticsTable } from "@/db/schema/diagnostics-schema";
 import { DTCLibraryTable } from "@/db/schema/dtc-library-schema";
 
-export const DTCInstancesTable = pgTable("dtcInstances", {
+export const diagnosticsDTCTable = pgTable("diagnosticDTC", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   uuid: uuid("uuid").defaultRandom(),
   diagnosticId: integer("diagnosticId")
@@ -30,8 +30,8 @@ export const DTCInstancesTable = pgTable("dtcInstances", {
     .notNull(),
 });
 
-export const insertDTCInstanceSchema = createInsertSchema(DTCInstancesTable);
+export const insertDTCInstanceSchema = createInsertSchema(diagnosticsDTCTable);
 
-export const updateDTCInstanceSchema = createUpdateSchema(DTCInstancesTable);
+export const updateDTCInstanceSchema = createUpdateSchema(diagnosticsDTCTable);
 
-export const selectDTCInstanceSchema = createSelectSchema(DTCInstancesTable);
+export const selectDTCInstanceSchema = createSelectSchema(diagnosticsDTCTable);
