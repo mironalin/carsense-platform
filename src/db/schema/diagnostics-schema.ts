@@ -17,17 +17,18 @@ import { vehiclesTable } from "@/db/schema/vehicles-schema";
 export const diagnosticsTable = pgTable("diagnostics", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   uuid: uuid("uuid").defaultRandom(),
+
   vehicleId: integer("vehicleId").references(() => vehiclesTable.id, {
     onDelete: "cascade",
   }),
   odometer: integer("odometer").notNull(),
   locationLat: doublePrecision("locationLat"),
   locationLong: doublePrecision("locationLong"),
-  notes: text("notes").notNull(),
+  notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt")
-    .$onUpdate(() => new Date())
-    .notNull(),
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const insertDiagnosticSchema = createInsertSchema(diagnosticsTable);

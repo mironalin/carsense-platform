@@ -1,0 +1,1 @@
+ALTER TABLE "diagnostics" ALTER COLUMN "notes" DROP NOT NULL;
