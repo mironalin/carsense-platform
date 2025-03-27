@@ -50,6 +50,20 @@
       "when": 1743060179652,
       "tag": "0006_curved_salo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743061718374,
+      "tag": "0007_magical_mysterio",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1743061843351,
+      "tag": "0008_fixed_spot",
+      "breakpoints": true
     }
   ]
 }
