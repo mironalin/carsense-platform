@@ -18,7 +18,7 @@ export const diagnosticsTable = pgTable("diagnostics", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   uuid: uuid("uuid").defaultRandom(),
 
-  vehicleId: integer("vehicleId").references(() => vehiclesTable.id, {
+  vehicleId: integer("vehicleId").notNull().references(() => vehiclesTable.id, {
     onDelete: "cascade",
   }),
   odometer: integer("odometer").notNull(),
@@ -28,6 +28,7 @@ export const diagnosticsTable = pgTable("diagnostics", {
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt")
     .notNull()
+    .defaultNow()
     .$onUpdate(() => new Date()),
 });
 

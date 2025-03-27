@@ -26,8 +26,9 @@ export const diagnosticsDTCTable = pgTable("diagnosticDTC", {
   confirmed: boolean("confirmed"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
-    .$onUpdate(() => new Date())
-    .notNull(),
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const insertDTCInstanceSchema = createInsertSchema(diagnosticsDTCTable);

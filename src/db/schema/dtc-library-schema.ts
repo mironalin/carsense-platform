@@ -24,8 +24,9 @@ export const DTCLibraryTable = pgTable("dtcLibrary", {
   category: text("category"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
-    .$onUpdate(() => new Date())
-    .notNull(),
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const insertDTCLibrarySchema = createInsertSchema(DTCLibraryTable);

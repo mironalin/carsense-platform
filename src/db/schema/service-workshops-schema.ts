@@ -27,8 +27,9 @@ export const serviceWorkshopsTable = pgTable("serviceWorkshops", {
   operatingHours: jsonb("operatingHours"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
-    .$onUpdate(() => new Date())
-    .notNull(),
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const insertServiceWorkshopSchema = createInsertSchema(

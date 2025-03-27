@@ -30,6 +30,7 @@ export const sensorSnapshotsTable = pgTable("sensorSnapshots", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
     .notNull()
+    .defaultNow()
     .$onUpdate(() => new Date()),
 });
 

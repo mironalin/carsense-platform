@@ -22,8 +22,9 @@ export const locationsTable = pgTable("locations", {
   accuracy: doublePrecision("accuracy"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
-    .$onUpdate(() => new Date())
-    .notNull(),
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const createLocationSchema = createInsertSchema(locationsTable);

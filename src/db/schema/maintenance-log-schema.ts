@@ -55,8 +55,9 @@ export const maintenanceLogTable = pgTable("maintenanceLog", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
-    .$onUpdate(() => new Date())
-    .notNull(),
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const insertMaintenanceLogSchema

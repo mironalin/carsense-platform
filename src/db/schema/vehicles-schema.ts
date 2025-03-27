@@ -27,6 +27,7 @@ export const vehiclesTable = pgTable("vehicles", {
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
     .notNull()
+    .defaultNow()
     .$onUpdate(() => new Date()),
 });
 
