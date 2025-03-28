@@ -6,6 +6,7 @@ import { resolver, validator as zValidator } from "hono-openapi/zod";
 import type { AppBindings } from "@/lib/types";
 
 import { db } from "@/db";
+import { diagnosticsTable } from "@/db/schema/diagnostics-schema";
 import {
   insertOwnershipTransferSchema,
   ownershipTransfersTable,
@@ -64,13 +65,13 @@ export const vehiclesRoute = new Hono<AppBindings>()
         .select()
         .from(vehiclesTable)
         .where(
-            user.role === "user"
-              ? and(
-                  eq(vehiclesTable.ownerId, user.id),
-                  isNull(vehiclesTable.deletedAt),
-                )
+          user.role === "user"
+            ? and(
+                eq(vehiclesTable.ownerId, user.id),
+                isNull(vehiclesTable.deletedAt),
+              )
             : undefined,
-        )
+        );
 
       // Only log count, not the entire response
       if (vehicles.length > 0) {
@@ -471,4 +472,31 @@ export const vehiclesRoute = new Hono<AppBindings>()
     // Vehicle restoration is significant enough to log at info level
     logger.info({ vin: restoredVehicle.vin }, "Vehicle restored");
     return c.json({ vehicle: restoredVehicle, restored: true });
+  })
+  .get("/:vehicleUUID/diagnostics", describeRoute({
+    tags: ["Vehicles"],
+    description: "Get diagnostics for a vehicle",
+    summary: "Get diagnostics for a vehicle",
+  }), async (c) => {
+    const user = c.get("user");
+    const logger = c.get("logger");
+    const vehicleUUID = c.req.param("vehicleUUID");
+
+    if (!user) {
+      logger.warn("Unauthorized vehicle diagnostics access");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    // Get the vehicle first to get its ID
+    const vehicle = await db.select().from(vehiclesTable).where(eq(vehiclesTable.uuid, vehicleUUID)).then(res => res[0]);
+
+    if (!vehicle) {
+      logger.warn("Vehicle not found for diagnostics");
+      return c.json({ error: "Vehicle not found" }, 404);
+    }
+
+    // Use the numeric ID from the vehicle to query diagnostics
+    const diagnostics = await db.select().from(diagnosticsTable).where(eq(diagnosticsTable.vehicleId, vehicle.id));
+
+    return c.json(diagnostics);
   });
