@@ -27,7 +27,7 @@ export const locationsTable = pgTable("locations", {
     .$onUpdate(() => new Date()),
 });
 
-export const createLocationSchema = createInsertSchema(locationsTable);
+export const insertLocationSchema = createInsertSchema(locationsTable);
 
 export const selectLocationSchema = createSelectSchema(locationsTable);
 
