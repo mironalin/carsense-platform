@@ -2,6 +2,7 @@ import {
   boolean,
   integer,
   pgTable,
+  text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
@@ -20,9 +21,9 @@ export const diagnosticsDTCTable = pgTable("diagnosticDTC", {
   diagnosticId: integer("diagnosticId")
     .notNull()
     .references(() => diagnosticsTable.id, { onDelete: "cascade" }),
-  codeRefId: integer("codeRefId")
+  code: text("code")
     .notNull()
-    .references(() => DTCLibraryTable.id),
+    .references(() => DTCLibraryTable.code),
   confirmed: boolean("confirmed"),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
@@ -31,8 +32,8 @@ export const diagnosticsDTCTable = pgTable("diagnosticDTC", {
     .$onUpdate(() => new Date()),
 });
 
-export const insertDTCInstanceSchema = createInsertSchema(diagnosticsDTCTable);
+export const insertDiagnosticDTCInstanceSchema = createInsertSchema(diagnosticsDTCTable);
 
-export const updateDTCInstanceSchema = createUpdateSchema(diagnosticsDTCTable);
+export const updateDiagnosticDTCInstanceSchema = createUpdateSchema(diagnosticsDTCTable);
 
-export const selectDTCInstanceSchema = createSelectSchema(diagnosticsDTCTable);
+export const selectDiagnosticDTCInstanceSchema = createSelectSchema(diagnosticsDTCTable);
