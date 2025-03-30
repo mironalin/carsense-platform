@@ -19,6 +19,10 @@ export const zVehicleNotFoundResponse = z.object({
   error: z.string().openapi({ example: "Vehicle not found" }),
 });
 
+export const zBadRequestResponse = z.object({
+  error: z.string().openapi({ example: "Invalid request parameters" }),
+});
+
 // Standard response objects for OpenAPI docs
 export const unauthorizedResponseObject = {
   description: "Unauthorized",
@@ -43,6 +47,15 @@ export const vehicleNotFoundResponseObject = {
   content: {
     "application/json": {
       schema: resolver(zVehicleNotFoundResponse),
+    },
+  },
+};
+
+export const badRequestResponseObject = {
+  description: "Bad Request",
+  content: {
+    "application/json": {
+      schema: resolver(zBadRequestResponse),
     },
   },
 };
