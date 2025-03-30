@@ -408,7 +408,11 @@ export const diagnosticsRoute = new Hono<AppBindings>()
   }), zValidator("param", z.object({
     diagnosticUUID: z.string().uuid(),
   })), zValidator("query", z.object({
-    includeReadings: z.boolean().optional().default(false),
+    includeReadings: z.enum(["true", "false"])
+      .optional()
+      .default("false")
+      .transform(val => val === "true")
+      .pipe(z.boolean()),
   })), async (c) => {
     const user = c.get("user");
     const logger = c.get("logger");
@@ -419,7 +423,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     }
 
     const diagnosticUUID = c.req.param("diagnosticUUID");
-    const includeReadings = c.req.query("includeReadings") === "true";
+    const { includeReadings } = c.req.valid("query");
 
     logger.debug({ diagnosticUUID, includeReadings }, "Fetching diagnostic snapshots");
 
