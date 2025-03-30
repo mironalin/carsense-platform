@@ -1,12 +1,14 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator as zValidator } from "hono-openapi/zod";
+import { z } from "zod";
 
 import type { AppBindings } from "@/lib/types";
 
 import { db } from "@/db";
 import { diagnosticsTable } from "@/db/schema/diagnostics-schema";
+import { locationsTable } from "@/db/schema/locations-schema";
 import {
   insertOwnershipTransferSchema,
   ownershipTransfersTable,
@@ -18,7 +20,8 @@ import {
   vehiclesTable,
 } from "@/db/schema/vehicles-schema";
 import { getSessionAndUser } from "@/middleware/get-session-and-user";
-import { unauthorizedResponseObject, vehicleNotFoundResponseObject } from "@/zod/z-api-responses";
+import { badRequestResponseObject, notFoundResponseObject, unauthorizedResponseObject, vehicleNotFoundResponseObject } from "@/zod/z-api-responses";
+import { zLocationsListResponseSchema } from "@/zod/z-locations";
 import {
   zVehicleDeleteResponseSchema,
   zVehicleGetResponseSchema,
@@ -27,6 +30,8 @@ import {
   zVehiclesListResponseSchema,
   zVehicleUpdateResponseSchema,
 } from "@/zod/z-vehicles";
+
+const MAX_LOCATIONS_LIMIT = 100;
 
 export const vehiclesRoute = new Hono<AppBindings>()
   .use(getSessionAndUser)
@@ -499,4 +504,89 @@ export const vehiclesRoute = new Hono<AppBindings>()
     const diagnostics = await db.select().from(diagnosticsTable).where(eq(diagnosticsTable.vehicleId, vehicle.id));
 
     return c.json(diagnostics);
+  })
+  .get("/:vehicleUUID/locations/recent", describeRoute({
+    tags: ["Vehicles"],
+    description: "Get the latest N locations for a specific vehicle. If user role is 'user', they can only access locations for their own vehicles.",
+    summary: "Get recent locations for a vehicle",
+    responses: {
+      200: {
+        description: "OK",
+        content: {
+          "application/json": {
+            schema: resolver(zLocationsListResponseSchema),
+          },
+        },
+      },
+      401: unauthorizedResponseObject,
+      404: notFoundResponseObject,
+      400: badRequestResponseObject,
+    },
+  }), zValidator("param", z.object({
+    vehicleUUID: z.string().uuid(),
+  })), zValidator("query", z.object({
+    limit: z.string()
+      .optional()
+      .transform(val => val ? Number.parseInt(val, 10) : 10)
+      .pipe(z.number().min(1).max(MAX_LOCATIONS_LIMIT)),
+  })), async (c) => {
+    const user = c.get("user");
+    const logger = c.get("logger");
+
+    if (!user) {
+      logger.warn("Unauthorized access attempt - vehicle recent locations");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const vehicleUUID = c.req.param("vehicleUUID");
+    const { limit } = c.req.valid("query");
+
+    logger.debug({ userId: user.id, role: user.role, vehicleUUID, limit }, "Fetching recent locations for vehicle");
+
+    // Get the vehicle first to check ownership
+    const vehicle = await db
+      .select()
+      .from(vehiclesTable)
+      .where(eq(vehiclesTable.uuid, vehicleUUID))
+      .then(res => res[0]);
+
+    if (!vehicle) {
+      logger.debug({ vehicleUUID }, "Vehicle not found");
+      return c.json({ error: "Vehicle not found" }, 404);
+    }
+
+    // Check ownership for non-admin users
+    if (user.role === "user" && vehicle.ownerId !== user.id) {
+      logger.warn({
+        userId: user.id,
+        vehicleId: vehicle.id,
+        ownerId: vehicle.ownerId,
+      }, "Access denied to vehicle locations");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    // Get the latest N locations for the vehicle
+    const locations = await db
+      .select()
+      .from(locationsTable)
+      .where(
+        and(
+          eq(locationsTable.vehicleId, vehicle.id),
+          sql`${locationsTable.id} IN (
+            SELECT id FROM (
+              SELECT id, ROW_NUMBER() OVER (ORDER BY "createdAt" DESC) as rn
+              FROM locations
+              WHERE vehicle_id = ${vehicle.id}
+            ) ranked
+            WHERE rn <= ${limit}
+          )`,
+        ),
+      )
+      .orderBy(desc(locationsTable.createdAt));
+
+    if (locations.length > 0) {
+      logger.debug({ count: locations.length }, "Recent locations found");
+    }
+
+    return c.json(locations);
   });
