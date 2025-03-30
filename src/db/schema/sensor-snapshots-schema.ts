@@ -34,8 +34,8 @@ export const sensorSnapshotsTable = pgTable("sensorSnapshots", {
     .$onUpdate(() => new Date()),
 });
 
-export const insertSensorSnapshot = createInsertSchema(sensorSnapshotsTable);
+export const insertSensorSnapshotSchema = createInsertSchema(sensorSnapshotsTable);
 
-export const updateSensorSnapshot = createUpdateSchema(sensorSnapshotsTable);
+export const updateSensorSnapshotSchema = createUpdateSchema(sensorSnapshotsTable);
 
-export const selectSensorSnapshot = createSelectSchema(sensorSnapshotsTable);
+export const selectSensorSnapshotSchema = createSelectSchema(sensorSnapshotsTable);
