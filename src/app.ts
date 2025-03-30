@@ -3,6 +3,7 @@ import { createApp } from "@/lib/create-app";
 import { authRoute } from "@/routes/auth-route";
 import { testRoute } from "@/routes/test-route";
 import { vehiclesRoute } from "@/routes/vehicles-route";
+import { diagnosticsRoute } from "./routes/diagnostics-route";
 
 // try {
 //   const result = await auth.api.signInEmail({
@@ -28,7 +29,8 @@ export const apiRoutes = app
   .basePath("/api")
   .route("/auth/**", authRoute)
   .route("/test", testRoute)
-  .route("/vehicles", vehiclesRoute);
+  .route("/vehicles", vehiclesRoute)
+  .route("/diagnostics", diagnosticsRoute);
 
 export default app;
 export type AppType = typeof apiRoutes;
