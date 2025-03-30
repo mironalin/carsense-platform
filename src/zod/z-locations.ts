@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { insertLocationSchema, selectLocationSchema } from "@/db/schema/locations-schema";
+import { insertLocationSchema, selectLocationSchema, updateLocationSchema } from "@/db/schema/locations-schema";
 
 // =============================================================================
 // Input Schemas - Used for validating request payloads
@@ -24,27 +24,14 @@ export type LocationInsertSchema = z.infer<typeof zLocationInsertSchema>;
 /**
  * Schema for retrieving a single location
  */
-export const zLocationGetResponseSchema = z.object({
-  id: z.number(),
-  uuid: z.string().uuid(),
-  vehicleId: z.number(),
-  location: z.object({
-    latitude: z.number(),
-    longitude: z.number(),
-    accuracy: z.number().nullable(),
-  }),
-  timestamps: z.object({
-    createdAt: z.date(),
-    updatedAt: z.date(),
-  }),
-});
+export const zLocationGetResponseSchema = selectLocationSchema;
 
 export type LocationGetResponse = z.infer<typeof zLocationGetResponseSchema>;
 
 /**
  * Schema for updating a location
  */
-export const zLocationUpdateResponseSchema = selectLocationSchema;
+export const zLocationUpdateResponseSchema = updateLocationSchema;
 export type LocationUpdateResponse = z.infer<typeof zLocationUpdateResponseSchema>;
 
 // =============================================================================
