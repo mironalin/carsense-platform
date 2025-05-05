@@ -8,7 +8,7 @@ import type { AppBindings } from "@/lib/types";
 import { db } from "@/db";
 import { DTCLibraryTable } from "@/db/schema/dtc-library-schema";
 import { getSessionAndUser } from "@/middleware/get-session-and-user";
-import { notFoundResponseObject } from "@/zod/z-api-responses";
+import { notFoundResponseObject, unauthorizedResponseObject } from "@/zod/z-api-responses";
 import { zDTCLibraryResponseSchema, zDTCQuerySchema } from "@/zod/z-dtc";
 
 export const dtcRoute = new Hono<AppBindings>()
@@ -27,11 +27,19 @@ export const dtcRoute = new Hono<AppBindings>()
         },
       },
       404: notFoundResponseObject,
+      401: unauthorizedResponseObject,
     },
   }), zValidator("query", zDTCQuerySchema), async (c) => {
+    const user = c.get("user");
     const logger = c.get("logger");
+    
+    if (!user) {
+      logger.warn("Unauthorized access attempt - DTC lookup");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+    
     const { code } = c.req.valid("query");
-
+    
     logger.debug({ code }, "Looking up DTC code");
 
     const dtc = await db
