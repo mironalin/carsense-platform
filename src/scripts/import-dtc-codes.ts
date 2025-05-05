@@ -30,19 +30,16 @@ function determineAffectedSystem(category: string): string {
     case "Body": return "Body Electronics";
     case "Chassis": return "Suspension and Braking";
     case "Network": return "Communication Systems";
+    case "NetworkCommunication": return "Communication Systems";
     default: return "Unknown";
   }
 }
 
 async function importDTCCodes() {
   try {
-    // Read the DTC.cs file
-    const dtcFilePath = path.join(process.cwd(), "DTC.cs");
-    const fileContent = fs.readFileSync(dtcFilePath, "utf-8");
-
-    // Regular expressions to extract data
-    const codePattern = /([PCBU][0-9]{4})\s+=\s+0x[0-9a-fA-F]+,/g;
-    const categoryDescPattern = /\[Category\(Categories\.([a-zA-Z]+)\),\s+Description\("([^"]+)"\)\]/g;
+    // Read the JSON file
+    const dtcFilePath = path.join(process.cwd(), "DTC.json");
+    const dtcData = JSON.parse(fs.readFileSync(dtcFilePath, "utf-8"));
 
     const dtcEntries: Array<{
       code: string;
@@ -52,45 +49,23 @@ async function importDTCCodes() {
       affectedSystem: string;
     }> = [];
 
-    // Parse the file content line by line
-    const lines = fileContent.split("\n");
-    
-    for (let i = 0; i < lines.length; i++) {
-      // Look for code pattern
-      const codeLine = lines[i].trim();
-      const codeMatch = /([PCBU][0-9]{4})\s+=\s+0x[0-9a-fA-F]+,/.exec(codeLine);
+    // Process each entry from the JSON file
+    for (const entry of dtcData) {
+      const code = entry.code;
+      const category = entry.category;
+      const description = entry.description;
       
-      if (codeMatch) {
-        const code = codeMatch[1];
-        
-        // Look for category and description in previous lines
-        let category = "Unknown";
-        let description = "Unknown";
-        
-        // Check up to 5 lines back for category and description
-        for (let j = Math.max(0, i - 5); j < i; j++) {
-          const attrLine = lines[j].trim();
-          const categoryMatch = /\[Category\(Categories\.([a-zA-Z]+)\),\s+Description\("([^"]+)"\)\]/.exec(attrLine);
-          
-          if (categoryMatch) {
-            category = categoryMatch[1];
-            description = categoryMatch[2];
-            break;
-          }
-        }
-        
-        // Determine severity and affected system
-        const severity = determineSeverity(code);
-        const affectedSystem = determineAffectedSystem(category);
-        
-        dtcEntries.push({
-          code,
-          description,
-          category,
-          severity,
-          affectedSystem,
-        });
-      }
+      // Determine severity and affected system
+      const severity = determineSeverity(code);
+      const affectedSystem = determineAffectedSystem(category);
+      
+      dtcEntries.push({
+        code,
+        description,
+        category,
+        severity,
+        affectedSystem,
+      });
     }
 
     console.log(`Found ${dtcEntries.length} DTC codes to import`);
