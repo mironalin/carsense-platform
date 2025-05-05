@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "zod-openapi/extend";
 
 import { insertLocationSchema, selectLocationSchema, updateLocationSchema } from "@/db/schema/locations-schema";
 

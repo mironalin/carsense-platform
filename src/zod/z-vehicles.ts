@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "zod-openapi/extend";
 
 import { insertVehicleSchema, selectVehicleSchema } from "@/db/schema/vehicles-schema";
 
