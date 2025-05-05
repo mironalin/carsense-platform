@@ -23,4 +23,4 @@ export type DTCQuerySchema = z.infer<typeof zDTCQuerySchema>;
 /**
  * Schema for DTC library item responses
  */
-export const zDTCLibraryResponseSchema = selectDTCLibrarySchema; 
+export const zDTCLibraryResponseSchema = selectDTCLibrarySchema;

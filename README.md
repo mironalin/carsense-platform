@@ -40,23 +40,28 @@ This backend is part of the larger CarSense ecosystem, which includes:
 ### Installation
 
 1. Clone the repository:
+
    ```sh
    git clone https://github.com/yourusername/carsense-backend.git
    cd carsense-backend
    ```
 
 2. Install dependencies:
+
    ```sh
    bun install
    ```
 
 3. Set up environment variables:
+
    ```sh
    cp .env.example .env
    ```
+
    Edit the `.env` file with your configuration details.
 
 4. Run database migrations:
+
    ```sh
    bun run drizzle-kit generate
    bun run drizzle-kit migrate
@@ -83,10 +88,12 @@ The system uses the following core tables:
 ## 🔌 API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/signup`: Create a new user account
 - `POST /api/auth/login`: Authenticate and receive a token
 
 ### Vehicles
+
 - `GET /api/vehicles`: List vehicles
 - `POST /api/vehicles`: Register a new vehicle
 - `GET /api/vehicles/:id`: Get vehicle details
@@ -94,14 +101,17 @@ The system uses the following core tables:
 - `DELETE /api/vehicles/:id`: Remove a vehicle
 
 ### Diagnostics
+
 - `GET /api/diagnostics`: List diagnostics
 - `POST /api/diagnostics`: Create a new diagnostic session
 - `POST /api/diagnostics/:id/dtcs`: Add DTC codes to a diagnostic session
 
 ### DTC Library
+
 - `GET /api/dtc?code=P0001`: Look up a specific DTC code
 
 ### Locations
+
 - `GET /api/locations`: Get vehicle locations
 - `POST /api/locations`: Record a new vehicle location
 
@@ -110,9 +120,11 @@ The system uses the following core tables:
 The project includes utilities for importing Diagnostic Trouble Codes:
 
 1. **Convert DTC file** (`src/scripts/convert-dtc.ts`):
+
    ```sh
    bun run src/scripts/convert-dtc.ts
    ```
+
    Converts the original DTC.bin format to JSON for easier processing.
 
 2. **Import DTC codes** (`src/scripts/import-dtc-codes.ts`):

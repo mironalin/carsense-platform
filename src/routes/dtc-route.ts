@@ -32,14 +32,14 @@ export const dtcRoute = new Hono<AppBindings>()
   }), zValidator("query", zDTCQuerySchema), async (c) => {
     const user = c.get("user");
     const logger = c.get("logger");
-    
+
     if (!user) {
       logger.warn("Unauthorized access attempt - DTC lookup");
       return c.json({ error: "Unauthorized" }, 401);
     }
-    
+
     const { code } = c.req.valid("query");
-    
+
     logger.debug({ code }, "Looking up DTC code");
 
     const dtc = await db
@@ -55,4 +55,4 @@ export const dtcRoute = new Hono<AppBindings>()
 
     logger.debug({ code, dtcId: dtc.id }, "DTC code found");
     return c.json(dtc);
-  }); 
+  });

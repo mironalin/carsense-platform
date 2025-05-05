@@ -1,24 +1,23 @@
 // src/scripts/import-dtc-codes.ts
 
-import { config } from "dotenv";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
-import fs from "fs";
-import path from "path";
-import { DTCLibraryTable, severityEnum } from "../db/schema/dtc-library-schema";
+import fs from "node:fs";
+import path from "node:path";
+
 import { db } from "@/db/index";
+
+import { DTCLibraryTable } from "../db/schema/dtc-library-schema";
 
 // Function to determine severity based on code type
 function determineSeverity(code: string): "low" | "medium" | "high" {
   // Usually, P codes are engine/powertrain, B codes are body,
   // C codes are chassis, U codes are network/communication
   const firstChar = code[0];
-  
+
   switch (firstChar) {
-    case 'P': return "high";    // Powertrain issues often affect drivability
-    case 'C': return "medium";  // Chassis issues can affect safety but may not be immediate
-    case 'B': return "low";     // Body issues are often comfort/convenience
-    case 'U': return "medium";  // Network/communication can affect various systems
+    case "P": return "high"; // Powertrain issues often affect drivability
+    case "C": return "medium"; // Chassis issues can affect safety but may not be immediate
+    case "B": return "low"; // Body issues are often comfort/convenience
+    case "U": return "medium"; // Network/communication can affect various systems
     default: return "medium";
   }
 }
@@ -54,11 +53,11 @@ async function importDTCCodes() {
       const code = entry.code;
       const category = entry.category;
       const description = entry.description;
-      
+
       // Determine severity and affected system
       const severity = determineSeverity(code);
       const affectedSystem = determineAffectedSystem(category);
-      
+
       dtcEntries.push({
         code,
         description,
@@ -79,7 +78,8 @@ async function importDTCCodes() {
     }
 
     console.log("DTC code import completed successfully");
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error importing DTC codes:", error);
   }
 }
