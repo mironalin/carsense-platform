@@ -1,6 +1,7 @@
 import configureOpenAPI from "@/lib/configure-open-api";
 import { createApp } from "@/lib/create-app";
 import { authRoute } from "@/routes/auth-route";
+import { dtcRoute } from "@/routes/dtc-route";
 import { testRoute } from "@/routes/test-route";
 import { vehiclesRoute } from "@/routes/vehicles-route";
 
@@ -32,7 +33,8 @@ export const apiRoutes = app
   .route("/test", testRoute)
   .route("/vehicles", vehiclesRoute)
   .route("/diagnostics", diagnosticsRoute)
-  .route("/locations", locationsRoute);
+  .route("/locations", locationsRoute)
+  .route("/dtc", dtcRoute);
 
 export default app;
 export type AppType = typeof apiRoutes;
