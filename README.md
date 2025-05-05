@@ -36,7 +36,6 @@ This backend is part of the larger CarSense ecosystem, which includes:
 
 - [Bun](https://bun.sh/) (v1.0 or higher)
 - PostgreSQL database
-- Node.js (v18 or higher)
 
 ### Installation
 
@@ -112,13 +111,13 @@ The project includes utilities for importing Diagnostic Trouble Codes:
 
 1. **Convert DTC file** (`src/scripts/convert-dtc.ts`):
    ```sh
-   npx tsx src/scripts/convert-dtc.ts
+   bun run src/scripts/convert-dtc.ts
    ```
    Converts the original DTC.bin format to JSON for easier processing.
 
 2. **Import DTC codes** (`src/scripts/import-dtc-codes.ts`):
    ```sh
-   npx tsx src/scripts/import-dtc-codes.ts
+   bun run src/scripts/import-dtc-codes.ts
    ```
    Imports the converted DTCs into the database with appropriate severity levels and categories.
 
