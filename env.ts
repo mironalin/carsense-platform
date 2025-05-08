@@ -14,6 +14,8 @@ const EnvSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+  ML_SERVICE_URL: z.string().default("http://localhost:8000/api/v1"),
+  ML_SERVICE_JWT_SECRET: z.string().default("shared-secret-with-main-backend"),
 });
 
 export type env = z.infer<typeof EnvSchema>;
