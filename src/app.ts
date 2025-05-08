@@ -7,6 +7,8 @@ import { vehiclesRoute } from "@/routes/vehicles-route";
 
 import { diagnosticsRoute } from "./routes/diagnostics-route";
 import { locationsRoute } from "./routes/locations-route";
+import { mlPredictionsRoute } from "./routes/ml-predictions";
+import { mlModelsRoute } from "./routes/ml-models";
 // try {
 //   const result = await auth.api.signInEmail({
 //     body: {
@@ -34,7 +36,9 @@ export const apiRoutes = app
   .route("/vehicles", vehiclesRoute)
   .route("/diagnostics", diagnosticsRoute)
   .route("/locations", locationsRoute)
-  .route("/dtc", dtcRoute);
+  .route("/dtc", dtcRoute)
+  .route("/ml/predictions", mlPredictionsRoute)
+  .route("/ml/models", mlModelsRoute);
 
 export default app;
 export type AppType = typeof apiRoutes;
