@@ -11,6 +11,6 @@
   },
   "devDependencies": {
     "typescript": "^5.0.0",
-    "pnpm": "^9.0.0"
+    "pnpm": "^10.11.0"
   }
 }
