@@ -1,7 +1,9 @@
+import { Button } from "./components/ui/button"
+
 function App() {
   return (
     <div className="flex justify-center items-center h-screen">
-      <h1 className="text-3xl font-bold">Hello CarSense</h1>
+      <Button variant="destructive" size="lg" className="">CarSense</Button>
     </div>
   )
 }
