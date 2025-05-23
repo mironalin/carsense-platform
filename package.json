@@ -10,7 +10,9 @@
     "lint:web": "pnpm --filter web lint"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "pnpm": "^10.11.0"
+    "@antfu/eslint-config": "^4.13.2",
+    "eslint": "^9.27.0",
+    "pnpm": "^10.11.0",
+    "typescript": "^5.0.0"
   }
 }
