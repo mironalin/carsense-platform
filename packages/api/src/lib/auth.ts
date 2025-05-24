@@ -1,28 +1,28 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { bearer, jwt } from "better-auth/plugins";
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { bearer, jwt } from 'better-auth/plugins'
 
-import { db } from "../db";
+import env from '../../env'
 
-import env from "../../env";
+import { db } from '../db'
 
 export const auth = betterAuth({
   user: {
     additionalFields: {
       role: {
-        type: "string",
+        type: 'string',
         required: true,
-        defaultValue: "user",
+        defaultValue: 'user',
         input: false,
       },
     },
   },
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
   }),
   emailAndPassword: {
     enabled: true,
-    autoSignIn: false,
+    // autoSignIn: false,
   },
   socialProviders: {
     github: {
@@ -30,6 +30,6 @@ export const auth = betterAuth({
       clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
-  trustedOrigins: ["http://localhost:5173", "http://localhost:3000"],
+  trustedOrigins: ['http://localhost:5173', 'http://localhost:3000'],
   plugins: [jwt(), bearer()],
-});
+})

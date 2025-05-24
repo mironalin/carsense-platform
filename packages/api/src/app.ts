@@ -31,7 +31,7 @@ configureOpenAPI(app);
 
 export const apiRoutes = app
   .basePath("/api")
-  .route("/auth/**", authRoute)
+  .route("/auth/*", authRoute)
   .route("/test", testRoute)
   .route("/vehicles", vehiclesRoute)
   .route("/diagnostics", diagnosticsRoute)
