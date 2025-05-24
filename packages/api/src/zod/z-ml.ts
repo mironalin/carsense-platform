@@ -68,7 +68,6 @@ export const zBasicPredictionResponseSchema = z.object({
 
 export type BasicPredictionResponse = z.infer<typeof zBasicPredictionResponseSchema>;
 
-
 // =============================================================================
 // Detailed Vehicle Health Prediction Schemas (NEW/UPDATED)
 // =============================================================================
@@ -103,9 +102,9 @@ export type SensorReading = z.infer<typeof zSensorReadingSchema>;
  * This replaces the previous simpler zVehicleHealthPredictionRequestSchema.
  */
 export const zVehicleHealthPredictionRequestSchema = z.object({
-  vehicle_id: z.number().openapi({ 
-    description: "The unique ID of the vehicle in the backend database.", 
-    example: 123 
+  vehicle_id: z.number().openapi({
+    description: "The unique ID of the vehicle in the backend database.",
+    example: 123,
   }),
   vehicleInfo: zVehicleInfoSchema.openapi({
     description: "Vehicle information, can be used for context or if vehicle_id is not yet known by client.",
@@ -113,11 +112,11 @@ export const zVehicleHealthPredictionRequestSchema = z.object({
   }),
   dtcCodes: z.array(z.string()).default([]).openapi({
     description: "List of DTC codes present in the vehicle",
-    example: ["P0171", "P0300"]
+    example: ["P0171", "P0300"],
   }),
   obdParameters: z.record(z.string(), z.number()).default({}).openapi({
     description: "OBD parameters as key-value pairs (e.g., {'rpm': 1200, 'coolant_temp': 90})",
-    example: { "rpm": 850, "engine_load": 35.5, "short_fuel_trim_bank1": 1.5 }
+    example: { rpm: 850, engine_load: 35.5, short_fuel_trim_bank1: 1.5 },
   }),
   sensorReadings: z.array(zSensorReadingSchema).optional().openapi({
     description: "Detailed sensor readings with units",
@@ -130,7 +129,7 @@ export const zVehicleHealthPredictionRequestSchema = z.object({
   }),
   requestTime: z.string().datetime().openapi({
     description: "Request timestamp",
-    example: "2024-05-09T10:30:00.000Z"
+    example: "2024-05-09T10:30:00.000Z",
   }),
 }).openapi({
   example: {
@@ -143,19 +142,18 @@ export const zVehicleHealthPredictionRequestSchema = z.object({
       engineType: "gasoline",
       fuelType: "petrol",
       transmissionType: "automatic",
-      mileage: 75000
+      mileage: 75000,
     },
     dtcCodes: ["P0171", "P0300"],
-    obdParameters: { "rpm": 850, "engine_load": 35.5, "short_fuel_trim_bank1": 1.5 },
+    obdParameters: { rpm: 850, engine_load: 35.5, short_fuel_trim_bank1: 1.5 },
     sensorReadings: [
       { pid: "coolant_temp", value: 90.5, unit: "°C" },
-      { pid: "intake_air_temp", value: 25.0, unit: "°C" }
+      { pid: "intake_air_temp", value: 25.0, unit: "°C" },
     ],
-    requestTime: "2024-05-09T10:30:00.000Z"
-  }
+    requestTime: "2024-05-09T10:30:00.000Z",
+  },
 });
 export type VehicleHealthPredictionRequest = z.infer<typeof zVehicleHealthPredictionRequestSchema>;
-
 
 /**
  * Schema for individual component failure probability.
@@ -208,7 +206,6 @@ export const zVehicleHealthPredictionResponseSchema = z.object({
   processedAt: z.string().datetime().openapi({ description: "Processing timestamp" }),
 });
 export type VehicleHealthPredictionResponse = z.infer<typeof zVehicleHealthPredictionResponseSchema>;
-
 
 // =============================================================================
 // Prediction Feedback Schema

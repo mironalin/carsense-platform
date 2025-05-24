@@ -4,7 +4,6 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { db } from "../db/index";
-
 import { DTCLibraryTable } from "../db/schema/dtc-library-schema";
 
 // Function to determine severity based on code type

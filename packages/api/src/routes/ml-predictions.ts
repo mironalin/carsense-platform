@@ -1,3 +1,4 @@
+import { config } from "dotenv";
 import { and, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
@@ -6,27 +7,24 @@ import { z } from "zod";
 
 import type { AppBindings } from "../lib/types";
 
+import env from "../../env";
 import { db } from "../db";
-import { diagnosticsTable } from "../db/schema/diagnostics-schema";
 import { vehiclesTable } from "../db/schema/vehicles-schema";
+import { generateMLServiceToken } from "../lib/ml-service-token";
 import { getSessionAndUser } from "../middleware/get-session-and-user";
 import { notFoundResponseObject, unauthorizedResponseObject } from "../zod/z-api-responses";
-import { generateMLServiceToken } from "../lib/ml-service-token";
 import {
   zBasicPredictionRequestSchema,
   zBasicPredictionResponseSchema,
   zPredictionFeedbackSchema,
   zVehicleHealthPredictionRequestSchema,
   zVehicleHealthPredictionResponseSchema,
-  zMLModelsListResponseSchema
 } from "../zod/z-ml";
-import env from "../../env";
-import { config } from "dotenv";
 
 config({ path: ".env" });
 
 // Define base URL without trailing slash
-const ML_SERVICE_BASE_URL = env.ML_SERVICE_URL.endsWith('/')
+const ML_SERVICE_BASE_URL = env.ML_SERVICE_URL.endsWith("/")
   ? env.ML_SERVICE_URL.slice(0, -1)
   : env.ML_SERVICE_URL;
 
@@ -62,7 +60,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
     const mlServiceToken = generateMLServiceToken(
       user.id,
       user.role,
-      ["create:predictions"]
+      ["create:predictions"],
     );
 
     try {
@@ -71,9 +69,9 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${mlServiceToken}`
+          "Authorization": `Bearer ${mlServiceToken}`,
         },
-        body: JSON.stringify(c.req.valid("json"))
+        body: JSON.stringify(c.req.valid("json")),
       });
 
       if (!response.ok) {
@@ -81,14 +79,15 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         logger.error({ status: response.status, error: errorText }, "ML service error");
         return c.json({
           error: "Error creating prediction",
-          details: response.status
+          details: response.status,
         }, response.status as any);
       }
 
       const prediction = await response.json();
       c.status(201);
       return c.json(prediction);
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error }, "Error creating prediction");
       return c.json({ error: "Failed to create prediction" }, 500);
     }
@@ -127,7 +126,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
       dtcCodes,
       obdParameters,
       sensorReadings,
-      requestTime
+      requestTime,
     } = predictionRequest;
 
     logger.debug({
@@ -136,9 +135,8 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
       vehicleModel: vehicleInfo.model,
       obdParametersCount: Object.keys(obdParameters).length,
       sensorReadingsCount: sensorReadings?.length ?? 0,
-      dtcCodesCount: dtcCodes.length
-    },
-      "Requesting ML prediction with current payload structure");
+      dtcCodesCount: dtcCodes.length,
+    }, "Requesting ML prediction with current payload structure");
 
     const mlRequestPayload = predictionRequest;
 
@@ -165,7 +163,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
     const mlServiceToken = generateMLServiceToken(
       user.id,
       user.role,
-      ["read:predictions"]
+      ["read:predictions"],
     );
 
     try {
@@ -174,9 +172,9 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${mlServiceToken}`
+          "Authorization": `Bearer ${mlServiceToken}`,
         },
-        body: JSON.stringify(mlRequestPayload)
+        body: JSON.stringify(mlRequestPayload),
       });
 
       if (!response.ok) {
@@ -184,7 +182,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         logger.error({ status: response.status, error: errorText }, "ML service error");
         return c.json({
           error: "Error communicating with ML service",
-          details: response.status
+          details: response.status,
         }, 500);
       }
 
@@ -194,11 +192,12 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
       logger.info({
         vehicle_id,
         healthScore: prediction.predictions.vehicleHealthScore,
-        recommendationCount: prediction.predictions.maintenanceRecommendations.length
+        recommendationCount: prediction.predictions.maintenanceRecommendations.length,
       }, "ML prediction successful");
 
       return c.json(prediction);
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error }, "Error making prediction request to ML service");
       return c.json({ error: "Failed to get prediction from ML service" }, 500);
     }
@@ -224,7 +223,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
   }), zValidator("param", z.object({
     vehicleId: z.string()
       .regex(/^\d+$/, "Vehicle ID must be a number")
-      .transform(val => parseInt(val, 10)),
+      .transform(val => Number.parseInt(val, 10)),
   })), async (c) => {
     const user = c.get("user");
     const logger = c.get("logger");
@@ -259,7 +258,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
     const mlServiceToken = generateMLServiceToken(
       user.id,
       user.role,
-      ["read:predictions"]
+      ["read:predictions"],
     );
 
     try {
@@ -267,8 +266,8 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
       const response = await fetch(`${ML_SERVICE_BASE_URL}/predictions/vehicle/${vehicleId}`, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${mlServiceToken}`
-        }
+          Authorization: `Bearer ${mlServiceToken}`,
+        },
       });
 
       if (!response.ok) {
@@ -276,13 +275,14 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         logger.error({ status: response.status, error: errorText }, "ML service error");
         return c.json({
           error: "Error retrieving prediction history",
-          details: response.status
+          details: response.status,
         }, response.status as any);
       }
 
       const predictions = await response.json();
       return c.json(predictions);
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error }, "Error retrieving prediction history");
       return c.json({ error: "Failed to retrieve prediction history" }, 500);
     }
@@ -308,7 +308,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
   }), zValidator("param", z.object({
     predictionId: z.string()
       .regex(/^\d+$/, "Prediction ID must be a number")
-      .transform(val => parseInt(val, 10)),
+      .transform(val => Number.parseInt(val, 10)),
   })), async (c) => {
     const user = c.get("user");
     const logger = c.get("logger");
@@ -324,7 +324,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
     const mlServiceToken = generateMLServiceToken(
       user.id,
       user.role,
-      ["read:predictions"]
+      ["read:predictions"],
     );
 
     try {
@@ -332,8 +332,8 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
       const response = await fetch(`${ML_SERVICE_BASE_URL}/predictions/${predictionId}`, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${mlServiceToken}`
-        }
+          Authorization: `Bearer ${mlServiceToken}`,
+        },
       });
 
       if (!response.ok) {
@@ -345,7 +345,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         logger.error({ status: response.status, error: errorText }, "ML service error");
         return c.json({
           error: "Error retrieving prediction",
-          details: response.status
+          details: response.status,
         }, response.status as any);
       }
 
@@ -371,7 +371,8 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
       }
 
       return c.json(prediction);
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error }, "Error retrieving prediction");
       return c.json({ error: "Failed to retrieve prediction" }, 500);
     }
@@ -397,7 +398,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
   }), zValidator("param", z.object({
     predictionId: z.string()
       .regex(/^\d+$/, "Prediction ID must be a number")
-      .transform(val => parseInt(val, 10)),
+      .transform(val => Number.parseInt(val, 10)),
   })), zValidator("json", zPredictionFeedbackSchema), async (c) => {
     const user = c.get("user");
     const logger = c.get("logger");
@@ -414,7 +415,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
     const mlServiceToken = generateMLServiceToken(
       user.id,
       user.role,
-      ["update:predictions"]
+      ["update:predictions"],
     );
 
     try {
@@ -423,9 +424,9 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${mlServiceToken}`
+          "Authorization": `Bearer ${mlServiceToken}`,
         },
-        body: JSON.stringify(feedback)
+        body: JSON.stringify(feedback),
       });
 
       if (!response.ok) {
@@ -437,15 +438,16 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
         logger.error({ status: response.status, error: errorText }, "ML service error");
         return c.json({
           error: "Error adding feedback",
-          details: response.status
+          details: response.status,
         }, response.status as any);
       }
 
       const updatedPrediction = await response.json();
       logger.info({ predictionId }, "Feedback added successfully");
       return c.json(updatedPrediction);
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error }, "Error adding feedback to prediction");
       return c.json({ error: "Failed to add feedback" }, 500);
     }
-  })
+  });

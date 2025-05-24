@@ -1,14 +1,13 @@
 import configureOpenAPI from "./lib/configure-open-api";
 import { createApp } from "./lib/create-app";
 import { authRoute } from "./routes/auth-route";
+import { diagnosticsRoute } from "./routes/diagnostics-route";
 import { dtcRoute } from "./routes/dtc-route";
+import { locationsRoute } from "./routes/locations-route";
+import { mlModelsRoute } from "./routes/ml-models";
+import { mlPredictionsRoute } from "./routes/ml-predictions";
 import { testRoute } from "./routes/test-route";
 import { vehiclesRoute } from "./routes/vehicles-route";
-
-import { diagnosticsRoute } from "./routes/diagnostics-route";
-import { locationsRoute } from "./routes/locations-route";
-import { mlPredictionsRoute } from "./routes/ml-predictions";
-import { mlModelsRoute } from "./routes/ml-models";
 // try {
 //   const result = await auth.api.signInEmail({
 //     body: {

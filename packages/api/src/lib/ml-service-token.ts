@@ -1,15 +1,16 @@
-import { sign } from "jsonwebtoken";
-import env  from "../../env";
 import { config } from "dotenv";
+import { sign } from "jsonwebtoken";
+
+import env from "../../env";
 
 config({ path: ".env" });
 
-interface ServiceTokenPayload {
-  sub: string;          // User ID
-  role: string;         // User role
+type ServiceTokenPayload = {
+  sub: string; // User ID
+  role: string; // User role
   permissions: string[]; // User permissions
-  exp: number;          // Expiration time
-}
+  exp: number; // Expiration time
+};
 
 /**
  * Generate a JWT token for service-to-service authentication with the ML service
@@ -22,7 +23,7 @@ interface ServiceTokenPayload {
 export function generateMLServiceToken(
   userId: string,
   role: string,
-  permissions: string[]
+  permissions: string[],
 ): string {
   // Get the secret from environment variables
   const secret = env.ML_SERVICE_JWT_SECRET;
@@ -36,7 +37,7 @@ export function generateMLServiceToken(
     sub: userId,
     role,
     permissions,
-    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 8) // 8 days
+    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 8), // 8 days
   };
 
   // Sign and return the token

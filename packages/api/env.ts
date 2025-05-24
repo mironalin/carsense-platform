@@ -20,7 +20,7 @@ const EnvSchema = z.object({
 
 export type env = z.infer<typeof EnvSchema>;
 
-// eslint-disable-next-line import/no-mutable-exports, ts/no-redeclare
+// eslint-disable-next-line import/no-mutable-exports
 let env: env;
 
 try {

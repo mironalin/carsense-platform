@@ -4,14 +4,14 @@ import { resolver } from "hono-openapi/zod";
 
 import type { AppBindings } from "../lib/types";
 
+import env from "../../env";
+import { generateMLServiceToken } from "../lib/ml-service-token";
 import { getSessionAndUser } from "../middleware/get-session-and-user";
 import { notFoundResponseObject, unauthorizedResponseObject } from "../zod/z-api-responses";
-import { generateMLServiceToken } from "../lib/ml-service-token";
 import { zMLModelSchema, zMLModelsListResponseSchema } from "../zod/z-ml";
-import env from "../../env";
 
 // Define base URL without trailing slash
-const ML_SERVICE_BASE_URL = env.ML_SERVICE_URL.endsWith('/')
+const ML_SERVICE_BASE_URL = env.ML_SERVICE_URL.endsWith("/")
   ? env.ML_SERVICE_URL.slice(0, -1)
   : env.ML_SERVICE_URL;
 
@@ -47,7 +47,7 @@ export const mlModelsRoute = new Hono<AppBindings>()
     const mlServiceToken = generateMLServiceToken(
       user.id,
       user.role,
-      ["read:models"]
+      ["read:models"],
     );
 
     try {
@@ -58,8 +58,8 @@ export const mlModelsRoute = new Hono<AppBindings>()
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${mlServiceToken}`
-        }
+          Authorization: `Bearer ${mlServiceToken}`,
+        },
       });
 
       if (!response.ok) {
@@ -67,13 +67,14 @@ export const mlModelsRoute = new Hono<AppBindings>()
         logger.error({ status: response.status, error: errorText, url }, "ML service error");
         return c.json({
           error: "Error communicating with ML service",
-          details: response.status
+          details: response.status,
         }, 500);
       }
 
       const models = await response.json();
       return c.json({ models });
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error }, "Error fetching models from ML service");
       return c.json({ error: "Failed to get models from ML service" }, 500);
     }
@@ -106,7 +107,7 @@ export const mlModelsRoute = new Hono<AppBindings>()
     }
 
     // Validate modelId is a number
-    const modelIdNum = parseInt(modelId, 10);
+    const modelIdNum = Number.parseInt(modelId, 10);
     if (isNaN(modelIdNum)) {
       return c.json({ error: "Invalid model ID" }, 400);
     }
@@ -115,7 +116,7 @@ export const mlModelsRoute = new Hono<AppBindings>()
     const mlServiceToken = generateMLServiceToken(
       user.id,
       user.role,
-      ["read:models"]
+      ["read:models"],
     );
 
     try {
@@ -123,8 +124,8 @@ export const mlModelsRoute = new Hono<AppBindings>()
       const response = await fetch(`${ML_SERVICE_BASE_URL}/models/${modelIdNum}`, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${mlServiceToken}`
-        }
+          Authorization: `Bearer ${mlServiceToken}`,
+        },
       });
 
       if (!response.ok) {
@@ -136,13 +137,14 @@ export const mlModelsRoute = new Hono<AppBindings>()
         logger.error({ status: response.status, error: errorText }, "ML service error");
         return c.json({
           error: "Error communicating with ML service",
-          details: response.status
+          details: response.status,
         }, 500);
       }
 
       const model = await response.json();
       return c.json(model);
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error }, "Error fetching model from ML service");
       return c.json({ error: "Failed to get model from ML service" }, 500);
     }
