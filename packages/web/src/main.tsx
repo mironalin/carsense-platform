@@ -1,10 +1,13 @@
+import type { ToasterProps } from "sonner";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { Toaster } from "sonner";
 
-import { ThemeProvider } from "./components/theme-provider";
 import "./index.css";
+import { ThemeProvider, useTheme } from "./components/theme-provider";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
@@ -21,6 +24,11 @@ declare module "@tanstack/react-router" {
   };
 }
 
+function ToasterWrapper() {
+  const { theme } = useTheme();
+  return <Toaster theme={theme as ToasterProps["theme"]} />;
+}
+
 // Render the app
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
@@ -30,6 +38,7 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <RouterProvider router={router} context={{ queryClient }} />
+          <ToasterWrapper />
         </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>,
