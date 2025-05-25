@@ -40,7 +40,12 @@ export function VehicleSwitcher() {
 
           </SelectTrigger>
         </SidebarMenuButton>
-        <SelectContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg">
+        <SelectContent
+          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+          }}
+        >
           <SelectGroup>
             <SelectLabel className="text-xs text-muted-foreground">Vehicles</SelectLabel>
             {vehicles?.map(vehicle => (
