@@ -10,7 +10,7 @@ import { SidebarMenuButton } from "./ui/sidebar";
 export function VehicleSwitcher() {
   const navigate = useNavigate();
 
-  const { vehicleId } = useParams({ from: "/_authenticated/dashboard/$vehicleId/" });
+  const { vehicleId } = useParams({ strict: false });
   const { data: vehicles, isPending } = useGetVehicles();
 
   const onSelect = (id: string) => {

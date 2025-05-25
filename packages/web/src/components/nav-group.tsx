@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation, useParams } from "@tanstack/react-router";
 
 import {
   SidebarGroup,
@@ -23,23 +23,28 @@ export function NavGroup({
     icon?: LucideIcon;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
-  // const { pathname } = useLocation();
-  // const params = useParams({ from: "/" });
+  const { vehicleId } = useParams({ strict: false });
+  const { pathname } = useLocation();
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarGroupLabel>{label}</SidebarGroupLabel>
         <SidebarMenu>
-          {items.map(item => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title} asChild>
-                <Link to={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {items.map((item) => {
+            const fullHref = `/dashboard/${vehicleId}${item.url}`;
+            const isActive = pathname === fullHref;
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
+                  <Link to={fullHref}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

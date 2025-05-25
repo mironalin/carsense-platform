@@ -17,10 +17,11 @@ const queryClient = new QueryClient();
 const router = createRouter({ routeTree, context: { queryClient } });
 
 // Register the router instance for type safety
+
 declare module "@tanstack/react-router" {
-  type Register = {
+  interface Register {
     router: typeof router;
-  };
+  }
 }
 
 function ToasterWrapper() {

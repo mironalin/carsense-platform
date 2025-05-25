@@ -31,15 +31,10 @@ import {
 import { VehicleSwitcher } from "./vehicle-switcher";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navOverview: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "",
       icon: Car,
     },
     {
@@ -83,7 +78,7 @@ const data = {
     },
     {
       title: "Diagnostics",
-      url: "/vehicle-status",
+      url: "/diagnostics",
       icon: AlertTriangle,
     },
     {
@@ -144,7 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavGroup items={data.navFooter} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
