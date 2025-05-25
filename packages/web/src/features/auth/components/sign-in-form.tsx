@@ -46,7 +46,7 @@ export function SignInForm({
         },
         {
           onSuccess: () => {
-            navigate({ to: "/" });
+            navigate({ to: "/dashboard" });
           },
           onError: (ctx: any) => {
             toast.error(`${ctx.error.message}!`);
@@ -61,7 +61,7 @@ export function SignInForm({
     await authClient.signIn.social(
       { provider },
       {
-        onSuccess: () => navigate({ to: "/" }),
+        onSuccess: () => navigate({ to: "/dashboard" }),
         onError: (ctx: any) => {
           toast.error(ctx.error.message);
         },
