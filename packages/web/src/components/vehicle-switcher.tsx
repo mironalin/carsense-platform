@@ -1,43 +1,50 @@
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { Car } from "lucide-react";
 
+import { useGetVehicles } from "@/features/vehicles/api/use-get-vehicles";
+
+import { VehicleSwitcherSkeleton } from "./skeleton/vehicle-switcher-skeleton";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { SidebarMenuButton } from "./ui/sidebar";
-import { useNavigate, useParams } from "@tanstack/react-router";
-import { useGetVehicles } from "@/features/vehicles/api/use-get-vehicles";
 
 export function VehicleSwitcher() {
   const navigate = useNavigate();
 
-  const {vehicleId} = useParams({strict: false});
-  const {data: vehicles} = useGetVehicles();
+  const { vehicleId } = useParams({ from: "/_authenticated/dashboard/$vehicleId/" });
+  const { data: vehicles, isPending } = useGetVehicles();
 
   const onSelect = (id: string) => {
-    navigate({to: "/dashboard/$vehicleId", params: {vehicleId: id}});
+    navigate({ to: "/dashboard/$vehicleId", params: { vehicleId: id } });
+  };
+
+  if (isPending) {
+    return <VehicleSwitcherSkeleton />;
   }
 
-  const placeholder = (
-    <>
-      <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-        <Car className="size-4" />
-      </div>
-      <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate font-semibold">CarSense</span>
-        <span className="truncate text-xs">Select a vehicle</span>
-      </div>
-    </>
-  );
+  const placeholder = () => {
+    return (
+      <>
+        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+          <Car className="size-4" />
+        </div>
+        <div className="grid flex-1 text-left text-sm leading-tight">
+          <span className="truncate font-semibold">CarSense</span>
+          <span className="truncate text-xs">Select a vehicle</span>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <Select value={vehicleId} onValueChange={onSelect}>
-        <SidebarMenuButton asChild
+        <SidebarMenuButton
+          asChild
           size="lg"
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
           <SelectTrigger>
-            <SelectValue placeholder={placeholder}>
-
-            </SelectValue>
-
+            <SelectValue placeholder={placeholder()} />
           </SelectTrigger>
         </SidebarMenuButton>
         <SelectContent
