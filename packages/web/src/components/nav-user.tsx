@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import {
   BellIcon,
   CreditCardIcon,
@@ -5,6 +6,8 @@ import {
   MoreVerticalIcon,
   UserCircleIcon,
 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import {
   Avatar,
@@ -26,14 +29,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Switch } from "./ui/switch";
+import { signOut, useSession } from "@/lib/auth-client";
+
 import { useTheme } from "./theme-provider";
 import { Label } from "./ui/label";
-import { useState } from "react";
-import { signOut, useSession } from "@/lib/auth-client";
-import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
 import { Skeleton } from "./ui/skeleton";
+import { Switch } from "./ui/switch";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -60,20 +61,20 @@ export function NavUser() {
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
-    )
+    );
   }
 
   if (!session) {
     throw new Error("User not found");
   }
 
-  const {name, email, image} = session.user;
+  const { name, email, image } = session.user;
 
   const avatarFallback = name ? name.split(" ").map(name => name.charAt(0).toUpperCase()).join("") : (email.charAt(0).toUpperCase() ?? "U");
 
   const handleThemeChange = () => {
     setTheme(theme === "dark" ? "light" : "dark");
-  }
+  };
 
   const handleSignOut = async () => {
     setPending(true);
@@ -84,7 +85,7 @@ export function NavUser() {
         },
         onError: (ctx) => {
           setPending(false);
-          toast.error(ctx.error.message + "!");
+          toast.error(`${ctx.error.message}!`);
         },
       },
     });

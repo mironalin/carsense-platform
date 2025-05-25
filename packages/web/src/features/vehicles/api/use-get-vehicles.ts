@@ -1,11 +1,12 @@
-import { api } from "@/lib/rpc"
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
-export const getVehiclesQuery = async () =>{
+import { api } from "@/lib/rpc";
+
+export async function getVehiclesQuery() {
   const response = await api.vehicles.$get();
 
   if (!response.ok) {
-    throw Error("Failed to fetch vehicles: " + response.statusText);
+    throw new Error(`Failed to fetch vehicles: ${response.statusText}`);
   }
 
   const data = await response.json();
@@ -13,7 +14,7 @@ export const getVehiclesQuery = async () =>{
   return data;
 }
 
-export const useGetVehicles = () => {
+export function useGetVehicles() {
   const query = useQuery({
     queryKey: ["vehicles"],
     queryFn: getVehiclesQuery,

@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-import { Link, useLocation, useParams } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 import {
   SidebarGroup,
@@ -24,7 +24,7 @@ export function NavGroup({
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   // const { pathname } = useLocation();
-  // const params = useParams({ from: "/dashboard/$vehicleId" });
+  // const params = useParams({ from: "/" });
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent className="flex flex-col gap-2">

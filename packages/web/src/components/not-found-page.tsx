@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Button } from "./ui/button"
 
-export const NotFoundPage = () => {
+import { Button } from "./ui/button";
+
+export function NotFoundPage() {
   return (
     <div className="flex items-center min-h-screen px-4 py-12 sm:px-6 md:px-8 lg:px-12 xl:px-16">
       <div className="w-full space-y-6 text-center">
@@ -16,5 +17,5 @@ export const NotFoundPage = () => {
         </Link>
       </div>
     </div>
-  )
+  );
 }

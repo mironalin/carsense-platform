@@ -5,7 +5,6 @@ import {
   ArrowUpCircleIcon,
   BarChart3,
   Car,
-  ChevronDown,
   Download,
   Gauge,
   HelpCircle,
@@ -16,7 +15,6 @@ import {
   Wrench,
 } from "lucide-react";
 import * as React from "react";
-import { useState } from "react";
 
 import { NavGroup } from "@/components/nav-group";
 import { NavUser } from "@/components/nav-user";
@@ -30,7 +28,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { VehicleSwitcher } from "./vehicle-switcher";
 
 const data = {

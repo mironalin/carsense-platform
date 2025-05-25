@@ -5,7 +5,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { GitHubIcon } from "@/components/ui/icons/github-icon";
 import { GoogleIcon } from "@/components/ui/icons/google-icon";

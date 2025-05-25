@@ -10,7 +10,6 @@ import "./index.css";
 import { ThemeProvider, useTheme } from "./components/theme-provider";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
-
 // Create a new query client
 const queryClient = new QueryClient();
 
