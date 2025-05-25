@@ -1,5 +1,3 @@
-"use client";
-
 import {
   BellIcon,
   CreditCardIcon,
@@ -32,23 +30,46 @@ import { Switch } from "./ui/switch";
 import { useTheme } from "./theme-provider";
 import { Label } from "./ui/label";
 import { useState } from "react";
-import { signOut } from "@/lib/auth-client";
+import { signOut, useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import { Skeleton } from "./ui/skeleton";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
   const [pending, setPending] = useState(false);
   const navigate = useNavigate();
+  const { data: session, isPending: isSessionPending } = useSession();
+
+  if (isSessionPending) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            disabled
+          >
+            <Skeleton className="h-8 w-8 rounded-lg" />
+            <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+            <MoreVerticalIcon className="ml-auto size-4" />
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
+  }
+
+  if (!session) {
+    throw new Error("User not found");
+  }
+
+  const {name, email, image} = session.user;
+
+  const avatarFallback = name ? name.split(" ").map(name => name.charAt(0).toUpperCase()).join("") : (email.charAt(0).toUpperCase() ?? "U");
 
   const handleThemeChange = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -63,7 +84,7 @@ export function NavUser({
         },
         onError: (ctx) => {
           setPending(false);
-          toast.error(ctx.error.message+ "!");
+          toast.error(ctx.error.message + "!");
         },
       },
     });
@@ -79,13 +100,13 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src={image ?? ""} alt={name} />
+                <AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{name}</span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {user.email}
+                  {email}
                 </span>
               </div>
               <MoreVerticalIcon className="ml-auto size-4" />
@@ -96,17 +117,20 @@ export function NavUser({
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
+            onCloseAutoFocus={(e) => {
+              e.preventDefault();
+            }}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={image ?? ""} alt={name} />
+                  <AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{name}</span>
                   <span className="truncate text-xs text-muted-foreground">
-                    {user.email}
+                    {email}
                   </span>
                 </div>
               </div>
@@ -127,7 +151,7 @@ export function NavUser({
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={e => e.preventDefault()}>
                 <div className="flex flex-row items-center gap-2">
-                  <Switch id="theme-switch" checked={theme === "dark"} onCheckedChange={handleThemeChange}/>
+                  <Switch id="theme-switch" checked={theme === "dark"} onCheckedChange={handleThemeChange} />
                   <Label className="font-normal" htmlFor="theme-switch">Dark Mode</Label>
                 </div>
               </DropdownMenuItem>
