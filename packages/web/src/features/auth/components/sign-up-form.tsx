@@ -59,7 +59,7 @@ export function SignUpForm({
         {
           onSuccess: () => {
             toast.success("Account created! Please check your email to verify.");
-            navigate({ to: "/dashboard" });
+            navigate({ to: "/app" });
           },
           onError: (ctx: any) => {
             toast.error(ctx.error.message || "Sign up failed. Please try again.");
@@ -75,7 +75,7 @@ export function SignUpForm({
       { provider },
       {
         onSuccess: () => {
-          navigate({ to: "/dashboard" });
+          navigate({ to: "/app" });
         },
         onError: (ctx: any) => {
           toast.error(

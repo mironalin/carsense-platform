@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_authenticated/dashboard/$vehicleId/export/",
+  "/_authenticated/app/$vehicleId/tables/",
 )({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <div>Hello "/_authenticated/dashboard/$vehicleId/export/"!</div>;
+  return <div>Hello "/_authenticated/dashboard/$vehicleId/tables/"!</div>;
 }

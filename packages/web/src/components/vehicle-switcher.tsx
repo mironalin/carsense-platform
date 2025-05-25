@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { Car } from "lucide-react";
 
 import { useGetVehicles } from "@/features/vehicles/api/use-get-vehicles";
@@ -13,8 +13,13 @@ export function VehicleSwitcher() {
   const { vehicleId } = useParams({ strict: false });
   const { data: vehicles, isPending } = useGetVehicles();
 
+  const { pathname } = useLocation();
+
+  // dashboard is of form /dashboard/$vehicleId, so we need to get the last part of the path, but it wont work, it would extract the vehicleId from the path
+  const page = pathname.split("/").pop();
+
   const onSelect = (id: string) => {
-    navigate({ to: "/dashboard/$vehicleId", params: { vehicleId: id } });
+    navigate({ to: `/app/${id}/${page}`, params: { vehicleId: id } });
   };
 
   if (isPending) {

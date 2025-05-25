@@ -32,7 +32,7 @@ export function NavGroup({
         <SidebarGroupLabel>{label}</SidebarGroupLabel>
         <SidebarMenu>
           {items.map((item) => {
-            const fullHref = `/dashboard/${vehicleId}${item.url}`;
+            const fullHref = `/app/${vehicleId}${item.url}`;
             const isActive = pathname === fullHref;
             return (
               <SidebarMenuItem key={item.title}>

@@ -34,7 +34,7 @@ const data = {
   navOverview: [
     {
       title: "Dashboard",
-      url: "",
+      url: "/dashboard",
       icon: Car,
     },
     {
@@ -121,7 +121,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link to="/dashboard">
+              <Link to="/app">
                 <ArrowUpCircleIcon className="h-5 w-5" />
                 <span className="text-base font-semibold">CarSense</span>
               </Link>
