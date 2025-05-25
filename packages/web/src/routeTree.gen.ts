@@ -11,15 +11,21 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as LandingPageImport } from './routes/_landing-page'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthImport } from './routes/_auth'
-import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as LandingPageIndexImport } from './routes/_landing-page/index'
 import { Route as AuthSignUpImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInImport } from './routes/_auth/sign-in'
 import { Route as AuthenticatedDashboardIndexImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedDashboardVehicleIdIndexImport } from './routes/_authenticated/dashboard/$vehicleId/index'
 
 // Create/Update Routes
+
+const LandingPageRoute = LandingPageImport.update({
+  id: '/_landing-page',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: '/_authenticated',
@@ -31,10 +37,10 @@ const AuthRoute = AuthImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
+const LandingPageIndexRoute = LandingPageIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => LandingPageRoute,
 } as any)
 
 const AuthSignUpRoute = AuthSignUpImport.update({
@@ -81,6 +87,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
+    '/_landing-page': {
+      id: '/_landing-page'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LandingPageImport
+      parentRoute: typeof rootRoute
+    }
     '/_auth/sign-in': {
       id: '/_auth/sign-in'
       path: '/sign-in'
@@ -95,12 +108,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignUpImport
       parentRoute: typeof AuthImport
     }
-    '/_authenticated/': {
-      id: '/_authenticated/'
+    '/_landing-page/': {
+      id: '/_landing-page/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexImport
-      parentRoute: typeof AuthenticatedImport
+      preLoaderRoute: typeof LandingPageIndexImport
+      parentRoute: typeof LandingPageImport
     }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
@@ -134,13 +147,11 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedDashboardVehicleIdIndexRoute: typeof AuthenticatedDashboardVehicleIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedDashboardVehicleIdIndexRoute:
     AuthenticatedDashboardVehicleIdIndexRoute,
@@ -150,20 +161,32 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface LandingPageRouteChildren {
+  LandingPageIndexRoute: typeof LandingPageIndexRoute
+}
+
+const LandingPageRouteChildren: LandingPageRouteChildren = {
+  LandingPageIndexRoute: LandingPageIndexRoute,
+}
+
+const LandingPageRouteWithChildren = LandingPageRoute._addFileChildren(
+  LandingPageRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '': typeof AuthenticatedRouteWithChildren
+  '': typeof LandingPageRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof LandingPageIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/$vehicleId': typeof AuthenticatedDashboardVehicleIdIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '': typeof AuthRouteWithChildren
+  '': typeof AuthenticatedRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof LandingPageIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/$vehicleId': typeof AuthenticatedDashboardVehicleIdIndexRoute
 }
@@ -172,9 +195,10 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_landing-page': typeof LandingPageRouteWithChildren
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_landing-page/': typeof LandingPageIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/$vehicleId/': typeof AuthenticatedDashboardVehicleIdIndexRoute
 }
@@ -200,9 +224,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_authenticated'
+    | '/_landing-page'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
-    | '/_authenticated/'
+    | '/_landing-page/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/$vehicleId/'
   fileRoutesById: FileRoutesById
@@ -211,11 +236,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LandingPageRoute: typeof LandingPageRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LandingPageRoute: LandingPageRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -229,7 +256,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_auth",
-        "/_authenticated"
+        "/_authenticated",
+        "/_landing-page"
       ]
     },
     "/_auth": {
@@ -242,9 +270,14 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/",
         "/_authenticated/dashboard/",
         "/_authenticated/dashboard/$vehicleId/"
+      ]
+    },
+    "/_landing-page": {
+      "filePath": "_landing-page.tsx",
+      "children": [
+        "/_landing-page/"
       ]
     },
     "/_auth/sign-in": {
@@ -255,9 +288,9 @@ export const routeTree = rootRoute
       "filePath": "_auth/sign-up.tsx",
       "parent": "/_auth"
     },
-    "/_authenticated/": {
-      "filePath": "_authenticated/index.tsx",
-      "parent": "/_authenticated"
+    "/_landing-page/": {
+      "filePath": "_landing-page/index.tsx",
+      "parent": "/_landing-page"
     },
     "/_authenticated/dashboard/": {
       "filePath": "_authenticated/dashboard/index.tsx",
