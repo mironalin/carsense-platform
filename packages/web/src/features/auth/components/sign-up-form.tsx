@@ -313,7 +313,7 @@ export function SignUpForm({
         <div className="text-center text-sm">
           Already have an account?
           {" "}
-          <Link to="/sign-in" className="underline underline-offset-4">
+          <Link to="/sign-in" search={{ mode: undefined, redirect: undefined, state: undefined }} className="underline underline-offset-4">
             Sign in
           </Link>
         </div>

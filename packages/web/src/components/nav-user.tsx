@@ -81,7 +81,7 @@ export function NavUser() {
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          navigate({ to: "/sign-in" });
+          navigate({ to: "/sign-in", search: { mode: undefined, redirect: undefined, state: undefined } });
         },
         onError: (ctx) => {
           setPending(false);

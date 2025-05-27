@@ -16,7 +16,11 @@ export const Route = createFileRoute("/_authenticated")({
     if (!sessionPayload?.session) {
       throw redirect({
         to: "/sign-in",
-        replace: true,
+        search: {
+          mode: undefined,
+          redirect: undefined,
+          state: undefined,
+        },
       });
     }
   },
