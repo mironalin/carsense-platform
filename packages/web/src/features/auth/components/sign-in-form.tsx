@@ -23,14 +23,36 @@ const formSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+type SignInFormProps = React.ComponentPropsWithoutRef<"form"> & {
+  redirectUri?: string;
+  state?: string;
+  isMobileMode?: boolean;
+};
+
 export function SignInForm({
   className,
+  redirectUri,
+  state,
+  isMobileMode = false,
   ...props
-}: React.ComponentPropsWithoutRef<"form">) {
+}: SignInFormProps) {
   const navigate = useNavigate();
   const [socialLoginProviderPending, setSocialLoginProviderPending] = useState<
     "github" | "google" | null
   >(null);
+
+  const handleMobileSuccess = async () => {
+    // For mobile auth, we don't navigate in the app - wait for backend to handle the redirect
+    if (isMobileMode) {
+      toast.success("Authentication successful, redirecting...");
+      // The authClient has already set the session cookie,
+      // and the /api/auth route will detect this and redirect to the mobile app
+      return;
+    }
+
+    // For web auth, navigate to the app as normal
+    navigate({ to: "/app" });
+  };
 
   const form = useForm({
     defaultValues: {
@@ -44,9 +66,7 @@ export function SignInForm({
           password: value.password,
         },
         {
-          onSuccess: () => {
-            navigate({ to: "/app" });
-          },
+          onSuccess: handleMobileSuccess,
           onError: (ctx: any) => {
             toast.error(`${ctx.error.message}!`);
           },
@@ -60,7 +80,7 @@ export function SignInForm({
     await authClient.signIn.social(
       { provider },
       {
-        onSuccess: () => navigate({ to: "/app" }),
+        onSuccess: handleMobileSuccess,
         onError: (ctx: any) => {
           toast.error(ctx.error.message);
         },
@@ -68,6 +88,12 @@ export function SignInForm({
       },
     );
   };
+
+  const formClasses = cn(
+    "flex flex-col gap-6",
+    isMobileMode ? "w-full" : "",
+    className,
+  );
 
   return (
     <TooltipProvider>
@@ -77,11 +103,13 @@ export function SignInForm({
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className={cn("flex flex-col gap-6", className)}
+        className={formClasses}
         {...props}
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
+          <h1 className="text-2xl font-bold">
+            {isMobileMode ? "CarSense Mobile Login" : "Login to your account"}
+          </h1>
           <p className="text-balance text-sm text-muted-foreground">
             Enter your email below to login to your account
           </p>
@@ -196,13 +224,15 @@ export function SignInForm({
             </Button>
           </div>
         </div>
-        <div className="text-center text-sm">
-          Don&apos;t have an account?
-          {" "}
-          <Link to="/sign-up" className="underline underline-offset-4">
-            Sign up
-          </Link>
-        </div>
+        {!isMobileMode && (
+          <div className="text-center text-sm">
+            Don&apos;t have an account?
+            {" "}
+            <Link to="/sign-up" className="underline underline-offset-4">
+              Sign up
+            </Link>
+          </div>
+        )}
       </form>
     </TooltipProvider>
   );

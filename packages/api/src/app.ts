@@ -1,11 +1,13 @@
 import configureOpenAPI from "./lib/configure-open-api";
 import { createApp } from "./lib/create-app";
+import { androidAuthRoute } from "./routes/android-auth-route";
 import { authRoute } from "./routes/auth-route";
 import { diagnosticsRoute } from "./routes/diagnostics-route";
 import { dtcRoute } from "./routes/dtc-route";
 import { locationsRoute } from "./routes/locations-route";
 import { mlModelsRoute } from "./routes/ml-models";
 import { mlPredictionsRoute } from "./routes/ml-predictions";
+import { sessionStatusRoute } from "./routes/session-status-route";
 import { testRoute } from "./routes/test-route";
 import { vehiclesRoute } from "./routes/vehicles-route";
 // try {
@@ -31,6 +33,8 @@ configureOpenAPI(app);
 export const apiRoutes = app
   .basePath("/api")
   .route("/auth/*", authRoute)
+  .route("/android-auth", androidAuthRoute)
+  .route("/session-status", sessionStatusRoute)
   .route("/test", testRoute)
   .route("/vehicles", vehiclesRoute)
   .route("/diagnostics", diagnosticsRoute)

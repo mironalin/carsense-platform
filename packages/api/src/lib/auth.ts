@@ -29,6 +29,22 @@ export const auth = betterAuth({
       clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
-  trustedOrigins: ["http://localhost:5173", "http://localhost:3000"],
+  trustedOrigins: ["http://localhost:5173", "http://localhost:3000", env.ANDROID_APP_REDIRECT_URI],
   plugins: [jwt(), bearer()],
+  advanced: {
+    useSecureCookies: true,
+    defaultCookieAttributes: {
+      httpOnly: true,
+      sameSite: "lax",
+    },
+    cookies: {
+      session_token: {
+        name: "carsense_session_token",
+        attributes: {
+          httpOnly: true,
+          sameSite: "lax",
+        },
+      },
+    },
+  },
 });
