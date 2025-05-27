@@ -2,7 +2,9 @@ import { hc } from "hono/client";
 
 import type { AppType } from "@/api/app";
 
-export const client = hc<AppType>("http://localhost:3000", {
+import env from "../../env";
+
+export const client = hc<AppType>(env.NODE_ENV === "production" ? env.API_PROD_URL : env.API_DEV_URL, {
   fetch: ((input, init) => {
     return fetch(input, {
       ...init,
