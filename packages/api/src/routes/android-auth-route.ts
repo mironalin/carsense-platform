@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { deleteCookie, setCookie } from "hono/cookie";
 
-import type { AppBindings } from "@/lib/types";
+import type { AppBindings } from "../lib/types";
 
 import env from "../../env";
 import { auth } from "../lib/auth";
@@ -70,8 +70,8 @@ export const androidAuthRoute = new Hono<AppBindings>()
 
     // Get the current environment for determining the correct web URL
     const baseWebUrl = env.NODE_ENV === "production"
-      ? "https://carsense.yourdomain.com" // Should add WEB_URL to env variables
-      : "http://localhost:5173";
+      ? env.PROD_DEV_URL
+      : env.LOCAL_WEB_DEV_URL;
 
     // Otherwise redirect to sign-in page with special Android mode flag
     logger.info({ redirectUrl: `${baseWebUrl}/sign-in?mode=mobile&redirect=${encodeURIComponent(redirectUri)}&state=${state}` }, "Redirecting to sign-in page");

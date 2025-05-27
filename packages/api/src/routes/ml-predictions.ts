@@ -126,7 +126,7 @@ export const mlPredictionsRoute = new Hono<AppBindings>()
       dtcCodes,
       obdParameters,
       sensorReadings,
-      requestTime,
+      // requestTime,
     } = predictionRequest;
 
     logger.debug({

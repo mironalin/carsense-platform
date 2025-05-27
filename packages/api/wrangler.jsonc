@@ -1,0 +1,59 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-05-27",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "dev": {
+    "port": 3000
+  },
+  "vars": {
+    "NODE_ENV": "production",
+    "PORT": 3000,
+    "LOG_LEVEL": "debug",
+    "DATABASE_URL": "postgresql://carsense-db_owner:npg_LpPbFidVnv78@ep-muddy-heart-a24rcuhg-pooler.eu-central-1.aws.neon.tech/carsense-db?sslmode=require",
+    "BETTER_AUTH_SECRET": "ONFVNo90F1TEFMbbsRXFi7Ct9YHuocjt",
+    "GITHUB_CLIENT_ID": "Ov23liGbph8GgKxFIWoi",
+    "GITHUB_CLIENT_SECRET": "4ea5c27fc180ae74fb3615eaf7c7220feadf5b39",
+    "ML_SERVICE_JWT_SECRET": "s/J/9mnRth0ZCvk5YVTqmfxyzceBOAhwTAZzTwZqeKNiohHtGyVixa1tzP1y7RoI"
+  },
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+  // "vars": {
+  //   "MY_VAR": "my-variable"
+  // },
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "MY_KV_NAMESPACE",
+  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  //   }
+  // ],
+  // "r2_buckets": [
+  //   {
+  //     "binding": "MY_BUCKET",
+  //     "bucket_name": "my-bucket"
+  //   }
+  // ],
+  // "d1_databases": [
+  //   {
+  //     "binding": "MY_DB",
+  //     "database_name": "my-database",
+  //     "database_id": ""
+  //   }
+  // ],
+  // "ai": {
+  //   "binding": "AI"
+  // },
+  // "observability": {
+  //   "enabled": true,
+  //   "head_sampling_rate": 1
+  // }
+}

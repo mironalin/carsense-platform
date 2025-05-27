@@ -20,6 +20,16 @@ async function createBearerToken(session: any) {
   return null;
 }
 
+// Extract token from set-cookie header
+function extractTokenFromCookie(setCookieHeader: string) {
+  // Looking for something like __Secure-carsense_session_token=xyz.abc;
+  const tokenMatch = setCookieHeader.match(/carsense_session_token=([^;]+)/);
+  if (tokenMatch && tokenMatch[1]) {
+    return tokenMatch[1];
+  }
+  return null;
+}
+
 export const authRoute = new Hono<{
   Variables: {
     user: typeof auth.$Infer.Session.user | null;
@@ -107,25 +117,46 @@ export const authRoute = new Hono<{
     logger.info({ status: response.status }, "Auth handler response");
 
     // After authentication is successful, check if we need to redirect to Android app
-    // This will catch scenarios where the user just authenticated
     if (response.status === 200 || response.status === 302) {
       logger.info({}, "Auth successful, checking for app redirect needs");
-      try {
-        // Check if there's now a session after login
-        const updatedSession = await auth.api.getSession({ headers: c.req.raw.headers });
-        logger.info({ sessionExists: !!updatedSession }, "Updated session after auth");
-        const appParamsCookie = getCookie(c, "app_login_redirect_params");
-        logger.info({ cookieFound: !!appParamsCookie }, "App params cookie after auth");
 
-        if (updatedSession && appParamsCookie) {
+      // Check if this was a successful login by looking for the session cookie in the response
+      const setCookieHeader = response.headers.get("set-cookie") || "";
+      const authCookies = setCookieHeader.split(",");
+      const hasSessionToken = authCookies.some((cookie: string) => cookie.includes("carsense_session_token"));
+
+      logger.info({ hasSessionCookie: hasSessionToken }, "Session cookie check in response");
+      const appParamsCookie = getCookie(c, "app_login_redirect_params");
+
+      if (hasSessionToken && appParamsCookie) {
+        try {
           const appParams = JSON.parse(appParamsCookie);
           logger.info({ appParams }, "Parsed app params after auth");
-          if (appParams.clientType === "android_app" && appParams.redirectUri) {
-            // Generate token for app authentication
-            const token = await createBearerToken(updatedSession);
-            logger.info({ success: !!token }, "Post-auth token generation");
 
-            // Clear the cookie
+          if (appParams.clientType === "android_app" && appParams.redirectUri) {
+            // Extract token from the cookie
+            let token = null;
+            for (const cookie of authCookies) {
+              const extractedToken = extractTokenFromCookie(cookie);
+              if (extractedToken) {
+                token = extractedToken;
+                break;
+              }
+            }
+
+            if (!token && setCookieHeader) {
+              // Try extracting from the full header as a fallback
+              token = extractTokenFromCookie(setCookieHeader);
+            }
+
+            if (!token) {
+              logger.error({}, "Could not extract token from response cookies");
+              return response;
+            }
+
+            logger.info({ tokenFound: !!token }, "Token extraction from cookie");
+
+            // Clear the app params cookie
             deleteCookie(c, "app_login_redirect_params", { path: "/api" });
             logger.info({}, "Cleared app_login_redirect_params cookie after auth");
 
@@ -135,9 +166,9 @@ export const authRoute = new Hono<{
             return c.redirect(redirectUrl);
           }
         }
-      }
-      catch (e) {
-        logger.error({ error: e }, "Error handling post-auth redirect");
+        catch (e) {
+          logger.error({ error: e }, "Error handling post-auth redirect");
+        }
       }
     }
 

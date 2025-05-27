@@ -1,9 +1,13 @@
 import { apiReference } from "@scalar/hono-api-reference";
+import { config } from "dotenv";
 import { openAPISpecs } from "hono-openapi";
 
 import type { AppOpenApi } from "./types";
 
 import packageJSON from "../../../../package.json";
+import env from "../../env";
+
+config({ path: ".env" });
 
 export default function configureOpenAPI(app: AppOpenApi) {
   app
@@ -32,7 +36,7 @@ export default function configureOpenAPI(app: AppOpenApi) {
           },
           servers: [
             {
-              url: "http://localhost:3000",
+              url: env.NODE_ENV === "production" ? env.PROD_DEV_URL : env.LOCAL_API_DEV_URL,
               description: "Local development server",
             },
           ],
