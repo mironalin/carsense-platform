@@ -1,3 +1,5 @@
+import { env } from "bun";
+
 import configureOpenAPI from "./lib/configure-open-api";
 import { createApp } from "./lib/create-app";
 import { androidAuthRoute } from "./routes/android-auth-route";
@@ -42,6 +44,8 @@ export const apiRoutes = app
   .route("/dtc", dtcRoute)
   .route("/ml/predictions", mlPredictionsRoute)
   .route("/ml/models", mlModelsRoute);
+
+app.get("*", c => c.env.ASSETS.fetch(c.req.raw));
 
 export default app;
 export type AppType = typeof apiRoutes;
