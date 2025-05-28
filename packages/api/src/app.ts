@@ -1,5 +1,3 @@
-import { env } from "bun";
-
 import configureOpenAPI from "./lib/configure-open-api";
 import { createApp } from "./lib/create-app";
 import { androidAuthRoute } from "./routes/android-auth-route";
