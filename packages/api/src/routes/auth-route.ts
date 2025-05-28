@@ -154,16 +154,88 @@ export const authRoute = new Hono<{
               return response;
             }
 
-            logger.info({ tokenFound: !!token }, "Token extraction from cookie");
+            logger.info({ tokenFound: !!token, fullTokenReceived: token }, "Token extraction from cookie");
+
+            // Split the token if it contains a dot, send only the prefix to the app.
+            let tokenToSendToApp = token;
+            const dotIndex = token.indexOf(".");
+            if (dotIndex !== -1) {
+              tokenToSendToApp = token.substring(0, dotIndex);
+              logger.info({ originalFullToken: token, tokenBeingSentToApp: tokenToSendToApp }, "Token was split at the first dot for app redirect.");
+            }
 
             // Clear the app params cookie
             deleteCookie(c, "app_login_redirect_params", { path: "/api" });
             logger.info({}, "Cleared app_login_redirect_params cookie after auth");
 
-            // Redirect to app with token
-            const redirectUrl = `${appParams.redirectUri}?token=${token}&state=${appParams.state}`;
-            logger.info({ redirectUrl }, "Post-auth redirect to app");
-            return c.redirect(redirectUrl);
+            // Construct the redirect URL for the custom scheme
+            const appRedirectUrl = `${appParams.redirectUri}?token=${encodeURIComponent(tokenToSendToApp)}&state=${encodeURIComponent(appParams.state)}`;
+            logger.info({ appRedirectUrl }, "Post-auth redirect to app via HTML/JS");
+
+            const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting...</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f4; color: #333; }
+        .container { text-align: center; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+    <script type="text/javascript">
+        window.onload = function() {
+            // Embed server-side values as JavaScript string literals.
+            // Escape any double quotes within the values themselves to prevent breaking the JS string.
+            const rawTokenFromServer = "${tokenToSendToApp.replace(/"/g, "\\\\\"")} ";
+            const rawStateFromServer = "${appParams.state.replace(/"/g, "\\\\\"")} ";
+            const baseRedirectUri = "${appParams.redirectUri}";
+
+            if (!rawTokenFromServer.trim() || !rawStateFromServer.trim() || !baseRedirectUri) {
+                console.error("Token, state, or baseRedirectUri missing for redirect.");
+                document.getElementById("message").textContent = "Error: Could not retrieve authentication details. Please try closing this window and opening the app again.";
+                document.getElementById("spinner").style.display = "none";
+                return;
+            }
+
+            // Trim whitespace from token and state that might have been introduced by template literals
+            const finalToken = rawTokenFromServer.trim();
+            const finalState = rawStateFromServer.trim();
+
+            // Now, use encodeURIComponent when constructing the actual URL for navigation
+            const redirectUrl = baseRedirectUri + "?token=" + encodeURIComponent(finalToken) + "&state=" + encodeURIComponent(finalState);
+            console.log("Attempting to redirect to: " + redirectUrl);
+            document.getElementById("message").textContent = "Redirecting to CarSense app...";
+            try {
+                window.location.href = redirectUrl;
+                setTimeout(function() {
+                    window.close();
+                }, 1000);
+            } catch (e) {
+                console.error("Error attempting to redirect:", e);
+                const escapedErrorMessage = e.message ? e.message.replace(/"/g, "&quot;") : "Unknown error";
+                document.getElementById("message").innerHTML = "Could not automatically redirect. Please return to the app manually or <a href=\\"" + redirectUrl + "\\">click here to try again</a>. Error: " + escapedErrorMessage;
+                document.getElementById("spinner").style.display = "none";
+                document.getElementById("manualRedirectLink").href = redirectUrl;
+                document.getElementById("manualRedirectLinkContainer").style.display = "block";
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="spinner" class="spinner"></div>
+        <p id="message">Authenticating, please wait...</p>
+        <div id="manualRedirectLinkContainer" style="display:none; margin-top: 20px;">
+            <p>If you are not redirected, <a id="manualRedirectLink" href="#">click here to return to the app</a>.</p>
+        </div>
+    </div>
+</body>
+</html>`;
+            return c.html(htmlContent);
           }
         }
         catch (e) {

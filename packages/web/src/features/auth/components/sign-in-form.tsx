@@ -41,16 +41,32 @@ export function SignInForm({
     "github" | "google" | null
   >(null);
 
-  const handleMobileSuccess = async () => {
-    // For mobile auth, we don't navigate in the app - wait for backend to handle the redirect
+  const handleMobileSuccess = async (responseData: any) => {
     if (isMobileMode) {
-      toast.success("Authentication successful, redirecting...");
-      // The authClient has already set the session cookie,
-      // and the /api/auth route will detect this and redirect to the mobile app
+      toast.success("Authentication successful, processing redirect page...");
+
+      let htmlString: string | null = null;
+
+      if (responseData && typeof responseData.data === "string" && responseData.data.trim().toLowerCase().startsWith("<!doctype html")) {
+        htmlString = responseData.data;
+      }
+      else {
+        if (typeof responseData === "string" && responseData.trim().toLowerCase().startsWith("<!doctype html")) {
+          htmlString = responseData;
+        }
+      }
+
+      if (htmlString) {
+        document.open();
+        document.write(htmlString);
+        document.close();
+      }
+      else {
+        toast.error("Redirect failed: Invalid redirect page content from server.");
+      }
       return;
     }
 
-    // For web auth, navigate to the app as normal
     navigate({ to: "/app" });
   };
 
@@ -68,7 +84,25 @@ export function SignInForm({
         {
           onSuccess: handleMobileSuccess,
           onError: (ctx: any) => {
-            toast.error(`${ctx.error.message}!`);
+            if (isMobileMode && ctx.error && ctx.error.status === 0) {
+              toast.success("Authentication successful, redirecting to app...");
+              return;
+            }
+
+            let errorMessage = "Login failed. Please try again.";
+            if (ctx.error?.message) {
+              errorMessage = ctx.error.message;
+            }
+            else if (ctx.error?.statusText && ctx.error.statusText !== "") {
+              errorMessage = `${ctx.error.statusText} (Status: ${ctx.error.status})`;
+            }
+            else if (ctx.response?.status && ctx.response.status !== 200) {
+              errorMessage = `Login failed. Server responded with status: ${ctx.response.status}`;
+            }
+            else if (typeof ctx.error === "string") {
+              errorMessage = ctx.error;
+            }
+            toast.error(errorMessage);
           },
         },
       );
