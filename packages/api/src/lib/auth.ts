@@ -1,8 +1,12 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { bearer, jwt } from "better-auth/plugins";
+import { bearer, jwt, openAPI } from "better-auth/plugins";
 import { Buffer } from "node:buffer";
 import { randomBytes, scryptSync } from "node:crypto";
+// export openAPISchema to a .json file
+import { writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import env from "../../env";
 import { db, schema } from "../db";
@@ -49,7 +53,7 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: ["http://localhost:5173", "http://localhost:3000", "https://api.carsense.workers.dev", env.ANDROID_APP_REDIRECT_URI],
-  plugins: [jwt(), bearer()],
+  plugins: [jwt(), bearer(), openAPI()],
   advanced: {
     useSecureCookies: true,
     defaultCookieAttributes: {
@@ -67,3 +71,22 @@ export const auth = betterAuth({
     },
   },
 });
+
+// const openAPISchema = await auth.api.generateOpenAPISchema();
+
+// // Get the directory of the current module
+// // ESM doesn't have __dirname, so we need to derive it
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
+
+// // Define the path for the openapi.json file relative to the current file
+// // This will place openapi.json in the same directory as auth.ts
+// const outputPath = join(__dirname, "authopenapi.json");
+
+// try {
+//   writeFileSync(outputPath, JSON.stringify(openAPISchema, null, 2));
+//   console.log(`OpenAPI schema exported to ${outputPath}`);
+// }
+// catch (error) {
+//   console.error("Failed to export OpenAPI schema:", error);
+// }
