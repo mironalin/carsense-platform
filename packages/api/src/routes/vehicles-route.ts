@@ -411,9 +411,10 @@ export const vehiclesRoute = new Hono<AppBindings>()
 
       const softDeleteVehicle = updateVehicleSchema.parse({
         deletedAt: new Date(),
+        updatedAt: new Date(),
       });
 
-      await db.update(vehiclesTable).set(softDeleteVehicle);
+      await db.update(vehiclesTable).set(softDeleteVehicle).where(eq(vehiclesTable.uuid, vehicleUUID));
 
       // Vehicle deletion is significant enough to log at info level
       logger.info({ vin: vehicle.vin }, "Vehicle soft deleted");
