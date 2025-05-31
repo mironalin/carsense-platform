@@ -4,9 +4,9 @@ import { bearer, jwt, openAPI } from "better-auth/plugins";
 import { Buffer } from "node:buffer";
 import { randomBytes, scryptSync } from "node:crypto";
 // export openAPISchema to a .json file
-import { writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+// import { writeFileSync } from "node:fs";
+// import { dirname, join } from "node:path";
+// import { fileURLToPath } from "node:url";
 
 import env from "../../env";
 import { db, schema } from "../db";

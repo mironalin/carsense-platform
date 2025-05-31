@@ -15,7 +15,6 @@ import {
 } from "../db/schema/ownership-transfers";
 import {
   insertVehicleSchema,
-  selectVehicleSchema,
   updateVehicleSchema,
   vehiclesTable,
 } from "../db/schema/vehicles-schema";
