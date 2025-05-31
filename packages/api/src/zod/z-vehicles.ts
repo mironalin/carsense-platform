@@ -36,6 +36,15 @@ export type VehicleGetResponse = z.infer<typeof zVehicleGetResponseSchema>;
 export const zVehicleUpdateResponseSchema = selectVehicleSchema;
 export type VehicleUpdateResponse = z.infer<typeof zVehicleUpdateResponseSchema>;
 
+/**
+ * Schema for vehicle creation response
+ */
+export const zVehicleCreateResponseSchema = z.object({
+  vehicle: selectVehicleSchema,
+  created: z.boolean().openapi({ example: true }),
+});
+export type VehicleCreateResponse = z.infer<typeof zVehicleCreateResponseSchema>;
+
 // =============================================================================
 // Collection Response Schemas
 // =============================================================================
@@ -55,7 +64,7 @@ export type VehiclesListResponse = z.infer<typeof zVehiclesListResponseSchema>;
  */
 export const zVehicleRestoreResponseSchema = z.object({
   vehicle: selectVehicleSchema,
-  restored: z.boolean(),
+  restored: z.boolean().openapi({ example: true }),
 });
 export type VehicleRestoreResponse = z.infer<typeof zVehicleRestoreResponseSchema>;
 

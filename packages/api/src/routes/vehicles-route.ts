@@ -23,12 +23,13 @@ import { getSessionAndUser } from "../middleware/get-session-and-user";
 import { badRequestResponseObject, notFoundResponseObject, unauthorizedResponseObject, vehicleNotFoundResponseObject } from "../zod/z-api-responses";
 import { zLocationsListResponseSchema } from "../zod/z-locations";
 import {
+  zVehicleCreateResponseSchema,
   zVehicleDeleteResponseSchema,
   zVehicleGetResponseSchema,
   zVehicleInsertSchema,
   zVehicleRestoreResponseSchema,
-  zVehiclesListResponseSchema,
   zVehicleUpdateResponseSchema,
+  zVehiclesListResponseSchema,
 } from "../zod/z-vehicles";
 
 const MAX_LOCATIONS_LIMIT = 100;
@@ -97,7 +98,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
           description: "Created",
           content: {
             "application/json": {
-              schema: resolver(selectVehicleSchema),
+              schema: resolver(zVehicleCreateResponseSchema),
             },
           },
         },
