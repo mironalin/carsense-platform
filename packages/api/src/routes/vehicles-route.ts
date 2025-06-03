@@ -27,8 +27,8 @@ import {
   zVehicleGetResponseSchema,
   zVehicleInsertSchema,
   zVehicleRestoreResponseSchema,
-  zVehicleUpdateResponseSchema,
   zVehiclesListResponseSchema,
+  zVehicleUpdateResponseSchema,
 } from "../zod/z-vehicles";
 
 const MAX_LOCATIONS_LIMIT = 100;
