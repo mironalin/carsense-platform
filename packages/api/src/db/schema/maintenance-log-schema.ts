@@ -41,13 +41,13 @@ export const serviceTypeEnum = pgEnum("serviceType", [
 
 export const maintenanceLogTable = pgTable("maintenanceLog", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom(),
-  vehicleId: integer("vehicleId")
+  uuid: uuid("uuid").notNull().defaultRandom(),
+  vehicleUUID: uuid("vehicleUUID")
     .notNull()
-    .references(() => vehiclesTable.id, { onDelete: "cascade" }),
-  serviceWorkshopId: integer("serviceWorkshopId")
+    .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
+  serviceWorkshopUUID: uuid("serviceWorkshopUUID")
     .notNull()
-    .references(() => serviceWorkshopsTable.id),
+    .references(() => serviceWorkshopsTable.uuid),
   customServiceWorkshopName: text("customServiceWorkshopName"),
   serviceDate: timestamp("serviceDate").notNull(),
   serviceType: serviceTypeEnum("serviceType").notNull(),

@@ -45,7 +45,7 @@ export const locationsRoute = new Hono<AppBindings>()
 
     if (user.role === "user") {
       const userVehicleIds = await db
-        .select({ id: vehiclesTable.id })
+        .select({ uuid: vehiclesTable.uuid })
         .from(vehiclesTable)
         .where(eq(vehiclesTable.ownerId, user.id));
 
@@ -54,8 +54,8 @@ export const locationsRoute = new Hono<AppBindings>()
         .from(locationsTable)
         .where(
           inArray(
-            locationsTable.vehicleId,
-            userVehicleIds.map(v => v.id),
+            locationsTable.vehicleUUID,
+            userVehicleIds.map(v => v.uuid),
           ),
         );
 
@@ -113,7 +113,7 @@ export const locationsRoute = new Hono<AppBindings>()
 
     if (user.role === "user") {
       const userVehicleIds = await db
-        .select({ id: vehiclesTable.id })
+        .select({ uuid: vehiclesTable.uuid })
         .from(vehiclesTable)
         .where(eq(vehiclesTable.ownerId, user.id));
 
@@ -124,20 +124,20 @@ export const locationsRoute = new Hono<AppBindings>()
         .where(
           and(
             inArray(
-              locationsTable.vehicleId,
-              userVehicleIds.map(v => v.id),
+              locationsTable.vehicleUUID,
+              userVehicleIds.map(v => v.uuid),
             ),
             sql`${locationsTable.id} IN (
               SELECT id FROM (
                 SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY "createdAt" DESC) as rn
                 FROM locations
-                WHERE vehicle_id = ${locationsTable.vehicleId}
+                WHERE vehicle_uuid = ${locationsTable.vehicleUUID}
               ) ranked
               WHERE rn <= ${limit}
             )`,
           ),
         )
-        .orderBy(locationsTable.vehicleId, desc(locationsTable.createdAt));
+        .orderBy(locationsTable.vehicleUUID, desc(locationsTable.createdAt));
 
       if (locations.length > 0) {
         logger.debug({ count: locations.length }, "Recent locations found");
@@ -156,12 +156,12 @@ export const locationsRoute = new Hono<AppBindings>()
           SELECT id FROM (
             SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY "createdAt" DESC) as rn
             FROM locations
-            WHERE vehicle_id = ${locationsTable.vehicleId}
+            WHERE vehicle_uuid = ${locationsTable.vehicleUUID}
           ) ranked
           WHERE rn <= ${limit}
         )`,
       )
-      .orderBy(locationsTable.vehicleId, desc(locationsTable.createdAt));
+      .orderBy(locationsTable.vehicleUUID, desc(locationsTable.createdAt));
 
     if (locations.length > 0) {
       logger.debug({ count: locations.length }, "Recent locations found");
@@ -213,13 +213,13 @@ export const locationsRoute = new Hono<AppBindings>()
         return c.json({ error: "Location not found" }, 404);
       }
 
-      if (location.vehicleId) {
+      if (location.vehicleUUID) {
         const vehicle = await db
           .select()
           .from(vehiclesTable)
           .where(
             and(
-              eq(vehiclesTable.id, location.vehicleId),
+              eq(vehiclesTable.uuid, location.vehicleUUID),
               eq(vehiclesTable.ownerId, user.id),
             ),
           )
@@ -229,7 +229,7 @@ export const locationsRoute = new Hono<AppBindings>()
           logger.warn({
             userId: user.id,
             locationId: location.id,
-            vehicleId: location.vehicleId,
+            vehicleUUID: location.vehicleUUID,
           }, "Access denied to location details");
           return c.json({ error: "Unauthorized" }, 401);
         }
@@ -278,15 +278,15 @@ export const locationsRoute = new Hono<AppBindings>()
 
     const location = c.req.valid("json");
 
-    logger.debug({ vehicleId: location.vehicleId }, "Location creation requested");
+    logger.debug({ vehicleUUID: location.vehicleUUID }, "Location creation requested");
 
-    if (user.role === "user" && location.vehicleId) {
+    if (user.role === "user" && location.vehicleUUID) {
       const vehicle = await db
         .select()
         .from(vehiclesTable)
         .where(
           and(
-            eq(vehiclesTable.id, location.vehicleId),
+            eq(vehiclesTable.uuid, location.vehicleUUID),
             eq(vehiclesTable.ownerId, user.id),
           ),
         )
@@ -310,7 +310,7 @@ export const locationsRoute = new Hono<AppBindings>()
 
     c.status(201);
 
-    logger.info({ id: newLocation.id, vehicleId: newLocation.vehicleId }, "Location created");
+    logger.info({ uuid: newLocation.uuid, vehicleUUID: newLocation.vehicleUUID }, "Location created");
 
     return c.json(newLocation);
   });

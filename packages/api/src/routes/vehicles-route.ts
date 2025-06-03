@@ -502,7 +502,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
     }
 
     // Use the numeric ID from the vehicle to query diagnostics
-    const diagnostics = await db.select().from(diagnosticsTable).where(eq(diagnosticsTable.vehicleId, vehicle.id));
+    const diagnostics = await db.select().from(diagnosticsTable).where(eq(diagnosticsTable.vehicleUUID, vehicle.uuid));
 
     return c.json(diagnostics);
   })
@@ -572,12 +572,12 @@ export const vehiclesRoute = new Hono<AppBindings>()
       .from(locationsTable)
       .where(
         and(
-          eq(locationsTable.vehicleId, vehicle.id),
+          eq(locationsTable.vehicleUUID, vehicle.uuid),
           sql`${locationsTable.id} IN (
             SELECT id FROM (
               SELECT id, ROW_NUMBER() OVER (ORDER BY "createdAt" DESC) as rn
               FROM locations
-              WHERE vehicle_id = ${vehicle.id}
+              WHERE vehicle_uuid = ${vehicle.uuid}
             ) ranked
             WHERE rn <= ${limit}
           )`,

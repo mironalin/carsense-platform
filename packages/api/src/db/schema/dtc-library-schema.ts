@@ -16,7 +16,7 @@ export const severityEnum = pgEnum("severity", ["low", "medium", "high"]);
 
 export const DTCLibraryTable = pgTable("dtcLibrary", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom(),
+  uuid: uuid("uuid").notNull().defaultRandom(),
   code: text("code").notNull().unique(),
   description: text("description").notNull(),
   severity: severityEnum("severity").notNull(),

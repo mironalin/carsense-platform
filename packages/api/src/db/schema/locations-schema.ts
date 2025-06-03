@@ -15,8 +15,8 @@ import { vehiclesTable } from "./vehicles-schema";
 
 export const locationsTable = pgTable("locations", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom(),
-  vehicleId: integer("vehicle_id").references(() => vehiclesTable.id),
+  uuid: uuid("uuid").notNull().defaultRandom(),
+  vehicleUUID: uuid("vehicleUUID").references(() => vehiclesTable.uuid),
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),
   accuracy: doublePrecision("accuracy"),

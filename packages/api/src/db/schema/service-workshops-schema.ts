@@ -15,7 +15,7 @@ import {
 
 export const serviceWorkshopsTable = pgTable("serviceWorkshops", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom(),
+  uuid: uuid("uuid").notNull().defaultRandom(),
   name: text("name").notNull(),
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),

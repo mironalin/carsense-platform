@@ -10,10 +10,10 @@ import { vehiclesTable } from "./vehicles-schema";
 
 export const ownershipTransfersTable = pgTable("ownershipTransfers", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom(),
-  vehicleId: integer("vehicleId")
+  uuid: uuid("uuid").notNull().defaultRandom(),
+  vehicleUUID: uuid("vehicleUUID")
     .notNull()
-    .references(() => vehiclesTable.id, { onDelete: "cascade" }),
+    .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
   fromUserId: text("fromUserId")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),

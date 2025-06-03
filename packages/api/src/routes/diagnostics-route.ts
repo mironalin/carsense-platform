@@ -45,7 +45,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     logger.debug({ userId: user.id, role: user.role }, "Fetching diagnostics");
 
     const userVehicleIds = await db
-      .select({ id: vehiclesTable.id })
+      .select({ uuid: vehiclesTable.uuid })
       .from(vehiclesTable)
       .where(eq(vehiclesTable.ownerId, user.id));
 
@@ -56,8 +56,8 @@ export const diagnosticsRoute = new Hono<AppBindings>()
         and(
           user.role === "user"
             ? inArray(
-                diagnosticsTable.vehicleId,
-                userVehicleIds.map(v => v.id),
+                diagnosticsTable.vehicleUUID,
+                userVehicleIds.map(v => v.uuid),
               )
             : undefined,
         ),
@@ -106,7 +106,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
 
     c.status(201);
 
-    logger.debug({ id: newDiagnostic.id, vehicleId: newDiagnostic.vehicleId }, "Diagnostic created");
+    logger.debug({ uuid: newDiagnostic.uuid, vehicleUUID: newDiagnostic.vehicleUUID }, "Diagnostic created");
 
     return c.json(newDiagnostic);
   })
@@ -140,7 +140,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     const diagnosticUUID = c.req.param("diagnosticUUID");
 
     const userVehicleIds = await db
-      .select({ id: vehiclesTable.id })
+      .select({ uuid: vehiclesTable.uuid })
       .from(vehiclesTable)
       .where(eq(vehiclesTable.ownerId, user.id));
 
@@ -152,8 +152,8 @@ export const diagnosticsRoute = new Hono<AppBindings>()
           eq(diagnosticsTable.uuid, diagnosticUUID),
           user.role === "user"
             ? inArray(
-                diagnosticsTable.vehicleId,
-                userVehicleIds.map(v => v.id),
+                diagnosticsTable.vehicleUUID,
+                userVehicleIds.map(v => v.uuid),
               )
             : undefined,
         ),
@@ -221,7 +221,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
         .from(vehiclesTable)
         .where(
           and(
-            eq(vehiclesTable.id, diagnostic.vehicleId),
+            eq(vehiclesTable.uuid, diagnostic.vehicleUUID),
             eq(vehiclesTable.ownerId, user.id),
           ),
         )
@@ -235,7 +235,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
 
     // Prepare the DTCs for insertion
     const dtcsToInsert = dtcs.map(dtc => ({
-      diagnosticId: diagnostic.id,
+      diagnosticUUID: diagnostic.uuid,
       code: dtc.code,
       confirmed: dtc.confirmed ?? false,
     }));
@@ -249,7 +249,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     c.status(201);
 
     logger.debug({
-      diagnosticId: diagnostic.id,
+      diagnosticUUID: diagnostic.uuid,
       dtcCount: newDTCs.length,
     }, "DTCs bulk created");
 
@@ -320,7 +320,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
         .from(vehiclesTable)
         .where(
           and(
-            eq(vehiclesTable.id, diagnostic.vehicleId),
+            eq(vehiclesTable.uuid, diagnostic.vehicleUUID),
             eq(vehiclesTable.ownerId, user.id),
           ),
         )
@@ -334,10 +334,10 @@ export const diagnosticsRoute = new Hono<AppBindings>()
 
     // Create the sensor snapshot
     const snapshotData: {
-      diagnosticId: number;
+      diagnosticUUID: string;
       source?: typeof sensorSourceEnum.enumValues[number];
     } = {
-      diagnosticId: diagnostic.id,
+      diagnosticUUID: diagnostic.uuid,
     };
 
     // Only add source if it has a value
@@ -357,7 +357,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     if (readings.length > 0) {
       const readingsToInsert = readings.map(reading =>
         insertSensorReadingSchema.parse({
-          sensorSnapshotsId: snapshot.id,
+          sensorSnapshotsUUID: snapshot.uuid,
           pid: reading.pid,
           value: reading.value,
           unit: reading.unit,
@@ -370,11 +370,11 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     }
 
     c.status(201);
-    logger.debug({ snapshotId: snapshot.id, readingCount: readings.length }, "Sensor snapshot created");
+    logger.debug({ snapshotUUID: snapshot.uuid, readingCount: readings.length }, "Sensor snapshot created");
 
     // Query the inserted readings to return with the response
     const insertedReadings = readings.length > 0
-      ? await db.select().from(sensorReadingsTable).where(eq(sensorReadingsTable.sensorSnapshotsId, snapshot.id))
+      ? await db.select().from(sensorReadingsTable).where(eq(sensorReadingsTable.sensorSnapshotsUUID, snapshot.uuid))
       : [];
 
     return c.json({
@@ -446,7 +446,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
         .from(vehiclesTable)
         .where(
           and(
-            eq(vehiclesTable.id, diagnostic.vehicleId),
+            eq(vehiclesTable.uuid, diagnostic.vehicleUUID),
             eq(vehiclesTable.ownerId, user.id),
           ),
         )
@@ -462,7 +462,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     const snapshots = await db
       .select()
       .from(sensorSnapshotsTable)
-      .where(eq(sensorSnapshotsTable.diagnosticId, diagnostic.id))
+      .where(eq(sensorSnapshotsTable.diagnosticUUID, diagnostic.uuid))
       .orderBy(sensorSnapshotsTable.createdAt);
 
     if (snapshots.length === 0) {
@@ -475,14 +475,14 @@ export const diagnosticsRoute = new Hono<AppBindings>()
         .select()
         .from(sensorReadingsTable)
         .where(inArray(
-          sensorReadingsTable.sensorSnapshotsId,
-          snapshots.map(snapshot => snapshot.id),
+          sensorReadingsTable.sensorSnapshotsUUID,
+          snapshots.map(snapshot => snapshot.uuid),
         ));
 
       // Add readings to each snapshot
       const snapshotsWithReadings = snapshots.map((snapshot) => {
         const snapshotReadings = allReadings.filter(
-          reading => reading.sensorSnapshotsId === snapshot.id,
+          reading => reading.sensorSnapshotsUUID === snapshot.uuid,
         );
 
         return {
@@ -551,7 +551,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
         .from(vehiclesTable)
         .where(
           and(
-            eq(vehiclesTable.id, diagnostic.vehicleId),
+            eq(vehiclesTable.uuid, diagnostic.vehicleUUID),
             eq(vehiclesTable.ownerId, user.id),
           ),
         )
@@ -570,7 +570,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
       .where(
         and(
           eq(sensorSnapshotsTable.uuid, snapshotUUID),
-          eq(sensorSnapshotsTable.diagnosticId, diagnostic.id),
+          eq(sensorSnapshotsTable.diagnosticUUID, diagnostic.uuid),
         ),
       )
       .then(res => res[0]);
@@ -584,7 +584,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
     const readings = await db
       .select()
       .from(sensorReadingsTable)
-      .where(eq(sensorReadingsTable.sensorSnapshotsId, snapshot.id))
+      .where(eq(sensorReadingsTable.sensorSnapshotsUUID, snapshot.uuid))
       .orderBy(sensorReadingsTable.pid);
 
     return c.json({

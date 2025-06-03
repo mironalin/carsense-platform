@@ -17,10 +17,10 @@ import { DTCLibraryTable } from "./dtc-library-schema";
 
 export const diagnosticsDTCTable = pgTable("diagnosticDTC", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom(),
-  diagnosticId: integer("diagnosticId")
+  uuid: uuid("uuid").notNull().defaultRandom(),
+  diagnosticUUID: uuid("diagnosticUUID")
     .notNull()
-    .references(() => diagnosticsTable.id, { onDelete: "cascade" }),
+    .references(() => diagnosticsTable.uuid, { onDelete: "cascade" }),
   code: text("code")
     .notNull()
     .references(() => DTCLibraryTable.code),

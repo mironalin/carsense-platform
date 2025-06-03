@@ -22,8 +22,8 @@ export const sensorSourceEnum = pgEnum("source", [
 
 export const sensorSnapshotsTable = pgTable("sensorSnapshots", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").defaultRandom(),
-  diagnosticId: integer("diagnosticId").references(() => diagnosticsTable.id, {
+  uuid: uuid("uuid").notNull().defaultRandom(),
+  diagnosticUUID: uuid("diagnosticUUID").references(() => diagnosticsTable.uuid, {
     onDelete: "cascade",
   }),
   source: sensorSourceEnum("source").default(sensorSourceEnum.enumValues[0]),
