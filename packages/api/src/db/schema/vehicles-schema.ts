@@ -10,6 +10,7 @@ import { user } from "./auth-schema";
 export const vehiclesTable = pgTable("vehicles", {
   uuid: uuid("uuid").primaryKey().defaultRandom(),
   ownerId: text("ownerId")
+    .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   vin: text("vin").unique(),
   make: text("make").notNull(),

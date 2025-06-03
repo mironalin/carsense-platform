@@ -53,6 +53,6 @@ export const dtcRoute = new Hono<AppBindings>()
       return c.json({ error: "DTC code not found" }, 404);
     }
 
-    logger.debug({ code, dtcId: dtc.id }, "DTC code found");
+    logger.debug({ code, dtcUUID: dtc.uuid }, "DTC code found");
     return c.json(dtc);
   });

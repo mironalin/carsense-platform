@@ -41,8 +41,10 @@ export const serviceTypeEnum = pgEnum("serviceType", [
 export const maintenanceLogTable = pgTable("maintenanceLog", {
   uuid: uuid("uuid").primaryKey().defaultRandom(),
   vehicleUUID: uuid("vehicleUUID")
+    .notNull()
     .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
   serviceWorkshopUUID: uuid("serviceWorkshopUUID")
+    .notNull()
     .references(() => serviceWorkshopsTable.uuid, { onDelete: "cascade" }),
   customServiceWorkshopName: text("customServiceWorkshopName"),
   serviceDate: timestamp("serviceDate").notNull(),

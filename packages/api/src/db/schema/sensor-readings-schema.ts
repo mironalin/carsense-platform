@@ -6,6 +6,7 @@ import { sensorSnapshotsTable } from "./sensor-snapshots-schema";
 export const sensorReadingsTable = pgTable("sensorReadings", {
   uuid: uuid("uuid").primaryKey().defaultRandom(),
   sensorSnapshotsUUID: uuid("sensorSnapshotsUUID")
+    .notNull()
     .references(() => sensorSnapshotsTable.uuid, { onDelete: "cascade" }),
   pid: text("pid").notNull(), // eg: "rpm", "temp", "fuel", "speed"
   value: doublePrecision("value").notNull(),

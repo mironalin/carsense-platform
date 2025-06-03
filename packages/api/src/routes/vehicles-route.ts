@@ -130,23 +130,23 @@ export const vehiclesRoute = new Hono<AppBindings>()
       const vehicle = c.req.valid("json");
 
       // Log only minimal data on creation attempt - VIN is a unique identifier
-      logger.debug({ vin: vehicle.vin }, "Vehicle creation requested");
+      logger.debug({ vin: vehicle.vin || "No VIN provided" }, "Vehicle creation requested");
 
       const existing = await db
         .select()
         .from(vehiclesTable)
-        .where(eq(vehiclesTable.vin, vehicle.vin));
+        .where(eq(vehiclesTable.vin, vehicle.vin || ""));
 
       const deletedVehicle = existing.find(v => v.deletedAt !== null);
 
       if (deletedVehicle) {
         // This is an unusual flow, so logging at info level is appropriate
-        logger.info({ vin: vehicle.vin }, "Restoring previously deleted vehicle");
+        logger.info({ vin: vehicle.vin || "No VIN provided" }, "Restoring previously deleted vehicle");
 
         if (deletedVehicle.ownerId !== user.id) {
           // Ownership transfer is important to log
           const ownershipTransfer = insertOwnershipTransferSchema.parse({
-            vehicleId: deletedVehicle.id,
+            vehicleUUID: deletedVehicle.uuid,
             fromUserId: deletedVehicle.ownerId,
             toUserId: user.id,
             transferredAt: new Date(),
@@ -171,7 +171,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
         const updated = await db
           .update(vehiclesTable)
           .set(updatedVehicle)
-          .where(eq(vehiclesTable.id, deletedVehicle.id))
+          .where(eq(vehiclesTable.uuid, deletedVehicle.uuid))
           .returning()
           .then(res => res[0]);
 
@@ -192,7 +192,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
       c.status(201);
 
       // Log success with minimal data
-      logger.info({ id: created.id, vin: created.vin }, "Vehicle created");
+      logger.info({ uuid: created.uuid, vin: created.vin }, "Vehicle created");
       return c.json({ vehicle: created, created: true });
     },
   )
@@ -560,7 +560,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
     if (user.role === "user" && vehicle.ownerId !== user.id) {
       logger.warn({
         userId: user.id,
-        vehicleId: vehicle.id,
+        vehicleUUID: vehicle.uuid,
         ownerId: vehicle.ownerId,
       }, "Access denied to vehicle locations");
       return c.json({ error: "Unauthorized" }, 401);
@@ -573,9 +573,9 @@ export const vehiclesRoute = new Hono<AppBindings>()
       .where(
         and(
           eq(locationsTable.vehicleUUID, vehicle.uuid),
-          sql`${locationsTable.id} IN (
-            SELECT id FROM (
-              SELECT id, ROW_NUMBER() OVER (ORDER BY "createdAt" DESC) as rn
+          sql`${locationsTable.uuid} IN (
+            SELECT uuid FROM (
+              SELECT uuid, ROW_NUMBER() OVER (ORDER BY "createdAt" DESC) as rn
               FROM locations
               WHERE vehicle_uuid = ${vehicle.uuid}
             ) ranked

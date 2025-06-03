@@ -16,7 +16,7 @@ import { DTCLibraryTable } from "./dtc-library-schema";
 
 export const diagnosticsDTCTable = pgTable("diagnosticDTC", {
   uuid: uuid("uuid").primaryKey().defaultRandom(),
-  diagnosticUUID: uuid("diagnosticUUID").references(() => diagnosticsTable.uuid, { onDelete: "cascade" }),
+  diagnosticUUID: uuid("diagnosticUUID").notNull().references(() => diagnosticsTable.uuid, { onDelete: "cascade" }),
   code: text("code")
     .notNull()
     .references(() => DTCLibraryTable.code),

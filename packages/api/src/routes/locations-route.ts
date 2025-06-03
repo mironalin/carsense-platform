@@ -127,7 +127,7 @@ export const locationsRoute = new Hono<AppBindings>()
               locationsTable.vehicleUUID,
               userVehicleIds.map(v => v.uuid),
             ),
-            sql`${locationsTable.id} IN (
+            sql`${locationsTable.uuid} IN (
               SELECT id FROM (
                 SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY "createdAt" DESC) as rn
                 FROM locations
@@ -152,7 +152,7 @@ export const locationsRoute = new Hono<AppBindings>()
       .select()
       .from(locationsTable)
       .where(
-        sql`${locationsTable.id} IN (
+        sql`${locationsTable.uuid} IN (
           SELECT id FROM (
             SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY "createdAt" DESC) as rn
             FROM locations
@@ -228,7 +228,7 @@ export const locationsRoute = new Hono<AppBindings>()
         if (!vehicle) {
           logger.warn({
             userId: user.id,
-            locationId: location.id,
+            locationUUID: location.uuid,
             vehicleUUID: location.vehicleUUID,
           }, "Access denied to location details");
           return c.json({ error: "Unauthorized" }, 401);
