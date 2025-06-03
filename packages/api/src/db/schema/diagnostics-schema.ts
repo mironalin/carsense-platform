@@ -15,10 +15,8 @@ import {
 import { vehiclesTable } from "./vehicles-schema";
 
 export const diagnosticsTable = pgTable("diagnostics", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").notNull().defaultRandom(),
-
-  vehicleUUID: uuid("vehicleUUID").notNull().references(() => vehiclesTable.uuid, {
+  uuid: uuid("uuid").primaryKey().defaultRandom(),
+  vehicleUUID: uuid("vehicleUUID").references(() => vehiclesTable.uuid, {
     onDelete: "cascade",
   }),
   odometer: integer("odometer").notNull(),

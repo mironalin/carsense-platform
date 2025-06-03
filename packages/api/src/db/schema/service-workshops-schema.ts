@@ -1,6 +1,5 @@
 import {
   doublePrecision,
-  integer,
   jsonb,
   pgTable,
   text,
@@ -14,8 +13,7 @@ import {
 } from "drizzle-zod";
 
 export const serviceWorkshopsTable = pgTable("serviceWorkshops", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").notNull().defaultRandom(),
+  uuid: uuid("uuid").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),

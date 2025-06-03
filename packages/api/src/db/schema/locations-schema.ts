@@ -1,6 +1,5 @@
 import {
   doublePrecision,
-  integer,
   pgTable,
   timestamp,
   uuid,
@@ -14,9 +13,9 @@ import {
 import { vehiclesTable } from "./vehicles-schema";
 
 export const locationsTable = pgTable("locations", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").notNull().defaultRandom(),
-  vehicleUUID: uuid("vehicleUUID").references(() => vehiclesTable.uuid),
+  uuid: uuid("uuid").primaryKey().defaultRandom(),
+  vehicleUUID: uuid("vehicleUUID")
+    .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),
   accuracy: doublePrecision("accuracy"),

@@ -1,6 +1,5 @@
 import {
   doublePrecision,
-  integer,
   pgEnum,
   pgTable,
   text,
@@ -40,14 +39,11 @@ export const serviceTypeEnum = pgEnum("serviceType", [
 ]);
 
 export const maintenanceLogTable = pgTable("maintenanceLog", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").notNull().defaultRandom(),
+  uuid: uuid("uuid").primaryKey().defaultRandom(),
   vehicleUUID: uuid("vehicleUUID")
-    .notNull()
     .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
   serviceWorkshopUUID: uuid("serviceWorkshopUUID")
-    .notNull()
-    .references(() => serviceWorkshopsTable.uuid),
+    .references(() => serviceWorkshopsTable.uuid, { onDelete: "cascade" }),
   customServiceWorkshopName: text("customServiceWorkshopName"),
   serviceDate: timestamp("serviceDate").notNull(),
   serviceType: serviceTypeEnum("serviceType").notNull(),

@@ -1,5 +1,4 @@
 import {
-  integer,
   pgEnum,
   pgTable,
   timestamp,
@@ -21,11 +20,9 @@ export const sensorSourceEnum = pgEnum("source", [
 ]);
 
 export const sensorSnapshotsTable = pgTable("sensorSnapshots", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").notNull().defaultRandom(),
-  diagnosticUUID: uuid("diagnosticUUID").references(() => diagnosticsTable.uuid, {
-    onDelete: "cascade",
-  }),
+  uuid: uuid("uuid").primaryKey().defaultRandom(),
+  diagnosticUUID: uuid("diagnosticUUID")
+    .references(() => diagnosticsTable.uuid, { onDelete: "cascade" }),
   source: sensorSourceEnum("source").default(sensorSourceEnum.enumValues[0]),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")

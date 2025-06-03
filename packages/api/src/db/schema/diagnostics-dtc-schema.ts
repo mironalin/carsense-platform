@@ -1,6 +1,5 @@
 import {
   boolean,
-  integer,
   pgTable,
   text,
   timestamp,
@@ -16,11 +15,8 @@ import { diagnosticsTable } from "./diagnostics-schema";
 import { DTCLibraryTable } from "./dtc-library-schema";
 
 export const diagnosticsDTCTable = pgTable("diagnosticDTC", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  uuid: uuid("uuid").notNull().defaultRandom(),
-  diagnosticUUID: uuid("diagnosticUUID")
-    .notNull()
-    .references(() => diagnosticsTable.uuid, { onDelete: "cascade" }),
+  uuid: uuid("uuid").primaryKey().defaultRandom(),
+  diagnosticUUID: uuid("diagnosticUUID").references(() => diagnosticsTable.uuid, { onDelete: "cascade" }),
   code: text("code")
     .notNull()
     .references(() => DTCLibraryTable.code),
