@@ -19,12 +19,10 @@ export const locationsTable = pgTable("locations", {
     .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),
+  altitude: doublePrecision("altitude"),
+  speed: doublePrecision("speed"),
   accuracy: doublePrecision("accuracy"),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt")
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
 });
 
 export const insertLocationSchema = createInsertSchema(locationsTable);
