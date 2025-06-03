@@ -71,6 +71,13 @@
       "when": 1743066346129,
       "tag": "0009_aberrant_crusher_hogan",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1748985648649,
+      "tag": "0010_slippery_sharon_carter",
+      "breakpoints": true
     }
   ]
 }
