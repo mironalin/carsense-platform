@@ -31,3 +31,4 @@ lerna-debug.log*
 .dev.vars
 packages/api/src/lib/authopenapi.json
 packages/api/wrangler.jsonc
+packages/api/src/db/schema/openapi.json
