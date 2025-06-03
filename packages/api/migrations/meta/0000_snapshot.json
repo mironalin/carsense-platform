@@ -1,5 +1,5 @@
 {
-  "id": "ae0d0aa0-52c3-41b5-972c-ae5552cea9dc",
+  "id": "5a67b966-e7de-4c0a-9367-07317058b853",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -103,6 +103,43 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.jwks": {
+      "name": "jwks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "public_key": {
+          "name": "public_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "private_key": {
+          "name": "private_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -311,39 +348,101 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.diagnosticDTC": {
+      "name": "diagnosticDTC",
+      "schema": "",
+      "columns": {
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "diagnosticUUID": {
+          "name": "diagnosticUUID",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "confirmed": {
+          "name": "confirmed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "diagnosticDTC_diagnosticUUID_diagnostics_uuid_fk": {
+          "name": "diagnosticDTC_diagnosticUUID_diagnostics_uuid_fk",
+          "tableFrom": "diagnosticDTC",
+          "tableTo": "diagnostics",
+          "columnsFrom": [
+            "diagnosticUUID"
+          ],
+          "columnsTo": [
+            "uuid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "diagnosticDTC_code_dtcLibrary_code_fk": {
+          "name": "diagnosticDTC_code_dtcLibrary_code_fk",
+          "tableFrom": "diagnosticDTC",
+          "tableTo": "dtcLibrary",
+          "columnsFrom": [
+            "code"
+          ],
+          "columnsTo": [
+            "code"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.diagnostics": {
       "name": "diagnostics",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "diagnostics_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "uuid": {
           "name": "uuid",
           "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "vehicleId": {
-          "name": "vehicleId",
-          "type": "integer",
+        "vehicleUUID": {
+          "name": "vehicleUUID",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "odometer": {
           "name": "odometer",
@@ -367,130 +466,36 @@
           "name": "notes",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "diagnostics_vehicleId_vehicles_id_fk": {
-          "name": "diagnostics_vehicleId_vehicles_id_fk",
-          "tableFrom": "diagnostics",
-          "tableTo": "vehicles",
-          "columnsFrom": [
-            "vehicleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.dtcInstances": {
-      "name": "dtcInstances",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "dtcInstances_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
-        "uuid": {
-          "name": "uuid",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "gen_random_uuid()"
-        },
-        "diagnosticId": {
-          "name": "diagnosticId",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "codeRefId": {
-          "name": "codeRefId",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "confirmed": {
-          "name": "confirmed",
-          "type": "boolean",
-          "primaryKey": false,
           "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
         },
         "updatedAt": {
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "dtcInstances_diagnosticId_diagnostics_id_fk": {
-          "name": "dtcInstances_diagnosticId_diagnostics_id_fk",
-          "tableFrom": "dtcInstances",
-          "tableTo": "diagnostics",
+        "diagnostics_vehicleUUID_vehicles_uuid_fk": {
+          "name": "diagnostics_vehicleUUID_vehicles_uuid_fk",
+          "tableFrom": "diagnostics",
+          "tableTo": "vehicles",
           "columnsFrom": [
-            "diagnosticId"
+            "vehicleUUID"
           ],
           "columnsTo": [
-            "id"
+            "uuid"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "dtcInstances_codeRefId_dtcLibrary_id_fk": {
-          "name": "dtcInstances_codeRefId_dtcLibrary_id_fk",
-          "tableFrom": "dtcInstances",
-          "tableTo": "dtcLibrary",
-          "columnsFrom": [
-            "codeRefId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -504,28 +509,11 @@
       "name": "dtcLibrary",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "dtcLibrary_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "uuid": {
           "name": "uuid",
           "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
         "code": {
@@ -570,7 +558,8 @@
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -593,35 +582,18 @@
       "name": "locations",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "locations_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "uuid": {
           "name": "uuid",
           "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "vehicle_id": {
-          "name": "vehicle_id",
-          "type": "integer",
+        "vehicleUUID": {
+          "name": "vehicleUUID",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "latitude": {
           "name": "latitude",
@@ -652,22 +624,23 @@
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "locations_vehicle_id_vehicles_id_fk": {
-          "name": "locations_vehicle_id_vehicles_id_fk",
+        "locations_vehicleUUID_vehicles_uuid_fk": {
+          "name": "locations_vehicleUUID_vehicles_uuid_fk",
           "tableFrom": "locations",
           "tableTo": "vehicles",
           "columnsFrom": [
-            "vehicle_id"
+            "vehicleUUID"
           ],
           "columnsTo": [
-            "id"
+            "uuid"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -681,39 +654,22 @@
       "name": "maintenanceLog",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "maintenanceLog_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "uuid": {
           "name": "uuid",
           "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "vehicleId": {
-          "name": "vehicleId",
-          "type": "integer",
+        "vehicleUUID": {
+          "name": "vehicleUUID",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "serviceWorkshopId": {
-          "name": "serviceWorkshopId",
-          "type": "integer",
+        "serviceWorkshopUUID": {
+          "name": "serviceWorkshopUUID",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -759,17 +715,103 @@
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "maintenanceLog_vehicleId_vehicles_id_fk": {
-          "name": "maintenanceLog_vehicleId_vehicles_id_fk",
+        "maintenanceLog_vehicleUUID_vehicles_uuid_fk": {
+          "name": "maintenanceLog_vehicleUUID_vehicles_uuid_fk",
           "tableFrom": "maintenanceLog",
           "tableTo": "vehicles",
           "columnsFrom": [
-            "vehicleId"
+            "vehicleUUID"
+          ],
+          "columnsTo": [
+            "uuid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "maintenanceLog_serviceWorkshopUUID_serviceWorkshops_uuid_fk": {
+          "name": "maintenanceLog_serviceWorkshopUUID_serviceWorkshops_uuid_fk",
+          "tableFrom": "maintenanceLog",
+          "tableTo": "serviceWorkshops",
+          "columnsFrom": [
+            "serviceWorkshopUUID"
+          ],
+          "columnsTo": [
+            "uuid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ownershipTransfers": {
+      "name": "ownershipTransfers",
+      "schema": "",
+      "columns": {
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "vehicleUUID": {
+          "name": "vehicleUUID",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fromUserId": {
+          "name": "fromUserId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "toUserId": {
+          "name": "toUserId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transferredAt": {
+          "name": "transferredAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ownershipTransfers_vehicleUUID_vehicles_uuid_fk": {
+          "name": "ownershipTransfers_vehicleUUID_vehicles_uuid_fk",
+          "tableFrom": "ownershipTransfers",
+          "tableTo": "vehicles",
+          "columnsFrom": [
+            "vehicleUUID"
+          ],
+          "columnsTo": [
+            "uuid"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ownershipTransfers_fromUserId_user_id_fk": {
+          "name": "ownershipTransfers_fromUserId_user_id_fk",
+          "tableFrom": "ownershipTransfers",
+          "tableTo": "user",
+          "columnsFrom": [
+            "fromUserId"
           ],
           "columnsTo": [
             "id"
@@ -777,17 +819,82 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "maintenanceLog_serviceWorkshopId_serviceWorkshops_id_fk": {
-          "name": "maintenanceLog_serviceWorkshopId_serviceWorkshops_id_fk",
-          "tableFrom": "maintenanceLog",
-          "tableTo": "serviceWorkshops",
+        "ownershipTransfers_toUserId_user_id_fk": {
+          "name": "ownershipTransfers_toUserId_user_id_fk",
+          "tableFrom": "ownershipTransfers",
+          "tableTo": "user",
           "columnsFrom": [
-            "serviceWorkshopId"
+            "toUserId"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.sensorReadings": {
+      "name": "sensorReadings",
+      "schema": "",
+      "columns": {
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "sensorSnapshotsUUID": {
+          "name": "sensorSnapshotsUUID",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pid": {
+          "name": "pid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "unit": {
+          "name": "unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sensorReadings_sensorSnapshotsUUID_sensorSnapshots_uuid_fk": {
+          "name": "sensorReadings_sensorSnapshotsUUID_sensorSnapshots_uuid_fk",
+          "tableFrom": "sensorReadings",
+          "tableTo": "sensorSnapshots",
+          "columnsFrom": [
+            "sensorSnapshotsUUID"
+          ],
+          "columnsTo": [
+            "uuid"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -801,35 +908,18 @@
       "name": "sensorSnapshots",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "sensorSnapshots_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "uuid": {
           "name": "uuid",
           "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "diagnosticId": {
-          "name": "diagnosticId",
-          "type": "integer",
+        "diagnosticUUID": {
+          "name": "diagnosticUUID",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "source": {
           "name": "source",
@@ -838,12 +928,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'obd2'"
-        },
-        "sensors": {
-          "name": "sensors",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true
         },
         "createdAt": {
           "name": "createdAt",
@@ -856,20 +940,21 @@
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "sensorSnapshots_diagnosticId_diagnostics_id_fk": {
-          "name": "sensorSnapshots_diagnosticId_diagnostics_id_fk",
+        "sensorSnapshots_diagnosticUUID_diagnostics_uuid_fk": {
+          "name": "sensorSnapshots_diagnosticUUID_diagnostics_uuid_fk",
           "tableFrom": "sensorSnapshots",
           "tableTo": "diagnostics",
           "columnsFrom": [
-            "diagnosticId"
+            "diagnosticUUID"
           ],
           "columnsTo": [
-            "id"
+            "uuid"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -885,28 +970,11 @@
       "name": "serviceWorkshops",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "serviceWorkshops_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "uuid": {
           "name": "uuid",
           "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
         "name": {
@@ -974,7 +1042,8 @@
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -989,28 +1058,11 @@
       "name": "vehicles",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "vehicles_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "uuid": {
           "name": "uuid",
           "type": "uuid",
-          "primaryKey": false,
-          "notNull": false,
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
         "ownerId": {
@@ -1023,7 +1075,7 @@
           "name": "vin",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "make": {
           "name": "make",
@@ -1077,20 +1129,28 @@
           "name": "odometerUpdatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": "now()"
+        },
+        "deletedAt": {
+          "name": "deletedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
         "updatedAt": {
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},

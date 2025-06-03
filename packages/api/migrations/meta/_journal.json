@@ -5,78 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1742844285292,
-      "tag": "0000_tidy_katie_power",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1742850686674,
-      "tag": "0001_lame_wolf_cub",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1742886862596,
-      "tag": "0002_spooky_shockwave",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1742890647677,
-      "tag": "0003_daily_giant_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1742891100037,
-      "tag": "0004_productive_firedrake",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1743056567194,
-      "tag": "0005_slim_blazing_skull",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1743060179652,
-      "tag": "0006_curved_salo",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1743061718374,
-      "tag": "0007_magical_mysterio",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1743061843351,
-      "tag": "0008_fixed_spot",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1743066346129,
-      "tag": "0009_aberrant_crusher_hogan",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1748985648649,
-      "tag": "0010_slippery_sharon_carter",
+      "when": 1748986895745,
+      "tag": "0000_living_misty_knight",
       "breakpoints": true
     }
   ]
