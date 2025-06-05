@@ -286,6 +286,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
       pid: z.string(),
       value: z.number(),
       unit: z.string(),
+      timestamp: z.string(),
     })),
   })), async (c) => {
     const user = c.get("user");
@@ -361,6 +362,7 @@ export const diagnosticsRoute = new Hono<AppBindings>()
           pid: reading.pid,
           value: reading.value,
           unit: reading.unit,
+          timestamp: new Date(reading.timestamp),
         }),
       );
 
