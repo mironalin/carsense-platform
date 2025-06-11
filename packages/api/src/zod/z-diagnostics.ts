@@ -19,6 +19,12 @@ export const zDiagnosticInsertSchema = insertDiagnosticSchema.omit({
 
 export type DiagnosticInsertSchema = z.infer<typeof zDiagnosticInsertSchema>;
 
+/**
+ * Schema for retrieving a single diagnostic
+ */
+export const zDiagnosticGetResponseSchema = selectDiagnosticSchema;
+export type DiagnosticGetResponse = z.infer<typeof zDiagnosticGetResponseSchema>;
+
 // =============================================================================
 // Collection Response Schemas
 // =============================================================================

@@ -23,7 +23,7 @@ export const diagnosticsTable = pgTable("diagnostics", {
   locationLat: doublePrecision("locationLat"),
   locationLong: doublePrecision("locationLong"),
   notes: text("notes"),
-  createdAt: timestamp("createdAt").defaultNow(),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
   updatedAt: timestamp("updatedAt")
     .notNull()
     .defaultNow()
