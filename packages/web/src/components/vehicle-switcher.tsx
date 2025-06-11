@@ -15,7 +15,6 @@ export function VehicleSwitcher() {
 
   const { pathname } = useLocation();
 
-  // dashboard is of form /dashboard/$vehicleId, so we need to get the last part of the path, but it wont work, it would extract the vehicleId from the path
   const page = pathname.split("/").pop();
 
   const onSelect = (id: string) => {
