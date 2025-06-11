@@ -129,7 +129,7 @@ export const locationsRoute = new Hono<AppBindings>()
             ),
             sql`${locationsTable.uuid} IN (
               SELECT id FROM (
-                SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY "createdAt" DESC) as rn
+                SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_uuid ORDER BY "timestamp" DESC) as rn
                 FROM locations
                 WHERE vehicle_uuid = ${locationsTable.vehicleUUID}
               ) ranked
@@ -137,7 +137,7 @@ export const locationsRoute = new Hono<AppBindings>()
             )`,
           ),
         )
-        .orderBy(locationsTable.vehicleUUID, desc(locationsTable.createdAt));
+        .orderBy(locationsTable.vehicleUUID, desc(locationsTable.timestamp));
 
       if (locations.length > 0) {
         logger.debug({ count: locations.length }, "Recent locations found");
@@ -154,14 +154,14 @@ export const locationsRoute = new Hono<AppBindings>()
       .where(
         sql`${locationsTable.uuid} IN (
           SELECT id FROM (
-            SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY "createdAt" DESC) as rn
+            SELECT id, ROW_NUMBER() OVER (PARTITION BY vehicle_uuid ORDER BY "timestamp" DESC) as rn
             FROM locations
             WHERE vehicle_uuid = ${locationsTable.vehicleUUID}
           ) ranked
           WHERE rn <= ${limit}
         )`,
       )
-      .orderBy(locationsTable.vehicleUUID, desc(locationsTable.createdAt));
+      .orderBy(locationsTable.vehicleUUID, desc(locationsTable.timestamp));
 
     if (locations.length > 0) {
       logger.debug({ count: locations.length }, "Recent locations found");

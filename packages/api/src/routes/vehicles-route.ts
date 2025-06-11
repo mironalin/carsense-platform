@@ -575,7 +575,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
           eq(locationsTable.vehicleUUID, vehicle.uuid),
           sql`${locationsTable.uuid} IN (
             SELECT uuid FROM (
-              SELECT uuid, ROW_NUMBER() OVER (ORDER BY "createdAt" DESC) as rn
+              SELECT uuid, ROW_NUMBER() OVER (ORDER BY "timestamp" DESC) as rn
               FROM locations
               WHERE vehicle_uuid = ${vehicle.uuid}
             ) ranked
@@ -583,7 +583,7 @@ export const vehiclesRoute = new Hono<AppBindings>()
           )`,
         ),
       )
-      .orderBy(desc(locationsTable.createdAt));
+      .orderBy(desc(locationsTable.timestamp));
 
     if (locations.length > 0) {
       logger.debug({ count: locations.length }, "Recent locations found");

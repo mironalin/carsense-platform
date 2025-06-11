@@ -12,8 +12,7 @@ import { insertLocationSchema, selectLocationSchema, updateLocationSchema } from
  */
 export const zLocationInsertSchema = insertLocationSchema.omit({
   uuid: true,
-  createdAt: true,
-  updatedAt: true,
+  timestamp: true,
 });
 
 export type LocationInsertSchema = z.infer<typeof zLocationInsertSchema>;
