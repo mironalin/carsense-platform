@@ -62,7 +62,7 @@ export function VehicleSwitcher() {
             <SelectLabel className="text-xs text-muted-foreground">Vehicles</SelectLabel>
             {vehicles?.map(vehicle => (
               <SelectItem
-                key={vehicle.id}
+                key={vehicle.uuid}
                 value={vehicle.uuid}
                 className="gap-2 p-2"
               >
