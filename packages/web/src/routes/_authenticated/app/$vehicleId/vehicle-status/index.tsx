@@ -1,13 +1,50 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
+
+import { useGetLatestDiagnostic } from "@/features/vehicles/api/use-get-latest-diagnostic";
+import { useGetVehicleById } from "@/features/vehicles/api/use-get-vehicle-by-id";
+import { useGetVehicleRecentLocations } from "@/features/vehicles/api/use-get-vehicle-recent-locations";
+import { VehicleDiagnosticsCard } from "@/features/vehicles/components/vehicle-status/vehicle-diagnostics-card";
+import { VehicleInformationCard } from "@/features/vehicles/components/vehicle-status/vehicle-information-card";
+import { VehicleRecentLocationsCard } from "@/features/vehicles/components/vehicle-status/vehicle-recent-locations-card";
 
 export const Route = createFileRoute(
   "/_authenticated/app/$vehicleId/vehicle-status/",
 )({
-  component: RouteComponent,
+  component: VehicleStatusComponent,
 });
 
-function RouteComponent() {
+function VehicleStatusComponent() {
+  const { vehicleId } = useParams({ strict: false });
+  const { data: vehicle, isPending: isLoadingVehicle } = useGetVehicleById(vehicleId!);
+  const { data: latestDiagnostic, isPending: isLoadingDiagnostic } = useGetLatestDiagnostic(vehicleId!);
+  const {
+    data: locations,
+    isPending: isLoadingLocations,
+    refetch: refetchLocations,
+  } = useGetVehicleRecentLocations(vehicleId!, 1);
+
+  const handleRefreshLocations = async () => {
+    await refetchLocations();
+  };
+
   return (
-    <div>Hello "/_authenticated/dashboard/$vehicleId/vehicle-status/"!</div>
+    <div className="w-full px-4 pb-4 md:px-6">
+      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
+        <VehicleInformationCard
+          vehicle={vehicle}
+          isLoadingVehicle={isLoadingVehicle}
+        />
+        <VehicleDiagnosticsCard
+          latestDiagnostic={latestDiagnostic}
+          isLoadingDiagnostic={isLoadingDiagnostic}
+        />
+        <VehicleRecentLocationsCard
+          vehicle={vehicle}
+          locations={locations}
+          isLoadingLocations={isLoadingLocations}
+          onRefresh={handleRefreshLocations}
+        />
+      </div>
+    </div>
   );
 }
