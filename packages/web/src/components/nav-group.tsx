@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
 import { Link, useLocation, useParams } from "@tanstack/react-router";
+import { atom, useAtom } from "jotai";
 
 import {
   SidebarGroup,
@@ -10,6 +11,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
+export const pathnameAtom = atom("");
 
 export function NavGroup({
   label,
@@ -24,7 +27,9 @@ export function NavGroup({
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   const { vehicleId } = useParams({ strict: false });
-  const { pathname } = useLocation();
+  const { pathname: currentPathname } = useLocation();
+
+  const [, setPathname] = useAtom(pathnameAtom);
 
   return (
     <SidebarGroup {...props}>
@@ -33,7 +38,10 @@ export function NavGroup({
         <SidebarMenu>
           {items.map((item) => {
             const fullHref = `/app/${vehicleId}${item.url}`;
-            const isActive = pathname === fullHref;
+            const isActive = currentPathname === fullHref;
+            if (isActive) {
+              setPathname(item.title);
+            }
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
