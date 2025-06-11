@@ -14,7 +14,7 @@ import { vehiclesTable } from "./vehicles-schema";
 
 export const locationsTable = pgTable("locations", {
   uuid: uuid("uuid").primaryKey().defaultRandom(),
-  vehicleUUID: uuid("vehicleUUID")
+  vehicleUUID: uuid("vehicle_uuid")
     .notNull()
     .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
   latitude: doublePrecision("latitude").notNull(),
