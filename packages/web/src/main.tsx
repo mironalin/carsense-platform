@@ -2,6 +2,7 @@ import type { ToasterProps } from "sonner";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { NuqsAdapter } from "nuqs/adapters/react";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { Toaster } from "sonner";
@@ -35,12 +36,14 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <RouterProvider router={router} context={{ queryClient }} />
-          <ToasterWrapper />
-        </ThemeProvider>
-      </QueryClientProvider>
+      <NuqsAdapter>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <RouterProvider router={router} context={{ queryClient }} />
+            <ToasterWrapper />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </NuqsAdapter>
     </StrictMode>,
   );
 }
