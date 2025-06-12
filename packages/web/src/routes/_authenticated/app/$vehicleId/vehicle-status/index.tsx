@@ -27,9 +27,11 @@ function VehicleStatusComponent() {
     await refetchLocations();
   };
 
+  //  className="flex flex-col gap-4 py-4 md:gap-6 md:py-6"
+
   return (
-    <div className="w-full px-4 pb-4 md:px-6">
-      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
+    <div className="w-full space-y-4 p-4 lg:p-6">
+      <div className="grid w-full grid-cols-1 gap-4 lg:gap-6 md:grid-cols-2">
         <VehicleInformationCard
           vehicle={vehicle}
           isLoadingVehicle={isLoadingVehicle}
