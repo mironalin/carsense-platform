@@ -37,7 +37,7 @@ export function SensorFilters({
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search sensors..."
+              placeholder="Search sensors by name..."
               className="pl-8 w-full"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
