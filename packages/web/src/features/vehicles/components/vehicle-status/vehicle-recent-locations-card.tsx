@@ -2,7 +2,7 @@ import { MapPin, Navigation, RefreshCw, Share2, Target } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-import type { LocationWithParsedDates, VehicleWithParsedDates } from "@/lib/types";
+import type { LocationWithParsedDates, VehicleWithParsedDates } from "@/features/vehicles/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
