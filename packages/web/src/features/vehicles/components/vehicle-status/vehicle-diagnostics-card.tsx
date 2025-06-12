@@ -1,6 +1,6 @@
 import { Activity, BarChart3, MapPin, TrendingUpIcon } from "lucide-react";
 
-import type { DiagnosticWithParsedDates } from "@/lib/types";
+import type { DiagnosticWithParsedDates } from "@/features/vehicles/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

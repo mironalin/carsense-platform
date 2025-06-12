@@ -1,6 +1,6 @@
 import { BarChart, Car, Droplet, Hash, Key, Settings } from "lucide-react";
 
-import type { VehicleWithParsedDates } from "@/lib/types";
+import type { VehicleWithParsedDates } from "@/features/vehicles/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
