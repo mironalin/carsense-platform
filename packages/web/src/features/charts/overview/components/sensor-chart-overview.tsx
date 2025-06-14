@@ -15,7 +15,7 @@ import { SensorChartCard } from "@/features/charts/overview/components/sensor-ch
 import { useChartFavorites } from "@/features/charts/overview/hooks/use-chart-favorites";
 import { useChartPreferences } from "@/features/charts/overview/hooks/use-chart-preferences";
 
-import type { Sensor, SensorChartOverviewProps } from "../types";
+import type { Sensor, SensorChartOverviewProps } from "../../types";
 
 import { colorThemes } from "../utils/color-themes";
 import { generateSensorChartData } from "../utils/generate-chart-data";

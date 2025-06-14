@@ -98,3 +98,27 @@ export type SensorChartOverviewProps = {
   data: SensorData | undefined;
   isLoading: boolean;
 };
+
+// Comparison Feature Types
+
+// Multi Diagnostic Session Selector Props Interface
+export type MultiDiagnosticSessionSelectorProps = {
+  sessions: DiagnosticSession[];
+  selectedSessions: string[];
+  onSessionsChange: (sessionIds: string[]) => void;
+  isLoading: boolean;
+  maxSelections?: number;
+};
+
+// Comparison Chart Data Point Interface (extends ChartDataPoint with diagnostic session info)
+export type ComparisonChartDataPoint = ChartDataPoint & {
+  diagnosticId: string;
+  diagnosticDate: string;
+};
+
+// Sensor Chart Comparison Props Interface
+export type SensorChartComparisonProps = {
+  data: Record<string, SensorData> | undefined;
+  isLoading: boolean;
+  selectedSessions: string[];
+};
