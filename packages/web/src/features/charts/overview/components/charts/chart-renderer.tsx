@@ -1,4 +1,4 @@
-import type { ChartType, Sensor } from "../../types";
+import type { ChartType, Sensor } from "@/features/charts/types";
 
 import { AreaChartComponent } from "./area-chart-component";
 import { BarChartComponent } from "./bar-chart-component";

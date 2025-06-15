@@ -1,8 +1,8 @@
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import type { ChartConfig, Sensor } from "@/features/charts/types";
 
-import type { ChartConfig, Sensor } from "../../types";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 type LineChartComponentProps = {
   sensor: Sensor;
