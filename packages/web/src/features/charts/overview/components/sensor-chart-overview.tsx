@@ -10,14 +10,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { FullScreenChartDialog } from "@/features/charts/overview/components/full-screen-chart-dialog";
-import { SensorChartCard } from "@/features/charts/overview/components/sensor-chart-card";
+import { FullScreenChartDialog } from "@/features/charts/components/full-screen-chart-dialog";
+import { SensorChartCard } from "@/features/charts/components/sensor-chart-card";
 import { useChartFavorites } from "@/features/charts/overview/hooks/use-chart-favorites";
 import { useChartPreferences } from "@/features/charts/overview/hooks/use-chart-preferences";
+import { colorThemes } from "@/features/charts/utils/color-themes";
 
-import type { Sensor, SensorChartOverviewProps } from "../../types";
+import type { ColorTheme, Sensor, SensorChartOverviewProps } from "../../types";
 
-import { colorThemes } from "../utils/color-themes";
 import { generateSensorChartData } from "../utils/generate-chart-data";
 import { ChartFilters } from "./chart-filters";
 import { SensorChartOverviewSkeleton } from "./sensor-skeleton";
@@ -200,7 +200,7 @@ export function SensorChartOverview({ data, isLoading }: SensorChartOverviewProp
   const categories = data.categories;
 
   // Get current color theme
-  const categoryColors = colorThemes[colorTheme].colors;
+  const categoryColors = colorThemes[colorTheme as ColorTheme].colors;
 
   return (
     <div className="space-y-6">
@@ -219,7 +219,6 @@ export function SensorChartOverview({ data, isLoading }: SensorChartOverviewProp
         setChartType={setChartType}
         colorTheme={colorTheme}
         setColorTheme={setColorTheme}
-        colorThemes={colorThemes}
       />
 
       {/* Hint about click-to-copy functionality */}

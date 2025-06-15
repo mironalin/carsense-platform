@@ -1,19 +1,14 @@
-import { AreaChart, BarChart3, Check, ChevronDown, LineChart, Search, SlidersHorizontal, Star, X } from "lucide-react";
+import { Search, SlidersHorizontal, Star, X } from "lucide-react";
 
-import type { ChartFiltersProps, ChartType, ColorTheme } from "@/features/charts/overview/types";
+import type { ChartFiltersProps } from "@/features/charts/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ChartControls } from "@/features/charts/components/chart-controls";
 import { getCategoryIcon } from "@/features/charts/overview/utils/chart-categories";
+
+import type { Sensor } from "../../types";
 
 export function ChartFilters({
   searchTerm,
@@ -29,7 +24,6 @@ export function ChartFilters({
   setChartType,
   colorTheme,
   setColorTheme,
-  colorThemes,
 }: ChartFiltersProps) {
   // Get unique categories with at least one sensor
   const uniqueCategories = Object.keys(categories).filter(category =>
@@ -37,7 +31,7 @@ export function ChartFilters({
   );
 
   return (
-    <div className="rounded-lg border bg-card p-4 shadow-sm">
+    <div className="rounded-xl border bg-card p-4 shadow-sm">
       <div className="space-y-4">
         {/* Top row with search, favorites, chart type and theme */}
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -78,64 +72,13 @@ export function ChartFilters({
 
           {/* Right side - Chart Type and Theme */}
           <div className="flex items-center gap-3 ml-auto">
-            {/* Chart Type Selector */}
-            <ToggleGroup
-              type="single"
-              value={chartType}
-              onValueChange={value => value && setChartType(value as ChartType)}
-              className="border rounded-md"
-            >
-              <ToggleGroupItem value="area" aria-label="Area Chart" className="h-8 w-8 p-0">
-                <AreaChart className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="line" aria-label="Line Chart" className="h-8 w-8 p-0">
-                <LineChart className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="bar" aria-label="Bar Chart" className="h-8 w-8 p-0">
-                <BarChart3 className="h-4 w-4" />
-              </ToggleGroupItem>
-            </ToggleGroup>
-
-            {/* Theme Selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 px-2 flex items-center gap-1">
-                  <div className="flex items-center gap-0.5">
-                    {Object.keys(colorThemes).map(theme => (
-                      <div
-                        key={theme}
-                        className={`h-2 w-2 rounded-full ${theme === colorTheme ? "ring-1 ring-primary ring-offset-1" : ""}`}
-                        style={{ backgroundColor: colorThemes[theme].colors.Engine }}
-                      />
-                    ))}
-                  </div>
-                  <ChevronDown className="h-3 w-3 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuGroup>
-                  {Object.entries(colorThemes).map(([key, theme]) => (
-                    <DropdownMenuItem
-                      key={key}
-                      onClick={() => setColorTheme(key as ColorTheme)}
-                      className="flex items-center gap-2"
-                    >
-                      <div className="flex items-center gap-1.5">
-                        {Object.values(theme.colors).slice(0, 5).map((color, i) => (
-                          <div
-                            key={i}
-                            className="h-3 w-3 rounded-full"
-                            style={{ backgroundColor: color }}
-                          />
-                        ))}
-                      </div>
-                      <span>{theme.name}</span>
-                      {key === colorTheme && <Check className="ml-auto h-4 w-4" />}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Chart Controls */}
+            <ChartControls
+              chartType={chartType}
+              onChartTypeChange={value => setChartType(value)}
+              colorTheme={colorTheme}
+              onColorThemeChange={value => setColorTheme(value)}
+            />
 
             <Button
               variant="ghost"
@@ -167,7 +110,7 @@ export function ChartFilters({
             <div className="flex flex-wrap gap-2">
               {uniqueCategories.map((category) => {
                 // Count sensors in this category
-                const count = allSensors.filter(s => s.category === category).length;
+                const count = allSensors.filter((s: Sensor) => s.category === category).length;
                 const isSelected = selectedCategories.includes(category);
 
                 return (
@@ -183,7 +126,7 @@ export function ChartFilters({
                     onClick={() => {
                       setSelectedCategories(
                         selectedCategories.includes(category)
-                          ? selectedCategories.filter(c => c !== category)
+                          ? selectedCategories.filter((c: string) => c !== category)
                           : [...selectedCategories, category],
                       );
                     }}
