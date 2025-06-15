@@ -25,6 +25,8 @@ export type Sensor = {
   lastValue: number | null;
   minValue: number | null;
   maxValue: number | null;
+  isMultiSeries?: boolean;
+  seriesConfig?: Record<string, { label: string; color: string }>;
 };
 
 // Chart Data Point Interface
@@ -55,6 +57,67 @@ export type SensorData = {
   };
 };
 
+// Sensor Chart Card Props Interface
+export type SensorChartCardProps = {
+  sensor: Sensor;
+  chartData: any[];
+  categoryColor: string;
+  chartType: ChartType;
+  index: number;
+  isFavorite?: boolean;
+  isVisible?: boolean;
+  onFavoriteToggle?: () => void;
+  onFullScreen?: () => void;
+  onChartClick?: (data: any) => void;
+  isComparisonMode?: boolean;
+  availableChartTypes?: ChartType[];
+  onChartTypeChange?: (chartType: ChartType) => void;
+};
+
+// Extended sensor type to include multi-series properties
+export type ExtendedSensor = {
+  isMultiSeries?: boolean;
+  seriesConfig?: Record<string, { label: string; color: string }>;
+  multiSeriesData?: any[];
+} & Sensor;
+
+// Area Chart Component Props Interface
+export type AreaChartComponentProps = {
+  sensor: ExtendedSensor;
+  chartData: any[];
+  categoryColor: string;
+  onClick: (data: any) => void;
+  className?: string;
+};
+
+// Bar Chart Component Props Interface
+export type BarChartComponentProps = {
+  sensor: ExtendedSensor;
+  chartData: any[];
+  categoryColor: string;
+  onClick: (data: any) => void;
+  className?: string;
+};
+
+// Line Chart Component Props Interface
+export type LineChartComponentProps = {
+  sensor: ExtendedSensor;
+  chartData: any[];
+  categoryColor: string;
+  onClick: (data: any) => void;
+  className?: string;
+};
+
+// Chart Renderer Props Interface
+export type ChartRendererProps = {
+  sensor: ExtendedSensor;
+  chartData: any[];
+  chartType: ChartType;
+  categoryColor: string;
+  onClick?: (data: any) => void;
+  className?: string;
+};
+
 // Chart Types
 export type ChartType = "area" | "line" | "bar";
 
@@ -76,7 +139,6 @@ export type ChartFiltersProps = {
   setChartType: (type: ChartType) => void;
   colorTheme: ColorTheme;
   setColorTheme: (theme: ColorTheme) => void;
-  colorThemes: Record<string, { name: string; colors: Record<string, string> }>;
 };
 
 // Sensor Chart Props Interface
@@ -121,4 +183,72 @@ export type SensorChartComparisonProps = {
   data: Record<string, SensorData> | undefined;
   isLoading: boolean;
   selectedSessions: string[];
+};
+
+// Comparison Preferences Interface
+export type ComparisonPreferences = {
+  selectedSensorIds: string[];
+  updateSelectedSensors: (sensorIds: string[]) => void;
+  selectedSessionIds: string[];
+  updateSelectedSessions: (sessionIds: string[]) => void;
+};
+
+// Grid Sensor Selector Props Interface
+export type GridSensorSelectorProps = {
+  sensors: Sensor[];
+  selectedSensorIds: string[];
+  onSensorChange: (sensorIds: string[]) => void;
+  isLoading: boolean;
+  maxSelections?: number;
+  categoryColors: Record<string, string>;
+};
+
+// Sensor Selector Props Interface
+export type SensorSelectorProps = {
+  sensors: Sensor[];
+  selectedSensorIds: string[];
+  onSensorChange: (sensorIds: string[]) => void;
+  isLoading: boolean;
+  maxSelections?: number;
+  categoryColors: Record<string, string>;
+};
+
+// Define the type for normalized data points
+export type NormalizedDataPoint = {
+  index: number;
+  pointNumber: number; // 1-indexed point number for display
+  timestamp: string;
+  // Add timestamps for each session
+  sessionTimestamps?: Record<string, string>;
+  [sessionId: string]: number | string | Record<string, string> | undefined;
+};
+
+// Chart Controls Props Interface
+export type ChartControlsProps = {
+  chartType: ChartType;
+  onChartTypeChange: (value: ChartType) => void;
+  colorTheme: ColorTheme;
+  onColorThemeChange: (value: ColorTheme) => void;
+};
+
+// Chart Type Selector Props Interface
+export type ChartTypeSelectorProps = {
+  chartType: ChartType;
+  onChartTypeChange: (value: ChartType) => void;
+};
+
+// Color Theme Selector Props Interface
+export type ColorThemeSelectorProps = {
+  colorTheme: ColorTheme;
+  onColorThemeChange: (value: ColorTheme) => void;
+};
+
+// Full Screen Chart Dialog Props Interface
+export type FullScreenChartDialogProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  sensor: Sensor | null;
+  chartData: any[];
+  chartType: ChartType;
+  categoryColor: string;
 };

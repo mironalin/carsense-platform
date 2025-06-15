@@ -31,6 +31,12 @@ function ChartsPage() {
     parseAsString.withDefault(""),
   );
 
+  // For comparison tab, store multiple diagnostic IDs
+  const [_comparisonDiagnosticIds, setComparisonDiagnosticIds] = useQueryState(
+    "comparisonDiagnosticIds",
+    parseAsString.withDefault(""),
+  );
+
   // Fetch all diagnostics for the vehicle
   const {
     data: diagnosticsData,
@@ -48,7 +54,7 @@ function ChartsPage() {
   // When diagnostics data is loaded, select the most recent diagnostic session by default
   // Only if no diagnostic is currently selected in the URL
   useEffect(() => {
-    if (!isLoadingDiagnostics && diagnosticsData && diagnosticsData.length > 0 && !selectedDiagnosticId) {
+    if (!isLoadingDiagnostics && diagnosticsData && diagnosticsData.length > 0 && !selectedDiagnosticId && activeTab === "overview") {
       // Sort diagnostics by createdAt (newest first)
       const sortedDiagnostics = [...diagnosticsData].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -57,7 +63,7 @@ function ChartsPage() {
       // Select the most recent diagnostic session
       setSelectedDiagnosticId(sortedDiagnostics[0].uuid);
     }
-  }, [diagnosticsData, isLoadingDiagnostics, selectedDiagnosticId, setSelectedDiagnosticId]);
+  }, [diagnosticsData, isLoadingDiagnostics, selectedDiagnosticId, setSelectedDiagnosticId, activeTab]);
 
   // Handle diagnostic session change - update URL
   const handleDiagnosticSessionChange = (sessionId: string) => {
@@ -67,11 +73,21 @@ function ChartsPage() {
   // Handle tab changes
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+
+    // Clear irrelevant URL parameters when switching tabs
+    if (value === "overview") {
+      // When switching to overview, clear comparison parameters
+      setComparisonDiagnosticIds("");
+    }
+    else if (value === "comparison") {
+      // When switching to comparison, clear overview parameters
+      setSelectedDiagnosticId("");
+    }
   };
 
   return (
     <div className="space-y-4 p-4 lg:p-6">
-      {!selectedDiagnosticId && !isLoadingDiagnostics && (
+      {!selectedDiagnosticId && !isLoadingDiagnostics && activeTab === "overview" && (
         <Alert>
           <LineChart className="h-4 w-4" />
           <AlertTitle>No diagnostic session selected</AlertTitle>
@@ -81,7 +97,7 @@ function ChartsPage() {
         </Alert>
       )}
 
-      {selectedDiagnosticId && (
+      {(selectedDiagnosticId || activeTab === "comparison") && (
         <Tabs
           value={activeTab}
           onValueChange={handleTabChange}
@@ -100,12 +116,15 @@ function ChartsPage() {
             </TabsList>
 
             <div className="flex flex-wrap items-center gap-2">
-              <DiagnosticSessionSelector
-                sessions={diagnosticsData || []}
-                selectedSession={selectedDiagnosticId || null}
-                onSessionChange={handleDiagnosticSessionChange}
-                isLoading={isLoadingDiagnostics}
-              />
+              {/* Only show the diagnostic selector in overview tab */}
+              {activeTab === "overview" && (
+                <DiagnosticSessionSelector
+                  sessions={diagnosticsData || []}
+                  selectedSession={selectedDiagnosticId || null}
+                  onSessionChange={handleDiagnosticSessionChange}
+                  isLoading={isLoadingDiagnostics}
+                />
+              )}
               <div className="flex items-center gap-2">
                 <Link to="/app/$vehicleId/sensors" params={{ vehicleId }}>
                   <Button variant="outline" size="sm">
