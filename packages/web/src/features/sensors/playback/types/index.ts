@@ -56,3 +56,12 @@ export type PlaybackControls = {
   clearAllSensors: () => void;
   reorderSensors: (newOrder: string[]) => void;
 };
+
+// Sensor Selector Props Interface
+export type PlaybackSensorSelectorProps = {
+  sensors: PlaybackSensor[];
+  selectedSensors: string[];
+  onToggleSensor: (pid: string) => void;
+  onSelectAll: () => void;
+  onClearAll: () => void;
+};

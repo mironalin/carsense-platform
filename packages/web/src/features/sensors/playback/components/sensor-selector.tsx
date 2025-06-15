@@ -1,20 +1,12 @@
 import { SlidersHorizontal } from "lucide-react";
 
+import type { PlaybackSensorSelectorProps } from "@/features/sensors/playback/types";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import type { PlaybackSensor } from "../types";
-
 import { getCategoryIcon, groupSensorsByCategory, STANDARD_CATEGORIES } from "../../utils/sensor-categories";
-
-type SensorSelectorProps = {
-  sensors: PlaybackSensor[];
-  selectedSensors: string[];
-  onToggleSensor: (pid: string) => void;
-  onSelectAll: () => void;
-  onClearAll: () => void;
-};
 
 export function SensorSelector({
   sensors,
@@ -22,12 +14,12 @@ export function SensorSelector({
   onToggleSensor,
   onSelectAll,
   onClearAll,
-}: SensorSelectorProps) {
+}: PlaybackSensorSelectorProps) {
   // Group sensors by category
   const groupedSensors = groupSensorsByCategory(sensors);
 
   return (
-    <div className="mt-4 sm:mt-6 border rounded-lg p-3 sm:p-4 bg-card">
+    <div className="mt-4 sm:mt-6 border rounded-xl p-3 sm:p-4 bg-card">
       <h3 className="text-sm font-medium mb-2 sm:mb-3 flex items-center gap-2">
         <SlidersHorizontal className="h-4 w-4" />
         Select Sensors to Display
