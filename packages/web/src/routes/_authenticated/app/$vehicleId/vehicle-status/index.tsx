@@ -44,6 +44,8 @@ function VehicleStatusComponent() {
           vehicle={vehicle}
           locations={locations}
           isLoadingLocations={isLoadingLocations}
+          latestDiagnostic={latestDiagnostic}
+          isLoadingDiagnostic={isLoadingDiagnostic}
           onRefresh={handleRefreshLocations}
         />
       </div>

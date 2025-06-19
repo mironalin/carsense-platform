@@ -2,7 +2,7 @@ import { MapPin, Navigation, RefreshCw, Share2, Target } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-import type { LocationWithParsedDates, VehicleWithParsedDates } from "@/features/vehicles/types";
+import type { DiagnosticWithParsedDates, LocationWithParsedDates, VehicleWithParsedDates } from "@/features/vehicles/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,8 @@ type VehicleRecentLocationsCardProps = {
   isLoadingLocations: boolean;
   locations: LocationWithParsedDates[] | null | undefined;
   vehicle: VehicleWithParsedDates | null | undefined;
+  latestDiagnostic: DiagnosticWithParsedDates | null | undefined;
+  isLoadingDiagnostic: boolean;
   onRefresh?: () => void;
 };
 
@@ -31,12 +33,35 @@ export function VehicleRecentLocationsCard({
   isLoadingLocations,
   locations,
   vehicle,
+  latestDiagnostic,
+  isLoadingDiagnostic,
   onRefresh,
 }: VehicleRecentLocationsCardProps) {
   const mapRef = useRef<VehicleMapRef>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const hasLocationData = !isLoadingLocations && locations && locations.length > 0;
+  // Check if location data is available either from Locations table or Diagnostics table
+  const hasLocationFromLocationsTable = !isLoadingLocations && locations && locations.length > 0;
+  const hasLocationFromDiagnostics = !isLoadingDiagnostic && latestDiagnostic
+    && latestDiagnostic.locationLat !== null && latestDiagnostic.locationLong !== null;
+
+  // Use location data from Locations table if available, otherwise use data from Diagnostics table
+  const hasLocationData = hasLocationFromLocationsTable || hasLocationFromDiagnostics;
+
+  // Determine which location data to use
+  const locationData = hasLocationFromLocationsTable
+    ? {
+        latitude: locations![0].latitude,
+        longitude: locations![0].longitude,
+        timestamp: locations![0].timestamp,
+      }
+    : hasLocationFromDiagnostics
+      ? {
+          latitude: latestDiagnostic!.locationLat!,
+          longitude: latestDiagnostic!.locationLong!,
+          timestamp: latestDiagnostic!.createdAt,
+        }
+      : null;
 
   const getTimeElapsed = (timestamp: string) => {
     if (!timestamp)
@@ -74,63 +99,37 @@ export function VehicleRecentLocationsCard({
     }
   };
 
-  const getMapLinks = () => {
-    if (!hasLocationData) {
-      return {
-        google: "",
-        apple: "",
-        waze: "",
-        osm: "",
-      };
+  const handleShareLocation = (mapType: "google" | "apple" | "waze" | "osm") => {
+    if (!locationData) {
+      toast.error("No location data to share");
+      return;
     }
 
-    const { latitude, longitude } = locations[0];
-    const vehicleName = `${vehicle?.make || ""} ${vehicle?.model || "Vehicle"}`;
+    const { latitude, longitude } = locationData;
+    let url = "";
 
-    return {
-      google: `https://www.google.com/maps?q=${latitude},${longitude}`,
-      apple: `http://maps.apple.com/?q=${vehicleName}&ll=${latitude},${longitude}`,
-      waze: `https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes`,
-      osm: `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=16/${latitude}/${longitude}`,
-    };
-  };
-
-  const handleShareLocation = (service: "google" | "apple" | "waze" | "osm") => {
-    if (!hasLocationData)
-      return;
-
-    const mapLinks = getMapLinks();
-    let link: string;
-    let serviceName: string;
-
-    switch (service) {
+    switch (mapType) {
       case "google":
-        link = mapLinks.google;
-        serviceName = "Google Maps";
+        url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
         break;
       case "apple":
-        link = mapLinks.apple;
-        serviceName = "Apple Maps";
+        url = `https://maps.apple.com/?q=${latitude},${longitude}`;
         break;
       case "waze":
-        link = mapLinks.waze;
-        serviceName = "Waze";
+        url = `https://www.waze.com/ul?ll=${latitude},${longitude}&navigate=yes`;
         break;
       case "osm":
-        link = mapLinks.osm;
-        serviceName = "OpenStreetMap";
+        url = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=16/${latitude}/${longitude}`;
         break;
       default:
-        link = mapLinks.google;
-        serviceName = "Google Maps";
+        url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     }
 
-    navigator.clipboard.writeText(link)
-      .then(() => toast.success(`Link copied for ${serviceName}`))
-      .catch(() => toast.error("Failed to copy location link"));
+    window.open(url, "_blank");
+    toast.success(`Location opened in ${mapType === "osm" ? "OpenStreetMap" : `${mapType.charAt(0).toUpperCase() + mapType.slice(1)} Maps`}`);
   };
 
-  if (isLoadingLocations) {
+  if (isLoadingLocations || isLoadingDiagnostic) {
     return <VehicleRecentLocationsCardSkeleton />;
   }
 
@@ -141,7 +140,7 @@ export function VehicleRecentLocationsCard({
           {hasLocationData && (
             <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
               <Navigation className="size-3" />
-              {getTimeElapsed(locations[0].timestamp)}
+              {getTimeElapsed(locationData!.timestamp)}
             </Badge>
           )}
           <TooltipProvider>
@@ -167,6 +166,9 @@ export function VehicleRecentLocationsCard({
         <CardTitle className="flex items-center gap-2 @[250px]/card:text-2xl text-xl font-semibold">
           <MapPin className="h-5 w-5" />
           Last Known Position
+          {hasLocationFromDiagnostics && !hasLocationFromLocationsTable && (
+            <Badge variant="outline" className="ml-2 text-xs">From Diagnostics</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -177,13 +179,13 @@ export function VehicleRecentLocationsCard({
                   <div className="flex flex-col">
                     <span className="text-sm text-muted-foreground">Latitude</span>
                     <span className="font-medium tabular-nums">
-                      {locations[0].latitude.toFixed(6)}
+                      {locationData!.latitude.toFixed(6)}
                     </span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm text-muted-foreground">Longitude</span>
                     <span className="font-medium tabular-nums">
-                      {locations[0].longitude.toFixed(6)}
+                      {locationData!.longitude.toFixed(6)}
                     </span>
                   </div>
                 </div>
@@ -191,44 +193,39 @@ export function VehicleRecentLocationsCard({
                 <div className="aspect-[16/9] h-[200px] w-full overflow-hidden">
                   <VehicleLocationMap
                     ref={mapRef}
-                    latitude={locations[0].latitude}
-                    longitude={locations[0].longitude}
-                    timestamp={locations[0].timestamp}
+                    latitude={locationData!.latitude}
+                    longitude={locationData!.longitude}
+                    timestamp={locationData!.timestamp}
                     make={vehicle?.make}
                     model={vehicle?.model}
                   />
                 </div>
-                <div className="flex gap-2">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button variant="outline" size="sm" className="flex gap-2" onClick={handleCenterMap}>
-                          <Target className="h-4 w-4" />
-                          Center Map
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Center map on vehicle</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
 
+                {/* Actions */}
+                <div className="flex justify-between">
+                  {/* Center map button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8"
+                    onClick={handleCenterMap}
+                  >
+                    <Target className="mr-2 h-3.5 w-3.5" />
+                    Center Map
+                  </Button>
+
+                  {/* Share location button */}
                   <DropdownMenu>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="flex gap-2">
-                              <Share2 className="h-4 w-4" />
-                              Share Location
-                            </Button>
-                          </DropdownMenuTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Share vehicle location</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8"
+                      >
+                        <Share2 className="mr-2 h-3.5 w-3.5" />
+                        Share Location
+                      </Button>
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent
                       align="start"
                       sideOffset={4}
@@ -275,7 +272,7 @@ export function VehicleRecentLocationsCard({
           <div className="font-medium">
             Last updated:
             {" "}
-            {new Date(locations[0].timestamp).toLocaleString()}
+            {new Date(locationData!.timestamp).toLocaleString()}
           </div>
           <div className="text-muted-foreground">
             View full route history in the Location tab
