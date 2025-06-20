@@ -65,7 +65,7 @@ function DTCsListContent({
     >
       <Card className="w-full h-full flex flex-col">
         <DTCsHeader dtcs={dtcs} />
-        <CardContent className="flex-1 p-4 overflow-hidden">
+        <CardContent className="flex-1 overflow-hidden">
           <DTCsScrollContainer dtcs={dtcs} />
         </CardContent>
       </Card>

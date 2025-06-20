@@ -49,14 +49,14 @@ export function DiagnosticsPage() {
 
   return (
     <motion.div
-      className="container mx-auto p-4 lg:p-6 h-[calc(100vh-80px)] flex flex-col"
+      className="container mx-auto p-4 lg:p-6 h-[calc(100vh-80px)] flex flex-col gap-4 lg:gap-6"
       variants={pageVariants}
       initial="initial"
       animate="animate"
       exit="exit"
     >
       {/* Simple selector toolbar */}
-      <div className="mb-4 flex justify-end">
+      <div className="flex justify-end">
         <DiagnosticSessionSelector
           sessions={diagnosticsData || []}
           selectedSession={selectedDiagnosticId || null}
