@@ -264,7 +264,7 @@ export function DTCCard({ dtc, index }: DTCCardProps) {
               </div>
 
               {/* Recommendation */}
-              <div className={`rounded-md p-3 ${
+              {/* <div className={`rounded-md p-3 ${
                 combinedDtc.severity === "high"
                   ? "bg-destructive/10 border border-destructive/20"
                   : combinedDtc.severity === "medium"
@@ -283,7 +283,7 @@ export function DTCCard({ dtc, index }: DTCCardProps) {
                       ? "Service is recommended in the near future. Monitor vehicle performance for any changes."
                       : "Standard service is recommended at your convenience. This is a minor issue."}
                 </div>
-              </div>
+              </div> */}
 
               {/* Creation Time */}
               <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
