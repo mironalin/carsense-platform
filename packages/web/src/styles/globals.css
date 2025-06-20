@@ -1,0 +1,9 @@
+@layer utilities {
+  .animate-transition {
+    transition: all 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  .animate-height {
+    transition: height 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+}
