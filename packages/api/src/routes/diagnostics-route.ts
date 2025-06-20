@@ -7,7 +7,7 @@ import { z } from "zod";
 import type { AppBindings } from "../lib/types";
 
 import { db } from "../db";
-import { diagnosticsDTCTable, insertDiagnosticDTCInstanceSchema } from "../db/schema/diagnostics-dtc-schema";
+import { diagnosticsDTCTable, insertDiagnosticDTCInstanceSchema, selectDiagnosticDTCInstanceSchema } from "../db/schema/diagnostics-dtc-schema";
 import { diagnosticsTable, insertDiagnosticSchema, selectDiagnosticSchema } from "../db/schema/diagnostics-schema";
 import { insertSensorReadingSchema, selectSensorReadingSchema, sensorReadingsTable } from "../db/schema/sensor-readings-schema";
 import { insertSensorSnapshotSchema, selectSensorSnapshotSchema, sensorSnapshotsTable, sensorSourceEnum } from "../db/schema/sensor-snapshots-schema";
@@ -258,6 +258,45 @@ export const diagnosticsRoute = new Hono<AppBindings>()
       count: newDTCs.length,
       dtcs: newDTCs,
     });
+  })
+  .get("/:diagnosticUUID/dtcs", describeRoute({
+    tags: ["Diagnostics"],
+    summary: "Get all DTCs for a diagnostic",
+    description: "Get all DTCs for a diagnostic",
+    responses: {
+      200: {
+        description: "OK",
+        content: {
+          "application/json": {
+            schema: resolver(z.array(selectDiagnosticDTCInstanceSchema)),
+          },
+        },
+      },
+      401: unauthorizedResponseObject,
+      404: notFoundResponseObject,
+    },
+  }), zValidator("param", z.object({
+    diagnosticUUID: z.string().uuid(),
+  })), async (c) => {
+    const user = c.get("user");
+    const logger = c.get("logger");
+
+    if (!user) {
+      logger.warn("Unauthorized access attempt - diagnostic DTCs");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const diagnosticUUID = c.req.param("diagnosticUUID");
+
+    logger.debug({ diagnosticUUID }, "Fetching diagnostic DTCs");
+
+    const dtcs = await db
+      .select()
+      .from(diagnosticsDTCTable)
+      .where(eq(diagnosticsDTCTable.diagnosticUUID, diagnosticUUID))
+      .orderBy(diagnosticsDTCTable.createdAt);
+
+    return c.json(dtcs);
   })
   .post("/:diagnosticUUID/snapshots", describeRoute({
     tags: ["Diagnostics"],

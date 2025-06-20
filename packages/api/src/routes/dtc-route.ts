@@ -55,4 +55,33 @@ export const dtcRoute = new Hono<AppBindings>()
 
     logger.debug({ code, dtcUUID: dtc.uuid }, "DTC code found");
     return c.json(dtc);
+  })
+  .get("/library", describeRoute({
+    tags: ["DTC"],
+    summary: "Get DTC library",
+    description: "Get the entire DTC library",
+    responses: {
+      200: {
+        description: "OK",
+        content: {
+          "application/json": {
+            schema: resolver(zDTCLibraryResponseSchema),
+          },
+        },
+      },
+    },
+  }), async (c) => {
+    const user = c.get("user");
+    const logger = c.get("logger");
+
+    if (!user) {
+      logger.warn("Unauthorized access attempt - DTC library");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const dtcs = await db
+      .select()
+      .from(DTCLibraryTable);
+
+    return c.json(dtcs);
   });
