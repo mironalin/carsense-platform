@@ -36,6 +36,16 @@ export function SensorChartComparison({ isLoading: initialLoading }: { isLoading
     updateSelectedSessions,
   } = useComparisonPreferences();
 
+  const [isSelectorMinimized, setIsSelectorMinimized] = useState(() => {
+    // Check if we have a saved preference in local storage
+    const savedPreference = localStorage.getItem("sensorSelectorMinimized");
+    return savedPreference === "true";
+  });
+
+  const handleToggleMinimize = () => {
+    setIsSelectorMinimized(prev => !prev);
+  };
+
   // State for full-screen chart dialog
   const [fullScreenChart, setFullScreenChart] = useState<{
     isOpen: boolean;
@@ -282,6 +292,8 @@ export function SensorChartComparison({ isLoading: initialLoading }: { isLoading
           onToggleSensor={handleToggleSensor}
           onSelectAll={handleSelectAllSensors}
           onClearAll={handleClearAllSensors}
+          isMinimized={isSelectorMinimized}
+          onToggleMinimize={handleToggleMinimize}
         />
       )}
 

@@ -20,6 +20,7 @@ import type { ColorTheme, Sensor, SensorChartOverviewProps } from "../../types";
 
 import { generateSensorChartData } from "../utils/generate-chart-data";
 import { ChartFilters } from "./chart-filters";
+import { NoDataAvailable } from "./no-data-available";
 import { SensorChartOverviewSkeleton } from "./sensor-skeleton";
 
 export function SensorChartOverview({ data, isLoading }: SensorChartOverviewProps) {
@@ -184,16 +185,7 @@ export function SensorChartOverview({ data, isLoading }: SensorChartOverviewProp
 
   // If no data available
   if (!data?.sensors || data.sensors.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>No sensor data available</CardTitle>
-          <CardDescription>
-            There is no sensor data for the selected diagnostic session
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
+    return <NoDataAvailable />;
   }
 
   // Categories from the data

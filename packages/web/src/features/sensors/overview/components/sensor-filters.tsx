@@ -29,7 +29,7 @@ export function SensorFilters({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-lg border bg-card p-4 shadow-sm">
+    <div className="rounded-xl border bg-card p-4 shadow-sm">
       <div className="space-y-4">
         {/* Search and favorite toggle */}
         <div className="flex flex-wrap gap-3 items-center">
