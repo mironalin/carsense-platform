@@ -64,4 +64,6 @@ export type PlaybackSensorSelectorProps = {
   onToggleSensor: (pid: string) => void;
   onSelectAll: () => void;
   onClearAll: () => void;
+  isMinimized: boolean;
+  onToggleMinimize: () => void;
 };

@@ -3,6 +3,7 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { GripIcon } from "lucide-react";
+import { useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,6 +35,21 @@ export function SensorPlayback({ data, isLoading }: SensorPlaybackProps) {
     },
     controls,
   ] = useSensorPlayback({ data, isLoading });
+
+  const [isSelectorMinimized, setIsSelectorMinimized] = useState(() => {
+    // Check if we have a saved preference in local storage
+    const savedPreference = localStorage.getItem("sensorSelectorMinimized");
+    return savedPreference === "true";
+  });
+
+  // Toggle minimized state and save preference
+  const handleToggleMinimize = () => {
+    setIsSelectorMinimized((prev) => {
+      const newState = !prev;
+      localStorage.setItem("sensorSelectorMinimized", String(newState));
+      return newState;
+    });
+  };
 
   // Setup DND sensors
   const dndSensors = useSensors(
@@ -123,7 +139,7 @@ export function SensorPlayback({ data, isLoading }: SensorPlaybackProps) {
           <CardHeader className="px-4 py-3 sm:px-6 sm:py-4 pb-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div className="flex items-center flex-wrap gap-2">
-                <h2 className="text-lg font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                <h2 className="text-lg font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text">
                   Sensor Playback
                 </h2>
                 <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">
@@ -210,6 +226,8 @@ export function SensorPlayback({ data, isLoading }: SensorPlaybackProps) {
                 onToggleSensor={controls.toggleSensor}
                 onSelectAll={controls.selectAllSensors}
                 onClearAll={controls.clearAllSensors}
+                isMinimized={isSelectorMinimized}
+                onToggleMinimize={handleToggleMinimize}
               />
             </div>
           </CardContent>
