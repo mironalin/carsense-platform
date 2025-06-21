@@ -1,17 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChartBar, Grid3X3, LineChart } from "lucide-react";
+import { ChartBar, LineChart } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useEffect } from "react";
 
+import { ErrorPage } from "@/components/error-page";
+import { LoaderPage } from "@/components/loader-page";
+import { NotFoundPage } from "@/components/not-found-page";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useGetVehicleSensorData } from "@/features/sensors/api/use-get-vehicle-sensor-data";
 import { DiagnosticSessionSelector } from "@/features/sensors/components/diagnostic-session-selector";
 import { SensorTablesView } from "@/features/tables/components/sensor-tables-view";
-import { useGetVehicleDiagnostics } from "@/features/vehicles/api/use-get-vehicle-diagnostics";
+import { getVehicleDiagnosticsQueryOptions, useGetVehicleDiagnostics } from "@/features/vehicles/api/use-get-vehicle-diagnostics";
 
 export const Route = createFileRoute("/_authenticated/app/$vehicleId/tables/")({
   component: TablesPage,
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    queryClient.prefetchQuery(getVehicleDiagnosticsQueryOptions({ vehicleId: params.vehicleId }));
+  },
+  pendingComponent: () => <LoaderPage />,
+  notFoundComponent: () => <NotFoundPage />,
+  errorComponent: () => <ErrorPage />,
 });
 
 function TablesPage() {
@@ -28,16 +38,14 @@ function TablesPage() {
     data: diagnosticsData,
     isLoading: isLoadingDiagnostics,
     error: diagnosticsError,
-  } = useGetVehicleDiagnostics(vehicleId);
+  } = useGetVehicleDiagnostics({ vehicleId, suspense: true });
 
   // Fetch sensor data using diagnosticId
   const {
     data: sensorData,
     isLoading: isLoadingSensorData,
     error: sensorDataError,
-  } = useGetVehicleSensorData(vehicleId, {
-    diagnosticId: diagnosticId || undefined,
-  });
+  } = useGetVehicleSensorData({ vehicleId, filter: { diagnosticId: diagnosticId || undefined }, suspense: false });
 
   // Set first diagnosticId if none is selected and data is available
   useEffect(() => {

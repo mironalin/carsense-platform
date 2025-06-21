@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/rpc";
 
@@ -17,17 +17,22 @@ export async function getVehicleRecentLocationsQuery(vehicleId: string, limit: n
   return data;
 }
 
-export function useGetVehicleRecentLocations(vehicleId: string, limit: number = 10) {
-  const query = useQuery({
-    queryKey: ["vehicles", vehicleId, "locations", "recent", limit],
-    queryFn: () => getVehicleRecentLocationsQuery(vehicleId, limit),
-    enabled: !!vehicleId,
-  });
-
-  return query;
+export function useGetVehicleRecentLocations({ vehicleId, limit = 10, suspense = false }: { vehicleId: string; limit?: number; suspense?: boolean }) {
+  if (suspense) {
+    return useSuspenseQuery({
+      queryKey: ["vehicles", vehicleId, "locations", "recent", limit],
+      queryFn: () => getVehicleRecentLocationsQuery(vehicleId, limit),
+    });
+  }
+  else {
+    return useQuery({
+      queryKey: ["vehicles", vehicleId, "locations", "recent", limit],
+      queryFn: () => getVehicleRecentLocationsQuery(vehicleId, limit),
+    });
+  }
 }
 
-export function getVehicleRecentLocationsQueryOptions(vehicleId: string, limit: number = 10) {
+export function getVehicleRecentLocationsQueryOptions({ vehicleId, limit = 10 }: { vehicleId: string; limit?: number }) {
   return queryOptions({
     queryKey: ["vehicles", vehicleId, "locations", "recent", limit],
     queryFn: () => getVehicleRecentLocationsQuery(vehicleId, limit),

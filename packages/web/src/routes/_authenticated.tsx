@@ -1,6 +1,9 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 import { AppSidebar } from "@/components/app-sidebar";
+import { ErrorPage } from "@/components/error-page";
+import { LoaderPage } from "@/components/loader-page";
+import { NotFoundPage } from "@/components/not-found-page";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
@@ -24,6 +27,9 @@ export const Route = createFileRoute("/_authenticated")({
       });
     }
   },
+  errorComponent: () => <ErrorPage />,
+  notFoundComponent: () => <NotFoundPage />,
+  pendingComponent: () => <LoaderPage />,
   component: RouteComponent,
 });
 

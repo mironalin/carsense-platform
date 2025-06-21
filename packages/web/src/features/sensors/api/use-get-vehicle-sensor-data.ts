@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/rpc";
 
@@ -342,16 +342,23 @@ function processSensorData(sensorData: any[], filter?: SensorFilter) {
 }
 
 // React Query hook
-export function useGetVehicleSensorData(vehicleId: string, filter?: SensorFilter) {
-  return useQuery({
-    queryKey: ["vehicles", vehicleId, "sensors", filter],
-    queryFn: () => getVehicleSensorDataQuery(vehicleId, filter),
-    enabled: !!vehicleId,
-  });
+export function useGetVehicleSensorData({ vehicleId, filter, suspense = false }: { vehicleId: string; filter?: SensorFilter; suspense?: boolean }) {
+  if (suspense) {
+    return useSuspenseQuery({
+      queryKey: ["vehicles", vehicleId, "sensors", filter],
+      queryFn: () => getVehicleSensorDataQuery(vehicleId, filter),
+    });
+  }
+  else {
+    return useQuery({
+      queryKey: ["vehicles", vehicleId, "sensors", filter],
+      queryFn: () => getVehicleSensorDataQuery(vehicleId, filter),
+    });
+  }
 }
 
 // Query options for loader usage
-export function getVehicleSensorDataQueryOptions(vehicleId: string, filter?: SensorFilter) {
+export function getVehicleSensorDataQueryOptions({ vehicleId, filter }: { vehicleId: string; filter?: SensorFilter }) {
   return queryOptions({
     queryKey: ["vehicles", vehicleId, "sensors", filter],
     queryFn: () => getVehicleSensorDataQuery(vehicleId, filter),

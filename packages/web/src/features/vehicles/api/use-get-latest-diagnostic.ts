@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/rpc";
 
@@ -20,17 +20,22 @@ export async function getLatestDiagnosticQuery(vehicleId: string) {
     : null;
 }
 
-export function useGetLatestDiagnostic(vehicleId: string) {
-  const query = useQuery({
-    queryKey: ["vehicles", vehicleId, "sensors", "latest"],
-    queryFn: () => getLatestDiagnosticQuery(vehicleId),
-    enabled: !!vehicleId,
-  });
-
-  return query;
+export function useGetLatestDiagnostic({ vehicleId, suspense = false }: { vehicleId: string; suspense?: boolean }) {
+  if (suspense) {
+    return useSuspenseQuery({
+      queryKey: ["vehicles", vehicleId, "sensors", "latest"],
+      queryFn: () => getLatestDiagnosticQuery(vehicleId),
+    });
+  }
+  else {
+    return useQuery({
+      queryKey: ["vehicles", vehicleId, "sensors", "latest"],
+      queryFn: () => getLatestDiagnosticQuery(vehicleId),
+    });
+  }
 }
 
-export function getLatestDiagnosticQueryOptions(vehicleId: string) {
+export function getLatestDiagnosticQueryOptions({ vehicleId }: { vehicleId: string }) {
   return queryOptions({
     queryKey: ["vehicles", vehicleId, "sensors", "latest"],
     queryFn: () => getLatestDiagnosticQuery(vehicleId),

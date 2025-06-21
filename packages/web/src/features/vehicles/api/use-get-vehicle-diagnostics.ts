@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/rpc";
 
@@ -16,17 +16,22 @@ export async function getVehicleDiagnosticsQuery(vehicleId: string) {
   return data;
 }
 
-export function useGetVehicleDiagnostics(vehicleId: string) {
-  const query = useQuery({
-    queryKey: ["vehicles", vehicleId, "diagnostics"],
-    queryFn: () => getVehicleDiagnosticsQuery(vehicleId),
-    enabled: !!vehicleId,
-  });
-
-  return query;
+export function useGetVehicleDiagnostics({ vehicleId, suspense = false }: { vehicleId: string; suspense?: boolean }) {
+  if (suspense) {
+    return useSuspenseQuery({
+      queryKey: ["vehicles", vehicleId, "diagnostics"],
+      queryFn: () => getVehicleDiagnosticsQuery(vehicleId),
+    });
+  }
+  else {
+    return useQuery({
+      queryKey: ["vehicles", vehicleId, "diagnostics"],
+      queryFn: () => getVehicleDiagnosticsQuery(vehicleId),
+    });
+  }
 }
 
-export function getVehicleDiagnosticsQueryOptions(vehicleId: string) {
+export function getVehicleDiagnosticsQueryOptions({ vehicleId }: { vehicleId: string }) {
   return queryOptions({
     queryKey: ["vehicles", vehicleId, "diagnostics"],
     queryFn: () => getVehicleDiagnosticsQuery(vehicleId),
