@@ -9,6 +9,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useGetUnreadCount } from "@/features/notifications/api/use-get-notifications";
 import { signOut, useSession } from "@/lib/auth-client";
 
 import { useTheme } from "./theme-provider";
@@ -37,6 +39,7 @@ export function NavUser() {
   const [pending, setPending] = useState(false);
   const navigate = useNavigate();
   const { data: session, isPending: isSessionPending } = useSession();
+  const { data: unreadData } = useGetUnreadCount();
 
   if (isSessionPending) {
     return (
@@ -64,6 +67,7 @@ export function NavUser() {
   }
 
   const { name, email, image } = session.user;
+  const unreadCount = unreadData?.unreadCount || 0;
 
   const avatarFallback = name ? name.split(" ").map(name => name.charAt(0).toUpperCase()).join("") : (email.charAt(0).toUpperCase() ?? "U");
 
@@ -95,10 +99,20 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={image ?? ""} alt={name} />
-                <AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-8 w-8 rounded-lg grayscale">
+                  <AvatarImage src={image ?? ""} alt={name} />
+                  <AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>
+                </Avatar>
+                {unreadCount > 0 && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -top-1 -right-1 h-4 w-4 p-0 text-xs flex items-center justify-center rounded-full border-2 border-background"
+                  >
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </Badge>
+                )}
+              </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{name}</span>
                 <span className="truncate text-xs text-muted-foreground">
@@ -137,9 +151,18 @@ export function NavUser() {
                 <UserCircleIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
+              <DropdownMenuItem onClick={() => navigate({ to: "/app/notifications" })}>
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <BellIcon />
+                    Notifications
+                  </div>
+                  {unreadCount > 0 && (
+                    <Badge variant="destructive" className="text-xs px-1.5 py-0.5 min-w-[20px] h-5">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </Badge>
+                  )}
+                </div>
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={e => e.preventDefault()}>
                 <div className="flex flex-row items-center gap-2">
