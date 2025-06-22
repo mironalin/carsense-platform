@@ -12,12 +12,14 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LandingPageImport } from './routes/_landing-page'
-import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as LandingPageIndexImport } from './routes/_landing-page/index'
 import { Route as AuthSignUpImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInImport } from './routes/_auth/sign-in'
 import { Route as AuthenticatedAppIndexImport } from './routes/_authenticated/app/index'
+import { Route as AuthenticatedAppNotificationsImport } from './routes/_authenticated.app.notifications'
+import { Route as AuthenticatedAppVehicleIdImport } from './routes/_authenticated.app.$vehicleId'
+import { Route as AuthenticatedAppNotificationsIndexImport } from './routes/_authenticated/app/notifications/index'
 import { Route as AuthenticatedAppVehicleIdIndexImport } from './routes/_authenticated/app/$vehicleId/index'
 import { Route as AuthenticatedAppVehicleIdVehicleStatusIndexImport } from './routes/_authenticated/app/$vehicleId/vehicle-status/index'
 import { Route as AuthenticatedAppVehicleIdTablesIndexImport } from './routes/_authenticated/app/$vehicleId/tables/index'
@@ -38,11 +40,6 @@ import { Route as AuthenticatedAppVehicleIdAnalyticsIndexImport } from './routes
 
 const LandingPageRoute = LandingPageImport.update({
   id: '/_landing-page',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AuthenticatedRoute = AuthenticatedImport.update({
-  id: '/_authenticated',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -70,114 +67,134 @@ const AuthSignInRoute = AuthSignInImport.update({
 } as any)
 
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexImport.update({
-  id: '/app/',
+  id: '/_authenticated/app/',
   path: '/app/',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => rootRoute,
 } as any)
+
+const AuthenticatedAppNotificationsRoute =
+  AuthenticatedAppNotificationsImport.update({
+    id: '/_authenticated/app/notifications',
+    path: '/app/notifications',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const AuthenticatedAppVehicleIdRoute = AuthenticatedAppVehicleIdImport.update({
+  id: '/_authenticated/app/$vehicleId',
+  path: '/app/$vehicleId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedAppNotificationsIndexRoute =
+  AuthenticatedAppNotificationsIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAppNotificationsRoute,
+  } as any)
 
 const AuthenticatedAppVehicleIdIndexRoute =
   AuthenticatedAppVehicleIdIndexImport.update({
-    id: '/app/$vehicleId/',
-    path: '/app/$vehicleId/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdVehicleStatusIndexRoute =
   AuthenticatedAppVehicleIdVehicleStatusIndexImport.update({
-    id: '/app/$vehicleId/vehicle-status/',
-    path: '/app/$vehicleId/vehicle-status/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/vehicle-status/',
+    path: '/vehicle-status/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdTablesIndexRoute =
   AuthenticatedAppVehicleIdTablesIndexImport.update({
-    id: '/app/$vehicleId/tables/',
-    path: '/app/$vehicleId/tables/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/tables/',
+    path: '/tables/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdSettingsIndexRoute =
   AuthenticatedAppVehicleIdSettingsIndexImport.update({
-    id: '/app/$vehicleId/settings/',
-    path: '/app/$vehicleId/settings/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdServiceCentersIndexRoute =
   AuthenticatedAppVehicleIdServiceCentersIndexImport.update({
-    id: '/app/$vehicleId/service-centers/',
-    path: '/app/$vehicleId/service-centers/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/service-centers/',
+    path: '/service-centers/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdSensorsIndexRoute =
   AuthenticatedAppVehicleIdSensorsIndexImport.update({
-    id: '/app/$vehicleId/sensors/',
-    path: '/app/$vehicleId/sensors/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/sensors/',
+    path: '/sensors/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdOwnershipIndexRoute =
   AuthenticatedAppVehicleIdOwnershipIndexImport.update({
-    id: '/app/$vehicleId/ownership/',
-    path: '/app/$vehicleId/ownership/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/ownership/',
+    path: '/ownership/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdMaintenanceIndexRoute =
   AuthenticatedAppVehicleIdMaintenanceIndexImport.update({
-    id: '/app/$vehicleId/maintenance/',
-    path: '/app/$vehicleId/maintenance/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/maintenance/',
+    path: '/maintenance/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdLocationIndexRoute =
   AuthenticatedAppVehicleIdLocationIndexImport.update({
-    id: '/app/$vehicleId/location/',
-    path: '/app/$vehicleId/location/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/location/',
+    path: '/location/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdHelpIndexRoute =
   AuthenticatedAppVehicleIdHelpIndexImport.update({
-    id: '/app/$vehicleId/help/',
-    path: '/app/$vehicleId/help/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/help/',
+    path: '/help/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdExportIndexRoute =
   AuthenticatedAppVehicleIdExportIndexImport.update({
-    id: '/app/$vehicleId/export/',
-    path: '/app/$vehicleId/export/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/export/',
+    path: '/export/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdDiagnosticsIndexRoute =
   AuthenticatedAppVehicleIdDiagnosticsIndexImport.update({
-    id: '/app/$vehicleId/diagnostics/',
-    path: '/app/$vehicleId/diagnostics/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/diagnostics/',
+    path: '/diagnostics/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdDashboardIndexRoute =
   AuthenticatedAppVehicleIdDashboardIndexImport.update({
-    id: '/app/$vehicleId/dashboard/',
-    path: '/app/$vehicleId/dashboard/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdChartsIndexRoute =
   AuthenticatedAppVehicleIdChartsIndexImport.update({
-    id: '/app/$vehicleId/charts/',
-    path: '/app/$vehicleId/charts/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/charts/',
+    path: '/charts/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdAnalyticsIndexRoute =
   AuthenticatedAppVehicleIdAnalyticsIndexImport.update({
-    id: '/app/$vehicleId/analytics/',
-    path: '/app/$vehicleId/analytics/',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/analytics/',
+    path: '/analytics/',
+    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -189,13 +206,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthImport
-      parentRoute: typeof rootRoute
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/_landing-page': {
@@ -226,117 +236,138 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingPageIndexImport
       parentRoute: typeof LandingPageImport
     }
+    '/_authenticated/app/$vehicleId': {
+      id: '/_authenticated/app/$vehicleId'
+      path: '/app/$vehicleId'
+      fullPath: '/app/$vehicleId'
+      preLoaderRoute: typeof AuthenticatedAppVehicleIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/app/notifications': {
+      id: '/_authenticated/app/notifications'
+      path: '/app/notifications'
+      fullPath: '/app/notifications'
+      preLoaderRoute: typeof AuthenticatedAppNotificationsImport
+      parentRoute: typeof rootRoute
+    }
     '/_authenticated/app/': {
       id: '/_authenticated/app/'
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AuthenticatedAppIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof rootRoute
     }
     '/_authenticated/app/$vehicleId/': {
       id: '/_authenticated/app/$vehicleId/'
-      path: '/app/$vehicleId'
-      fullPath: '/app/$vehicleId'
+      path: '/'
+      fullPath: '/app/$vehicleId/'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
+    }
+    '/_authenticated/app/notifications/': {
+      id: '/_authenticated/app/notifications/'
+      path: '/'
+      fullPath: '/app/notifications/'
+      preLoaderRoute: typeof AuthenticatedAppNotificationsIndexImport
+      parentRoute: typeof AuthenticatedAppNotificationsImport
     }
     '/_authenticated/app/$vehicleId/analytics/': {
       id: '/_authenticated/app/$vehicleId/analytics/'
-      path: '/app/$vehicleId/analytics'
+      path: '/analytics'
       fullPath: '/app/$vehicleId/analytics'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdAnalyticsIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/charts/': {
       id: '/_authenticated/app/$vehicleId/charts/'
-      path: '/app/$vehicleId/charts'
+      path: '/charts'
       fullPath: '/app/$vehicleId/charts'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdChartsIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/dashboard/': {
       id: '/_authenticated/app/$vehicleId/dashboard/'
-      path: '/app/$vehicleId/dashboard'
+      path: '/dashboard'
       fullPath: '/app/$vehicleId/dashboard'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdDashboardIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/diagnostics/': {
       id: '/_authenticated/app/$vehicleId/diagnostics/'
-      path: '/app/$vehicleId/diagnostics'
+      path: '/diagnostics'
       fullPath: '/app/$vehicleId/diagnostics'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdDiagnosticsIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/export/': {
       id: '/_authenticated/app/$vehicleId/export/'
-      path: '/app/$vehicleId/export'
+      path: '/export'
       fullPath: '/app/$vehicleId/export'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdExportIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/help/': {
       id: '/_authenticated/app/$vehicleId/help/'
-      path: '/app/$vehicleId/help'
+      path: '/help'
       fullPath: '/app/$vehicleId/help'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdHelpIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/location/': {
       id: '/_authenticated/app/$vehicleId/location/'
-      path: '/app/$vehicleId/location'
+      path: '/location'
       fullPath: '/app/$vehicleId/location'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdLocationIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/maintenance/': {
       id: '/_authenticated/app/$vehicleId/maintenance/'
-      path: '/app/$vehicleId/maintenance'
+      path: '/maintenance'
       fullPath: '/app/$vehicleId/maintenance'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdMaintenanceIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/ownership/': {
       id: '/_authenticated/app/$vehicleId/ownership/'
-      path: '/app/$vehicleId/ownership'
+      path: '/ownership'
       fullPath: '/app/$vehicleId/ownership'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdOwnershipIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/sensors/': {
       id: '/_authenticated/app/$vehicleId/sensors/'
-      path: '/app/$vehicleId/sensors'
+      path: '/sensors'
       fullPath: '/app/$vehicleId/sensors'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdSensorsIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/service-centers/': {
       id: '/_authenticated/app/$vehicleId/service-centers/'
-      path: '/app/$vehicleId/service-centers'
+      path: '/service-centers'
       fullPath: '/app/$vehicleId/service-centers'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdServiceCentersIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/settings/': {
       id: '/_authenticated/app/$vehicleId/settings/'
-      path: '/app/$vehicleId/settings'
+      path: '/settings'
       fullPath: '/app/$vehicleId/settings'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdSettingsIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/tables/': {
       id: '/_authenticated/app/$vehicleId/tables/'
-      path: '/app/$vehicleId/tables'
+      path: '/tables'
       fullPath: '/app/$vehicleId/tables'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdTablesIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/vehicle-status/': {
       id: '/_authenticated/app/$vehicleId/vehicle-status/'
-      path: '/app/$vehicleId/vehicle-status'
+      path: '/vehicle-status'
       fullPath: '/app/$vehicleId/vehicle-status'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdVehicleStatusIndexImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
   }
 }
@@ -355,8 +386,19 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+interface LandingPageRouteChildren {
+  LandingPageIndexRoute: typeof LandingPageIndexRoute
+}
+
+const LandingPageRouteChildren: LandingPageRouteChildren = {
+  LandingPageIndexRoute: LandingPageIndexRoute,
+}
+
+const LandingPageRouteWithChildren = LandingPageRoute._addFileChildren(
+  LandingPageRouteChildren,
+)
+
+interface AuthenticatedAppVehicleIdRouteChildren {
   AuthenticatedAppVehicleIdIndexRoute: typeof AuthenticatedAppVehicleIdIndexRoute
   AuthenticatedAppVehicleIdAnalyticsIndexRoute: typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   AuthenticatedAppVehicleIdChartsIndexRoute: typeof AuthenticatedAppVehicleIdChartsIndexRoute
@@ -374,62 +416,69 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAppVehicleIdVehicleStatusIndexRoute: typeof AuthenticatedAppVehicleIdVehicleStatusIndexRoute
 }
 
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
-  AuthenticatedAppVehicleIdIndexRoute: AuthenticatedAppVehicleIdIndexRoute,
-  AuthenticatedAppVehicleIdAnalyticsIndexRoute:
-    AuthenticatedAppVehicleIdAnalyticsIndexRoute,
-  AuthenticatedAppVehicleIdChartsIndexRoute:
-    AuthenticatedAppVehicleIdChartsIndexRoute,
-  AuthenticatedAppVehicleIdDashboardIndexRoute:
-    AuthenticatedAppVehicleIdDashboardIndexRoute,
-  AuthenticatedAppVehicleIdDiagnosticsIndexRoute:
-    AuthenticatedAppVehicleIdDiagnosticsIndexRoute,
-  AuthenticatedAppVehicleIdExportIndexRoute:
-    AuthenticatedAppVehicleIdExportIndexRoute,
-  AuthenticatedAppVehicleIdHelpIndexRoute:
-    AuthenticatedAppVehicleIdHelpIndexRoute,
-  AuthenticatedAppVehicleIdLocationIndexRoute:
-    AuthenticatedAppVehicleIdLocationIndexRoute,
-  AuthenticatedAppVehicleIdMaintenanceIndexRoute:
-    AuthenticatedAppVehicleIdMaintenanceIndexRoute,
-  AuthenticatedAppVehicleIdOwnershipIndexRoute:
-    AuthenticatedAppVehicleIdOwnershipIndexRoute,
-  AuthenticatedAppVehicleIdSensorsIndexRoute:
-    AuthenticatedAppVehicleIdSensorsIndexRoute,
-  AuthenticatedAppVehicleIdServiceCentersIndexRoute:
-    AuthenticatedAppVehicleIdServiceCentersIndexRoute,
-  AuthenticatedAppVehicleIdSettingsIndexRoute:
-    AuthenticatedAppVehicleIdSettingsIndexRoute,
-  AuthenticatedAppVehicleIdTablesIndexRoute:
-    AuthenticatedAppVehicleIdTablesIndexRoute,
-  AuthenticatedAppVehicleIdVehicleStatusIndexRoute:
-    AuthenticatedAppVehicleIdVehicleStatusIndexRoute,
+const AuthenticatedAppVehicleIdRouteChildren: AuthenticatedAppVehicleIdRouteChildren =
+  {
+    AuthenticatedAppVehicleIdIndexRoute: AuthenticatedAppVehicleIdIndexRoute,
+    AuthenticatedAppVehicleIdAnalyticsIndexRoute:
+      AuthenticatedAppVehicleIdAnalyticsIndexRoute,
+    AuthenticatedAppVehicleIdChartsIndexRoute:
+      AuthenticatedAppVehicleIdChartsIndexRoute,
+    AuthenticatedAppVehicleIdDashboardIndexRoute:
+      AuthenticatedAppVehicleIdDashboardIndexRoute,
+    AuthenticatedAppVehicleIdDiagnosticsIndexRoute:
+      AuthenticatedAppVehicleIdDiagnosticsIndexRoute,
+    AuthenticatedAppVehicleIdExportIndexRoute:
+      AuthenticatedAppVehicleIdExportIndexRoute,
+    AuthenticatedAppVehicleIdHelpIndexRoute:
+      AuthenticatedAppVehicleIdHelpIndexRoute,
+    AuthenticatedAppVehicleIdLocationIndexRoute:
+      AuthenticatedAppVehicleIdLocationIndexRoute,
+    AuthenticatedAppVehicleIdMaintenanceIndexRoute:
+      AuthenticatedAppVehicleIdMaintenanceIndexRoute,
+    AuthenticatedAppVehicleIdOwnershipIndexRoute:
+      AuthenticatedAppVehicleIdOwnershipIndexRoute,
+    AuthenticatedAppVehicleIdSensorsIndexRoute:
+      AuthenticatedAppVehicleIdSensorsIndexRoute,
+    AuthenticatedAppVehicleIdServiceCentersIndexRoute:
+      AuthenticatedAppVehicleIdServiceCentersIndexRoute,
+    AuthenticatedAppVehicleIdSettingsIndexRoute:
+      AuthenticatedAppVehicleIdSettingsIndexRoute,
+    AuthenticatedAppVehicleIdTablesIndexRoute:
+      AuthenticatedAppVehicleIdTablesIndexRoute,
+    AuthenticatedAppVehicleIdVehicleStatusIndexRoute:
+      AuthenticatedAppVehicleIdVehicleStatusIndexRoute,
+  }
+
+const AuthenticatedAppVehicleIdRouteWithChildren =
+  AuthenticatedAppVehicleIdRoute._addFileChildren(
+    AuthenticatedAppVehicleIdRouteChildren,
+  )
+
+interface AuthenticatedAppNotificationsRouteChildren {
+  AuthenticatedAppNotificationsIndexRoute: typeof AuthenticatedAppNotificationsIndexRoute
 }
 
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
-)
+const AuthenticatedAppNotificationsRouteChildren: AuthenticatedAppNotificationsRouteChildren =
+  {
+    AuthenticatedAppNotificationsIndexRoute:
+      AuthenticatedAppNotificationsIndexRoute,
+  }
 
-interface LandingPageRouteChildren {
-  LandingPageIndexRoute: typeof LandingPageIndexRoute
-}
-
-const LandingPageRouteChildren: LandingPageRouteChildren = {
-  LandingPageIndexRoute: LandingPageIndexRoute,
-}
-
-const LandingPageRouteWithChildren = LandingPageRoute._addFileChildren(
-  LandingPageRouteChildren,
-)
+const AuthenticatedAppNotificationsRouteWithChildren =
+  AuthenticatedAppNotificationsRoute._addFileChildren(
+    AuthenticatedAppNotificationsRouteChildren,
+  )
 
 export interface FileRoutesByFullPath {
   '': typeof LandingPageRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/': typeof LandingPageIndexRoute
+  '/app/$vehicleId': typeof AuthenticatedAppVehicleIdRouteWithChildren
+  '/app/notifications': typeof AuthenticatedAppNotificationsRouteWithChildren
   '/app': typeof AuthenticatedAppIndexRoute
-  '/app/$vehicleId': typeof AuthenticatedAppVehicleIdIndexRoute
+  '/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
+  '/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/$vehicleId/analytics': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/app/$vehicleId/charts': typeof AuthenticatedAppVehicleIdChartsIndexRoute
   '/app/$vehicleId/dashboard': typeof AuthenticatedAppVehicleIdDashboardIndexRoute
@@ -447,12 +496,13 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
-  '': typeof AuthenticatedRouteWithChildren
+  '': typeof AuthRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/': typeof LandingPageIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/$vehicleId': typeof AuthenticatedAppVehicleIdIndexRoute
+  '/app/notifications': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/$vehicleId/analytics': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/app/$vehicleId/charts': typeof AuthenticatedAppVehicleIdChartsIndexRoute
   '/app/$vehicleId/dashboard': typeof AuthenticatedAppVehicleIdDashboardIndexRoute
@@ -472,13 +522,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_auth': typeof AuthRouteWithChildren
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_landing-page': typeof LandingPageRouteWithChildren
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_landing-page/': typeof LandingPageIndexRoute
+  '/_authenticated/app/$vehicleId': typeof AuthenticatedAppVehicleIdRouteWithChildren
+  '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRouteWithChildren
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
+  '/_authenticated/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/_authenticated/app/$vehicleId/analytics/': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/_authenticated/app/$vehicleId/charts/': typeof AuthenticatedAppVehicleIdChartsIndexRoute
   '/_authenticated/app/$vehicleId/dashboard/': typeof AuthenticatedAppVehicleIdDashboardIndexRoute
@@ -502,8 +554,11 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/'
-    | '/app'
     | '/app/$vehicleId'
+    | '/app/notifications'
+    | '/app'
+    | '/app/$vehicleId/'
+    | '/app/notifications/'
     | '/app/$vehicleId/analytics'
     | '/app/$vehicleId/charts'
     | '/app/$vehicleId/dashboard'
@@ -526,6 +581,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/app/$vehicleId'
+    | '/app/notifications'
     | '/app/$vehicleId/analytics'
     | '/app/$vehicleId/charts'
     | '/app/$vehicleId/dashboard'
@@ -543,13 +599,15 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_auth'
-    | '/_authenticated'
     | '/_landing-page'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_landing-page/'
+    | '/_authenticated/app/$vehicleId'
+    | '/_authenticated/app/notifications'
     | '/_authenticated/app/'
     | '/_authenticated/app/$vehicleId/'
+    | '/_authenticated/app/notifications/'
     | '/_authenticated/app/$vehicleId/analytics/'
     | '/_authenticated/app/$vehicleId/charts/'
     | '/_authenticated/app/$vehicleId/dashboard/'
@@ -569,14 +627,19 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LandingPageRoute: typeof LandingPageRouteWithChildren
+  AuthenticatedAppVehicleIdRoute: typeof AuthenticatedAppVehicleIdRouteWithChildren
+  AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRouteWithChildren
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LandingPageRoute: LandingPageRouteWithChildren,
+  AuthenticatedAppVehicleIdRoute: AuthenticatedAppVehicleIdRouteWithChildren,
+  AuthenticatedAppNotificationsRoute:
+    AuthenticatedAppNotificationsRouteWithChildren,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -590,8 +653,10 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_auth",
-        "/_authenticated",
-        "/_landing-page"
+        "/_landing-page",
+        "/_authenticated/app/$vehicleId",
+        "/_authenticated/app/notifications",
+        "/_authenticated/app/"
       ]
     },
     "/_auth": {
@@ -599,27 +664,6 @@ export const routeTree = rootRoute
       "children": [
         "/_auth/sign-in",
         "/_auth/sign-up"
-      ]
-    },
-    "/_authenticated": {
-      "filePath": "_authenticated.tsx",
-      "children": [
-        "/_authenticated/app/",
-        "/_authenticated/app/$vehicleId/",
-        "/_authenticated/app/$vehicleId/analytics/",
-        "/_authenticated/app/$vehicleId/charts/",
-        "/_authenticated/app/$vehicleId/dashboard/",
-        "/_authenticated/app/$vehicleId/diagnostics/",
-        "/_authenticated/app/$vehicleId/export/",
-        "/_authenticated/app/$vehicleId/help/",
-        "/_authenticated/app/$vehicleId/location/",
-        "/_authenticated/app/$vehicleId/maintenance/",
-        "/_authenticated/app/$vehicleId/ownership/",
-        "/_authenticated/app/$vehicleId/sensors/",
-        "/_authenticated/app/$vehicleId/service-centers/",
-        "/_authenticated/app/$vehicleId/settings/",
-        "/_authenticated/app/$vehicleId/tables/",
-        "/_authenticated/app/$vehicleId/vehicle-status/"
       ]
     },
     "/_landing-page": {
@@ -640,69 +684,98 @@ export const routeTree = rootRoute
       "filePath": "_landing-page/index.tsx",
       "parent": "/_landing-page"
     },
+    "/_authenticated/app/$vehicleId": {
+      "filePath": "_authenticated.app.$vehicleId.tsx",
+      "children": [
+        "/_authenticated/app/$vehicleId/",
+        "/_authenticated/app/$vehicleId/analytics/",
+        "/_authenticated/app/$vehicleId/charts/",
+        "/_authenticated/app/$vehicleId/dashboard/",
+        "/_authenticated/app/$vehicleId/diagnostics/",
+        "/_authenticated/app/$vehicleId/export/",
+        "/_authenticated/app/$vehicleId/help/",
+        "/_authenticated/app/$vehicleId/location/",
+        "/_authenticated/app/$vehicleId/maintenance/",
+        "/_authenticated/app/$vehicleId/ownership/",
+        "/_authenticated/app/$vehicleId/sensors/",
+        "/_authenticated/app/$vehicleId/service-centers/",
+        "/_authenticated/app/$vehicleId/settings/",
+        "/_authenticated/app/$vehicleId/tables/",
+        "/_authenticated/app/$vehicleId/vehicle-status/"
+      ]
+    },
+    "/_authenticated/app/notifications": {
+      "filePath": "_authenticated.app.notifications.tsx",
+      "children": [
+        "/_authenticated/app/notifications/"
+      ]
+    },
     "/_authenticated/app/": {
-      "filePath": "_authenticated/app/index.tsx",
-      "parent": "/_authenticated"
+      "filePath": "_authenticated/app/index.tsx"
     },
     "/_authenticated/app/$vehicleId/": {
       "filePath": "_authenticated/app/$vehicleId/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
+    },
+    "/_authenticated/app/notifications/": {
+      "filePath": "_authenticated/app/notifications/index.tsx",
+      "parent": "/_authenticated/app/notifications"
     },
     "/_authenticated/app/$vehicleId/analytics/": {
       "filePath": "_authenticated/app/$vehicleId/analytics/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/charts/": {
       "filePath": "_authenticated/app/$vehicleId/charts/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/dashboard/": {
       "filePath": "_authenticated/app/$vehicleId/dashboard/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/diagnostics/": {
       "filePath": "_authenticated/app/$vehicleId/diagnostics/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/export/": {
       "filePath": "_authenticated/app/$vehicleId/export/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/help/": {
       "filePath": "_authenticated/app/$vehicleId/help/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/location/": {
       "filePath": "_authenticated/app/$vehicleId/location/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/maintenance/": {
       "filePath": "_authenticated/app/$vehicleId/maintenance/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/ownership/": {
       "filePath": "_authenticated/app/$vehicleId/ownership/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/sensors/": {
       "filePath": "_authenticated/app/$vehicleId/sensors/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/service-centers/": {
       "filePath": "_authenticated/app/$vehicleId/service-centers/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/settings/": {
       "filePath": "_authenticated/app/$vehicleId/settings/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/tables/": {
       "filePath": "_authenticated/app/$vehicleId/tables/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/vehicle-status/": {
       "filePath": "_authenticated/app/$vehicleId/vehicle-status/index.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/app/$vehicleId"
     }
   }
 }
