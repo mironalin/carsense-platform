@@ -16,6 +16,19 @@ import {
   zImageUploadSchema,
   zUploadErrorResponseSchema,
 } from "../zod/z-upload";
+import env from "../../env";
+
+/**
+ * Get the appropriate R2 public URL based on environment
+ */
+function getR2PublicUrl(c: any): string {
+  // In development, prefer dev URL if available, otherwise fall back to prod URL
+  if (env.NODE_ENV === "development") {
+    return c.env.R2_DEV_PUBLIC_URL || c.env.R2_PUBLIC_URL;
+  }
+  // In production, always use production URL
+  return c.env.R2_PUBLIC_URL;
+}
 
 export const uploadRoute = new Hono<AppBindings>()
   .use("*", getSessionAndUser)
@@ -119,11 +132,17 @@ export const uploadRoute = new Hono<AppBindings>()
         throw new Error("Failed to upload to R2");
       }
 
-      // Generate public URL (use dev URL if available, otherwise production URL)
-      const baseUrl = c.env.R2_DEV_PUBLIC_URL || c.env.R2_PUBLIC_URL;
+      // Generate public URL using environment-aware function
+      const baseUrl = getR2PublicUrl(c);
       const imageUrl = `${baseUrl}/${key}`;
 
-      logger.info({ userId: user.id, key, size: imageBuffer.length }, "Image uploaded successfully");
+      logger.info({ 
+        userId: user.id, 
+        key, 
+        size: imageBuffer.length, 
+        baseUrl, 
+        environment: env.NODE_ENV 
+      }, "Image uploaded successfully");
 
       return c.json({
         success: true,
@@ -192,7 +211,7 @@ export const uploadRoute = new Hono<AppBindings>()
       const { imageUrl } = c.req.valid("json");
       
       // Check if URL is from either production or development bucket
-      const baseUrl = c.env.R2_DEV_PUBLIC_URL || c.env.R2_PUBLIC_URL;
+      const baseUrl = getR2PublicUrl(c);
       const isValidUrl = imageUrl && (
         imageUrl.includes(c.env.R2_PUBLIC_URL) || 
         (c.env.R2_DEV_PUBLIC_URL && imageUrl.includes(c.env.R2_DEV_PUBLIC_URL))
