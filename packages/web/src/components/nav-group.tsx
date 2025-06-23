@@ -35,7 +35,7 @@ export function NavGroup({
 
   return (
     <SidebarGroup {...props}>
-      <SidebarGroupContent className="flex flex-col gap-2">
+      <SidebarGroupContent className="flex flex-col">
         <SidebarGroupLabel>{label}</SidebarGroupLabel>
         <SidebarMenu>
           {items.map((item) => {

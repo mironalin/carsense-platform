@@ -131,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavGroup label="Overview" items={data.navOverview} />
         <NavGroup label="Data & Monitoring" items={data.navDataAndMonitoring} />
         <NavGroup label="Vehicle Management" items={data.navVehicleManagement} />
-        <NavGroup items={data.navFooter} className="mt-auto" isFooter={true} />
+        <NavGroup items={data.navFooter} isFooter={true} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
