@@ -5,6 +5,7 @@ import { authRoute } from "./routes/auth-route";
 import { diagnosticsRoute } from "./routes/diagnostics-route";
 import { dtcRoute } from "./routes/dtc-route";
 import { locationsRoute } from "./routes/locations-route";
+import { maintenanceRoute } from "./routes/maintenance-route";
 import { notificationsRoute } from "./routes/notifications-route";
 import { ownershipTransfersRoute } from "./routes/ownership-transfers-route";
 import { sessionStatusRoute } from "./routes/session-status-route";
@@ -40,6 +41,7 @@ export const apiRoutes = app
   .route("/diagnostics", diagnosticsRoute)
   .route("/locations", locationsRoute)
   .route("/dtc", dtcRoute)
+  .route("/maintenance", maintenanceRoute)
   .route("/notifications", notificationsRoute)
   .route("/ownership-transfers", ownershipTransfersRoute);
 
