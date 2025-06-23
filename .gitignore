@@ -34,4 +34,5 @@ packages/api/wrangler.jsonc
 packages/api/src/db/schema/openapi.json
 packages/api/migrations/meta/_journal.json
 packages/api/migrations/meta/0002_snapshot.json
-packages/api/migrations/0002_complete_robbie_robertson.sql
+
+.wrangler/
