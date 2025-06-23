@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import type { SensorCardData, SensorFiltersProps } from "../types";
 
 import { getCategoryIcon } from "../../utils/sensor-categories";
+import { Card } from "@/components/ui/card";
 
 export function SensorFilters({
   searchTerm,
@@ -29,7 +30,7 @@ export function SensorFilters({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-xl border bg-card p-4 shadow-sm">
+    <Card className="border bg-card p-4 shadow-sm">
       <div className="space-y-4">
         {/* Search and favorite toggle */}
         <div className="flex flex-wrap gap-3 items-center">
@@ -196,6 +197,6 @@ export function SensorFilters({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }
