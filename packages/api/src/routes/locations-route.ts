@@ -387,6 +387,7 @@ export const locationsRoute = new Hono<AppBindings>()
       altitude: location.altitude,
       speed: location.speed,
       accuracy: location.accuracy,
+      timestamp: location.timestamp, // Timestamp is already transformed by zBulkLocationInsertSchema
     }));
 
     // Validate all locations

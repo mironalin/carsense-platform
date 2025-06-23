@@ -20,8 +20,10 @@ export const zLocationInsertSchema = insertLocationSchema.omit({
  */
 export const zBulkLocationInsertSchema = insertLocationSchema.omit({
   uuid: true,
-  timestamp: true,
   diagnosticUUID: true, // This will be provided in the URL parameter
+  timestamp: true, // We'll handle timestamp transformation separately
+}).extend({
+  timestamp: z.string().datetime().optional().transform(val => val ? new Date(val) : undefined), // Convert string to Date
 });
 
 export type LocationInsertSchema = z.infer<typeof zLocationInsertSchema>;
