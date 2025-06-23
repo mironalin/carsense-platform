@@ -202,7 +202,7 @@ export function VehicleRecentLocationsCard({
                 </div>
 
                 {/* Actions */}
-                <div className="flex justify-between">
+                <div className="flex gap-2">
                   {/* Center map button */}
                   <Button
                     variant="outline"
