@@ -38,7 +38,7 @@ export function NavUser() {
   const { theme, setTheme } = useTheme();
   const [pending, setPending] = useState(false);
   const navigate = useNavigate();
-  const { data: session, isPending: isSessionPending } = useSession();
+  const { data: session, isPending: isSessionPending, error } = useSession();
   const { data: unreadData } = useGetUnreadCount();
 
   if (isSessionPending) {
@@ -62,8 +62,29 @@ export function NavUser() {
     );
   }
 
-  if (!session) {
-    throw new Error("User not found");
+  if (!session || !session.user) {
+    // Log the error for debugging but don't crash the app
+    console.error("NavUser - Session error:", error);
+    
+    // Return a fallback UI instead of throwing an error
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            disabled
+          >
+            <Avatar className="h-8 w-8 rounded-lg">
+              <AvatarFallback>?</AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="text-muted-foreground">Session error</span>
+            </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
   }
 
   const { name, email, image } = session.user;
