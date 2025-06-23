@@ -18,8 +18,10 @@ import { Route as AuthSignUpImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInImport } from './routes/_auth/sign-in'
 import { Route as AuthenticatedAppIndexImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAppNotificationsImport } from './routes/_authenticated.app.notifications'
+import { Route as AuthenticatedAppAccountImport } from './routes/_authenticated.app.account'
 import { Route as AuthenticatedAppVehicleIdImport } from './routes/_authenticated.app.$vehicleId'
 import { Route as AuthenticatedAppNotificationsIndexImport } from './routes/_authenticated/app/notifications/index'
+import { Route as AuthenticatedAppAccountIndexImport } from './routes/_authenticated/app/account/index'
 import { Route as AuthenticatedAppVehicleIdIndexImport } from './routes/_authenticated/app/$vehicleId/index'
 import { Route as AuthenticatedAppVehicleIdVehicleStatusIndexImport } from './routes/_authenticated/app/$vehicleId/vehicle-status/index'
 import { Route as AuthenticatedAppVehicleIdTablesIndexImport } from './routes/_authenticated/app/$vehicleId/tables/index'
@@ -79,6 +81,12 @@ const AuthenticatedAppNotificationsRoute =
     getParentRoute: () => rootRoute,
   } as any)
 
+const AuthenticatedAppAccountRoute = AuthenticatedAppAccountImport.update({
+  id: '/_authenticated/app/account',
+  path: '/app/account',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthenticatedAppVehicleIdRoute = AuthenticatedAppVehicleIdImport.update({
   id: '/_authenticated/app/$vehicleId',
   path: '/app/$vehicleId',
@@ -90,6 +98,13 @@ const AuthenticatedAppNotificationsIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedAppNotificationsRoute,
+  } as any)
+
+const AuthenticatedAppAccountIndexRoute =
+  AuthenticatedAppAccountIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAppAccountRoute,
   } as any)
 
 const AuthenticatedAppVehicleIdIndexRoute =
@@ -243,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppVehicleIdImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/app/account': {
+      id: '/_authenticated/app/account'
+      path: '/app/account'
+      fullPath: '/app/account'
+      preLoaderRoute: typeof AuthenticatedAppAccountImport
+      parentRoute: typeof rootRoute
+    }
     '/_authenticated/app/notifications': {
       id: '/_authenticated/app/notifications'
       path: '/app/notifications'
@@ -263,6 +285,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/$vehicleId/'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdIndexImport
       parentRoute: typeof AuthenticatedAppVehicleIdImport
+    }
+    '/_authenticated/app/account/': {
+      id: '/_authenticated/app/account/'
+      path: '/'
+      fullPath: '/app/account/'
+      preLoaderRoute: typeof AuthenticatedAppAccountIndexImport
+      parentRoute: typeof AuthenticatedAppAccountImport
     }
     '/_authenticated/app/notifications/': {
       id: '/_authenticated/app/notifications/'
@@ -454,6 +483,20 @@ const AuthenticatedAppVehicleIdRouteWithChildren =
     AuthenticatedAppVehicleIdRouteChildren,
   )
 
+interface AuthenticatedAppAccountRouteChildren {
+  AuthenticatedAppAccountIndexRoute: typeof AuthenticatedAppAccountIndexRoute
+}
+
+const AuthenticatedAppAccountRouteChildren: AuthenticatedAppAccountRouteChildren =
+  {
+    AuthenticatedAppAccountIndexRoute: AuthenticatedAppAccountIndexRoute,
+  }
+
+const AuthenticatedAppAccountRouteWithChildren =
+  AuthenticatedAppAccountRoute._addFileChildren(
+    AuthenticatedAppAccountRouteChildren,
+  )
+
 interface AuthenticatedAppNotificationsRouteChildren {
   AuthenticatedAppNotificationsIndexRoute: typeof AuthenticatedAppNotificationsIndexRoute
 }
@@ -475,9 +518,11 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof AuthSignUpRoute
   '/': typeof LandingPageIndexRoute
   '/app/$vehicleId': typeof AuthenticatedAppVehicleIdRouteWithChildren
+  '/app/account': typeof AuthenticatedAppAccountRouteWithChildren
   '/app/notifications': typeof AuthenticatedAppNotificationsRouteWithChildren
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
+  '/app/account/': typeof AuthenticatedAppAccountIndexRoute
   '/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/$vehicleId/analytics': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/app/$vehicleId/charts': typeof AuthenticatedAppVehicleIdChartsIndexRoute
@@ -502,6 +547,7 @@ export interface FileRoutesByTo {
   '/': typeof LandingPageIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/$vehicleId': typeof AuthenticatedAppVehicleIdIndexRoute
+  '/app/account': typeof AuthenticatedAppAccountIndexRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/$vehicleId/analytics': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/app/$vehicleId/charts': typeof AuthenticatedAppVehicleIdChartsIndexRoute
@@ -527,9 +573,11 @@ export interface FileRoutesById {
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_landing-page/': typeof LandingPageIndexRoute
   '/_authenticated/app/$vehicleId': typeof AuthenticatedAppVehicleIdRouteWithChildren
+  '/_authenticated/app/account': typeof AuthenticatedAppAccountRouteWithChildren
   '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRouteWithChildren
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
+  '/_authenticated/app/account/': typeof AuthenticatedAppAccountIndexRoute
   '/_authenticated/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/_authenticated/app/$vehicleId/analytics/': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/_authenticated/app/$vehicleId/charts/': typeof AuthenticatedAppVehicleIdChartsIndexRoute
@@ -555,9 +603,11 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/'
     | '/app/$vehicleId'
+    | '/app/account'
     | '/app/notifications'
     | '/app'
     | '/app/$vehicleId/'
+    | '/app/account/'
     | '/app/notifications/'
     | '/app/$vehicleId/analytics'
     | '/app/$vehicleId/charts'
@@ -581,6 +631,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/app/$vehicleId'
+    | '/app/account'
     | '/app/notifications'
     | '/app/$vehicleId/analytics'
     | '/app/$vehicleId/charts'
@@ -604,9 +655,11 @@ export interface FileRouteTypes {
     | '/_auth/sign-up'
     | '/_landing-page/'
     | '/_authenticated/app/$vehicleId'
+    | '/_authenticated/app/account'
     | '/_authenticated/app/notifications'
     | '/_authenticated/app/'
     | '/_authenticated/app/$vehicleId/'
+    | '/_authenticated/app/account/'
     | '/_authenticated/app/notifications/'
     | '/_authenticated/app/$vehicleId/analytics/'
     | '/_authenticated/app/$vehicleId/charts/'
@@ -629,6 +682,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   LandingPageRoute: typeof LandingPageRouteWithChildren
   AuthenticatedAppVehicleIdRoute: typeof AuthenticatedAppVehicleIdRouteWithChildren
+  AuthenticatedAppAccountRoute: typeof AuthenticatedAppAccountRouteWithChildren
   AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRouteWithChildren
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
@@ -637,6 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LandingPageRoute: LandingPageRouteWithChildren,
   AuthenticatedAppVehicleIdRoute: AuthenticatedAppVehicleIdRouteWithChildren,
+  AuthenticatedAppAccountRoute: AuthenticatedAppAccountRouteWithChildren,
   AuthenticatedAppNotificationsRoute:
     AuthenticatedAppNotificationsRouteWithChildren,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
@@ -655,6 +710,7 @@ export const routeTree = rootRoute
         "/_auth",
         "/_landing-page",
         "/_authenticated/app/$vehicleId",
+        "/_authenticated/app/account",
         "/_authenticated/app/notifications",
         "/_authenticated/app/"
       ]
@@ -704,6 +760,12 @@ export const routeTree = rootRoute
         "/_authenticated/app/$vehicleId/vehicle-status/"
       ]
     },
+    "/_authenticated/app/account": {
+      "filePath": "_authenticated.app.account.tsx",
+      "children": [
+        "/_authenticated/app/account/"
+      ]
+    },
     "/_authenticated/app/notifications": {
       "filePath": "_authenticated.app.notifications.tsx",
       "children": [
@@ -716,6 +778,10 @@ export const routeTree = rootRoute
     "/_authenticated/app/$vehicleId/": {
       "filePath": "_authenticated/app/$vehicleId/index.tsx",
       "parent": "/_authenticated/app/$vehicleId"
+    },
+    "/_authenticated/app/account/": {
+      "filePath": "_authenticated/app/account/index.tsx",
+      "parent": "/_authenticated/app/account"
     },
     "/_authenticated/app/notifications/": {
       "filePath": "_authenticated/app/notifications/index.tsx",
