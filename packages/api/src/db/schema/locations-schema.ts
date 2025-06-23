@@ -10,10 +10,14 @@ import {
   createUpdateSchema,
 } from "drizzle-zod";
 
+import { diagnosticsTable } from "./diagnostics-schema";
 import { vehiclesTable } from "./vehicles-schema";
 
 export const locationsTable = pgTable("locations", {
   uuid: uuid("uuid").primaryKey().defaultRandom(),
+  diagnosticUUID: uuid("diagnosticUUID")
+    .notNull()
+    .references(() => diagnosticsTable.uuid, { onDelete: "cascade" }),
   vehicleUUID: uuid("vehicle_uuid")
     .notNull()
     .references(() => vehiclesTable.uuid, { onDelete: "cascade" }),
