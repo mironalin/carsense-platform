@@ -123,7 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Link to="/app">
                 <ArrowUpCircleIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">CarSense</span>
+                <span className="text-muted-foreground font-mono font-medium">CarSense</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
