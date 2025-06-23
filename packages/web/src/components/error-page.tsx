@@ -1,4 +1,4 @@
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -170,9 +170,11 @@ export function ErrorPage({
             <div className="text-center text-sm text-muted-foreground space-y-2">
               <p>Need help? Contact our support team</p>
               <div className="flex justify-center gap-4">
-                <Button variant="link" size="sm" className="p-0 h-auto">
-                  Help Center
-                </Button>
+                  <Button variant="link" size="sm" className="p-0 h-auto" asChild>
+                    <Link to="/app/help">
+                      Help Center
+                    </Link>
+                  </Button>
                 <Button variant="link" size="sm" className="p-0 h-auto">
                   Contact Support
                 </Button>
