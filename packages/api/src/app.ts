@@ -10,6 +10,7 @@ import { notificationsRoute } from "./routes/notifications-route";
 import { ownershipTransfersRoute } from "./routes/ownership-transfers-route";
 import { sessionStatusRoute } from "./routes/session-status-route";
 import { testRoute } from "./routes/test-route";
+import { uploadRoute } from "./routes/upload-route";
 import { vehiclesRoute } from "./routes/vehicles-route";
 // try {
 //   const result = await auth.api.signInEmail({
@@ -43,7 +44,8 @@ export const apiRoutes = app
   .route("/dtc", dtcRoute)
   .route("/maintenance", maintenanceRoute)
   .route("/notifications", notificationsRoute)
-  .route("/ownership-transfers", ownershipTransfersRoute);
+  .route("/ownership-transfers", ownershipTransfersRoute)
+  .route("/upload", uploadRoute);
 
 app.get("*", c => c.env.ASSETS.fetch(c.req.raw));
 
