@@ -5,8 +5,8 @@
     "dev": "bun run --hot src/index.ts",
     "lint": "eslint .",
     "lint:fix": "bun run lint --fix",
-    "wrangler:dev": "wrangler dev",
-    "wrangler:deploy": "wrangler deploy --minify"
+    "wrangler:dev": "wrangler dev --config wrangler.dev.jsonc",
+    "wrangler:deploy": "wrangler deploy --minify --config wrangler.jsonc"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.3",
