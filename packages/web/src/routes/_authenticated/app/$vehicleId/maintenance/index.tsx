@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 
+import { ErrorPage } from "@/components/error-page";
+import { LoaderPage } from "@/components/loader-page";
+import { NotFoundPage } from "@/components/not-found-page";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGetMaintenanceHistory } from "@/features/maintenance/api/use-get-maintenance-history";
+import { getMaintenanceHistoryQueryOptions, useGetMaintenanceHistory } from "@/features/maintenance/api/use-get-maintenance-history";
 import { AddMaintenanceDialog } from "@/features/maintenance/components/forms/add-maintenance-dialog";
 import { MaintenanceHistoryList } from "@/features/maintenance/components/history/maintenance-history-list";
 import { MaintenanceSummary } from "@/features/maintenance/components/summary/maintenance-summary";
@@ -13,7 +16,14 @@ import { containerVariants, itemVariants } from "@/features/maintenance/utils/an
 export const Route = createFileRoute(
   "/_authenticated/app/$vehicleId/maintenance/",
 )({
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    queryClient.prefetchQuery(getMaintenanceHistoryQueryOptions({ vehicleUUID: params.vehicleId }));
+  },
   component: RouteComponent,
+  pendingComponent: () => <LoaderPage />,
+  notFoundComponent: () => <NotFoundPage />,
+  errorComponent: () => <ErrorPage />,
 });
 
 function RouteComponent() {
@@ -22,25 +32,7 @@ function RouteComponent() {
   const {
     data: maintenanceData,
     isLoading,
-    error,
-  } = useGetMaintenanceHistory(vehicleId);
-
-  if (error) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center text-red-600">
-              <p>Failed to load maintenance data</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {error instanceof Error ? error.message : "Unknown error occurred"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  } = useGetMaintenanceHistory({ vehicleUUID: vehicleId, suspense: true });
 
   return (
     <motion.div
