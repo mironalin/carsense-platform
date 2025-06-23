@@ -19,7 +19,7 @@ const EnvSchema = z.object({
   ANDROID_APP_REDIRECT_URI: z.string().default("carsense://auth"),
   LOCAL_API_DEV_URL: z.string().default("http://localhost:3000"),
   LOCAL_WEB_DEV_URL: z.string().default("http://localhost:5173"),
-  PROD_DEV_URL: z.string().default("https://api.carsense.workers.dev"),
+  PROD_DEV_URL: z.string().default("https://carsense.alinmiron.live"),
 });
 
 export type env = z.infer<typeof EnvSchema>;
