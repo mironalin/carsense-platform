@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/rpc";
 
@@ -28,18 +28,25 @@ export async function getDiagnosticDTCsQuery(diagnosticId: string) {
   return dtcs;
 }
 
-export function useGetDiagnosticDTCs(diagnosticId: string | undefined) {
-  return useQuery({
-    queryKey: ["diagnostics", diagnosticId, "dtcs"],
-    queryFn: () => getDiagnosticDTCsQuery(diagnosticId!),
-    enabled: Boolean(diagnosticId),
-  });
+export function useGetDiagnosticDTCs({ diagnosticId, suspense = false }: { diagnosticId: string | undefined; suspense?: boolean }) {
+  if (suspense) {
+    return useSuspenseQuery({
+      queryKey: ["diagnostics", diagnosticId, "dtcs"],
+      queryFn: () => getDiagnosticDTCsQuery(diagnosticId!),
+    });
+  }
+  else {
+    return useQuery({
+      queryKey: ["diagnostics", diagnosticId, "dtcs"],
+      queryFn: () => getDiagnosticDTCsQuery(diagnosticId!),
+      enabled: Boolean(diagnosticId),
+    });
+  }
 }
 
-export function getDiagnosticDTCsQueryOptions(diagnosticId: string) {
-  return {
+export function getDiagnosticDTCsQueryOptions({ diagnosticId }: { diagnosticId: string }) {
+  return queryOptions({
     queryKey: ["diagnostics", diagnosticId, "dtcs"],
     queryFn: () => getDiagnosticDTCsQuery(diagnosticId),
-    enabled: Boolean(diagnosticId),
-  };
+  });
 }

@@ -34,7 +34,7 @@ function DTCsListContent({
     data: dtcs,
     isLoading: isLoadingData,
     error: fetchError,
-  } = useGetDiagnosticDTCs(diagnosticId);
+  } = useGetDiagnosticDTCs({ diagnosticId, suspense: true });
 
   const isLoading = isLoadingProp || isLoadingData;
   const error = errorProp || fetchError;
