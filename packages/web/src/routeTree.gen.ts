@@ -18,9 +18,11 @@ import { Route as AuthSignUpImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInImport } from './routes/_auth/sign-in'
 import { Route as AuthenticatedAppIndexImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAppNotificationsImport } from './routes/_authenticated.app.notifications'
+import { Route as AuthenticatedAppHelpImport } from './routes/_authenticated.app.help'
 import { Route as AuthenticatedAppAccountImport } from './routes/_authenticated.app.account'
 import { Route as AuthenticatedAppVehicleIdImport } from './routes/_authenticated.app.$vehicleId'
 import { Route as AuthenticatedAppNotificationsIndexImport } from './routes/_authenticated/app/notifications/index'
+import { Route as AuthenticatedAppHelpIndexImport } from './routes/_authenticated/app/help/index'
 import { Route as AuthenticatedAppAccountIndexImport } from './routes/_authenticated/app/account/index'
 import { Route as AuthenticatedAppVehicleIdIndexImport } from './routes/_authenticated/app/$vehicleId/index'
 import { Route as AuthenticatedAppVehicleIdVehicleStatusIndexImport } from './routes/_authenticated/app/$vehicleId/vehicle-status/index'
@@ -31,7 +33,6 @@ import { Route as AuthenticatedAppVehicleIdSensorsIndexImport } from './routes/_
 import { Route as AuthenticatedAppVehicleIdOwnershipIndexImport } from './routes/_authenticated/app/$vehicleId/ownership/index'
 import { Route as AuthenticatedAppVehicleIdMaintenanceIndexImport } from './routes/_authenticated/app/$vehicleId/maintenance/index'
 import { Route as AuthenticatedAppVehicleIdLocationIndexImport } from './routes/_authenticated/app/$vehicleId/location/index'
-import { Route as AuthenticatedAppVehicleIdHelpIndexImport } from './routes/_authenticated/app/$vehicleId/help/index'
 import { Route as AuthenticatedAppVehicleIdExportIndexImport } from './routes/_authenticated/app/$vehicleId/export/index'
 import { Route as AuthenticatedAppVehicleIdDiagnosticsIndexImport } from './routes/_authenticated/app/$vehicleId/diagnostics/index'
 import { Route as AuthenticatedAppVehicleIdDashboardIndexImport } from './routes/_authenticated/app/$vehicleId/dashboard/index'
@@ -81,6 +82,12 @@ const AuthenticatedAppNotificationsRoute =
     getParentRoute: () => rootRoute,
   } as any)
 
+const AuthenticatedAppHelpRoute = AuthenticatedAppHelpImport.update({
+  id: '/_authenticated/app/help',
+  path: '/app/help',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthenticatedAppAccountRoute = AuthenticatedAppAccountImport.update({
   id: '/_authenticated/app/account',
   path: '/app/account',
@@ -99,6 +106,12 @@ const AuthenticatedAppNotificationsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAppNotificationsRoute,
   } as any)
+
+const AuthenticatedAppHelpIndexRoute = AuthenticatedAppHelpIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAppHelpRoute,
+} as any)
 
 const AuthenticatedAppAccountIndexRoute =
   AuthenticatedAppAccountIndexImport.update({
@@ -167,13 +180,6 @@ const AuthenticatedAppVehicleIdLocationIndexRoute =
   AuthenticatedAppVehicleIdLocationIndexImport.update({
     id: '/location/',
     path: '/location/',
-    getParentRoute: () => AuthenticatedAppVehicleIdRoute,
-  } as any)
-
-const AuthenticatedAppVehicleIdHelpIndexRoute =
-  AuthenticatedAppVehicleIdHelpIndexImport.update({
-    id: '/help/',
-    path: '/help/',
     getParentRoute: () => AuthenticatedAppVehicleIdRoute,
   } as any)
 
@@ -265,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAccountImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated/app/help': {
+      id: '/_authenticated/app/help'
+      path: '/app/help'
+      fullPath: '/app/help'
+      preLoaderRoute: typeof AuthenticatedAppHelpImport
+      parentRoute: typeof rootRoute
+    }
     '/_authenticated/app/notifications': {
       id: '/_authenticated/app/notifications'
       path: '/app/notifications'
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/account/'
       preLoaderRoute: typeof AuthenticatedAppAccountIndexImport
       parentRoute: typeof AuthenticatedAppAccountImport
+    }
+    '/_authenticated/app/help/': {
+      id: '/_authenticated/app/help/'
+      path: '/'
+      fullPath: '/app/help/'
+      preLoaderRoute: typeof AuthenticatedAppHelpIndexImport
+      parentRoute: typeof AuthenticatedAppHelpImport
     }
     '/_authenticated/app/notifications/': {
       id: '/_authenticated/app/notifications/'
@@ -333,13 +353,6 @@ declare module '@tanstack/react-router' {
       path: '/export'
       fullPath: '/app/$vehicleId/export'
       preLoaderRoute: typeof AuthenticatedAppVehicleIdExportIndexImport
-      parentRoute: typeof AuthenticatedAppVehicleIdImport
-    }
-    '/_authenticated/app/$vehicleId/help/': {
-      id: '/_authenticated/app/$vehicleId/help/'
-      path: '/help'
-      fullPath: '/app/$vehicleId/help'
-      preLoaderRoute: typeof AuthenticatedAppVehicleIdHelpIndexImport
       parentRoute: typeof AuthenticatedAppVehicleIdImport
     }
     '/_authenticated/app/$vehicleId/location/': {
@@ -434,7 +447,6 @@ interface AuthenticatedAppVehicleIdRouteChildren {
   AuthenticatedAppVehicleIdDashboardIndexRoute: typeof AuthenticatedAppVehicleIdDashboardIndexRoute
   AuthenticatedAppVehicleIdDiagnosticsIndexRoute: typeof AuthenticatedAppVehicleIdDiagnosticsIndexRoute
   AuthenticatedAppVehicleIdExportIndexRoute: typeof AuthenticatedAppVehicleIdExportIndexRoute
-  AuthenticatedAppVehicleIdHelpIndexRoute: typeof AuthenticatedAppVehicleIdHelpIndexRoute
   AuthenticatedAppVehicleIdLocationIndexRoute: typeof AuthenticatedAppVehicleIdLocationIndexRoute
   AuthenticatedAppVehicleIdMaintenanceIndexRoute: typeof AuthenticatedAppVehicleIdMaintenanceIndexRoute
   AuthenticatedAppVehicleIdOwnershipIndexRoute: typeof AuthenticatedAppVehicleIdOwnershipIndexRoute
@@ -458,8 +470,6 @@ const AuthenticatedAppVehicleIdRouteChildren: AuthenticatedAppVehicleIdRouteChil
       AuthenticatedAppVehicleIdDiagnosticsIndexRoute,
     AuthenticatedAppVehicleIdExportIndexRoute:
       AuthenticatedAppVehicleIdExportIndexRoute,
-    AuthenticatedAppVehicleIdHelpIndexRoute:
-      AuthenticatedAppVehicleIdHelpIndexRoute,
     AuthenticatedAppVehicleIdLocationIndexRoute:
       AuthenticatedAppVehicleIdLocationIndexRoute,
     AuthenticatedAppVehicleIdMaintenanceIndexRoute:
@@ -497,6 +507,17 @@ const AuthenticatedAppAccountRouteWithChildren =
     AuthenticatedAppAccountRouteChildren,
   )
 
+interface AuthenticatedAppHelpRouteChildren {
+  AuthenticatedAppHelpIndexRoute: typeof AuthenticatedAppHelpIndexRoute
+}
+
+const AuthenticatedAppHelpRouteChildren: AuthenticatedAppHelpRouteChildren = {
+  AuthenticatedAppHelpIndexRoute: AuthenticatedAppHelpIndexRoute,
+}
+
+const AuthenticatedAppHelpRouteWithChildren =
+  AuthenticatedAppHelpRoute._addFileChildren(AuthenticatedAppHelpRouteChildren)
+
 interface AuthenticatedAppNotificationsRouteChildren {
   AuthenticatedAppNotificationsIndexRoute: typeof AuthenticatedAppNotificationsIndexRoute
 }
@@ -519,17 +540,18 @@ export interface FileRoutesByFullPath {
   '/': typeof LandingPageIndexRoute
   '/app/$vehicleId': typeof AuthenticatedAppVehicleIdRouteWithChildren
   '/app/account': typeof AuthenticatedAppAccountRouteWithChildren
+  '/app/help': typeof AuthenticatedAppHelpRouteWithChildren
   '/app/notifications': typeof AuthenticatedAppNotificationsRouteWithChildren
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
   '/app/account/': typeof AuthenticatedAppAccountIndexRoute
+  '/app/help/': typeof AuthenticatedAppHelpIndexRoute
   '/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/$vehicleId/analytics': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/app/$vehicleId/charts': typeof AuthenticatedAppVehicleIdChartsIndexRoute
   '/app/$vehicleId/dashboard': typeof AuthenticatedAppVehicleIdDashboardIndexRoute
   '/app/$vehicleId/diagnostics': typeof AuthenticatedAppVehicleIdDiagnosticsIndexRoute
   '/app/$vehicleId/export': typeof AuthenticatedAppVehicleIdExportIndexRoute
-  '/app/$vehicleId/help': typeof AuthenticatedAppVehicleIdHelpIndexRoute
   '/app/$vehicleId/location': typeof AuthenticatedAppVehicleIdLocationIndexRoute
   '/app/$vehicleId/maintenance': typeof AuthenticatedAppVehicleIdMaintenanceIndexRoute
   '/app/$vehicleId/ownership': typeof AuthenticatedAppVehicleIdOwnershipIndexRoute
@@ -548,13 +570,13 @@ export interface FileRoutesByTo {
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/$vehicleId': typeof AuthenticatedAppVehicleIdIndexRoute
   '/app/account': typeof AuthenticatedAppAccountIndexRoute
+  '/app/help': typeof AuthenticatedAppHelpIndexRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsIndexRoute
   '/app/$vehicleId/analytics': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/app/$vehicleId/charts': typeof AuthenticatedAppVehicleIdChartsIndexRoute
   '/app/$vehicleId/dashboard': typeof AuthenticatedAppVehicleIdDashboardIndexRoute
   '/app/$vehicleId/diagnostics': typeof AuthenticatedAppVehicleIdDiagnosticsIndexRoute
   '/app/$vehicleId/export': typeof AuthenticatedAppVehicleIdExportIndexRoute
-  '/app/$vehicleId/help': typeof AuthenticatedAppVehicleIdHelpIndexRoute
   '/app/$vehicleId/location': typeof AuthenticatedAppVehicleIdLocationIndexRoute
   '/app/$vehicleId/maintenance': typeof AuthenticatedAppVehicleIdMaintenanceIndexRoute
   '/app/$vehicleId/ownership': typeof AuthenticatedAppVehicleIdOwnershipIndexRoute
@@ -574,17 +596,18 @@ export interface FileRoutesById {
   '/_landing-page/': typeof LandingPageIndexRoute
   '/_authenticated/app/$vehicleId': typeof AuthenticatedAppVehicleIdRouteWithChildren
   '/_authenticated/app/account': typeof AuthenticatedAppAccountRouteWithChildren
+  '/_authenticated/app/help': typeof AuthenticatedAppHelpRouteWithChildren
   '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRouteWithChildren
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
   '/_authenticated/app/account/': typeof AuthenticatedAppAccountIndexRoute
+  '/_authenticated/app/help/': typeof AuthenticatedAppHelpIndexRoute
   '/_authenticated/app/notifications/': typeof AuthenticatedAppNotificationsIndexRoute
   '/_authenticated/app/$vehicleId/analytics/': typeof AuthenticatedAppVehicleIdAnalyticsIndexRoute
   '/_authenticated/app/$vehicleId/charts/': typeof AuthenticatedAppVehicleIdChartsIndexRoute
   '/_authenticated/app/$vehicleId/dashboard/': typeof AuthenticatedAppVehicleIdDashboardIndexRoute
   '/_authenticated/app/$vehicleId/diagnostics/': typeof AuthenticatedAppVehicleIdDiagnosticsIndexRoute
   '/_authenticated/app/$vehicleId/export/': typeof AuthenticatedAppVehicleIdExportIndexRoute
-  '/_authenticated/app/$vehicleId/help/': typeof AuthenticatedAppVehicleIdHelpIndexRoute
   '/_authenticated/app/$vehicleId/location/': typeof AuthenticatedAppVehicleIdLocationIndexRoute
   '/_authenticated/app/$vehicleId/maintenance/': typeof AuthenticatedAppVehicleIdMaintenanceIndexRoute
   '/_authenticated/app/$vehicleId/ownership/': typeof AuthenticatedAppVehicleIdOwnershipIndexRoute
@@ -604,17 +627,18 @@ export interface FileRouteTypes {
     | '/'
     | '/app/$vehicleId'
     | '/app/account'
+    | '/app/help'
     | '/app/notifications'
     | '/app'
     | '/app/$vehicleId/'
     | '/app/account/'
+    | '/app/help/'
     | '/app/notifications/'
     | '/app/$vehicleId/analytics'
     | '/app/$vehicleId/charts'
     | '/app/$vehicleId/dashboard'
     | '/app/$vehicleId/diagnostics'
     | '/app/$vehicleId/export'
-    | '/app/$vehicleId/help'
     | '/app/$vehicleId/location'
     | '/app/$vehicleId/maintenance'
     | '/app/$vehicleId/ownership'
@@ -632,13 +656,13 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/$vehicleId'
     | '/app/account'
+    | '/app/help'
     | '/app/notifications'
     | '/app/$vehicleId/analytics'
     | '/app/$vehicleId/charts'
     | '/app/$vehicleId/dashboard'
     | '/app/$vehicleId/diagnostics'
     | '/app/$vehicleId/export'
-    | '/app/$vehicleId/help'
     | '/app/$vehicleId/location'
     | '/app/$vehicleId/maintenance'
     | '/app/$vehicleId/ownership'
@@ -656,17 +680,18 @@ export interface FileRouteTypes {
     | '/_landing-page/'
     | '/_authenticated/app/$vehicleId'
     | '/_authenticated/app/account'
+    | '/_authenticated/app/help'
     | '/_authenticated/app/notifications'
     | '/_authenticated/app/'
     | '/_authenticated/app/$vehicleId/'
     | '/_authenticated/app/account/'
+    | '/_authenticated/app/help/'
     | '/_authenticated/app/notifications/'
     | '/_authenticated/app/$vehicleId/analytics/'
     | '/_authenticated/app/$vehicleId/charts/'
     | '/_authenticated/app/$vehicleId/dashboard/'
     | '/_authenticated/app/$vehicleId/diagnostics/'
     | '/_authenticated/app/$vehicleId/export/'
-    | '/_authenticated/app/$vehicleId/help/'
     | '/_authenticated/app/$vehicleId/location/'
     | '/_authenticated/app/$vehicleId/maintenance/'
     | '/_authenticated/app/$vehicleId/ownership/'
@@ -683,6 +708,7 @@ export interface RootRouteChildren {
   LandingPageRoute: typeof LandingPageRouteWithChildren
   AuthenticatedAppVehicleIdRoute: typeof AuthenticatedAppVehicleIdRouteWithChildren
   AuthenticatedAppAccountRoute: typeof AuthenticatedAppAccountRouteWithChildren
+  AuthenticatedAppHelpRoute: typeof AuthenticatedAppHelpRouteWithChildren
   AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRouteWithChildren
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
@@ -692,6 +718,7 @@ const rootRouteChildren: RootRouteChildren = {
   LandingPageRoute: LandingPageRouteWithChildren,
   AuthenticatedAppVehicleIdRoute: AuthenticatedAppVehicleIdRouteWithChildren,
   AuthenticatedAppAccountRoute: AuthenticatedAppAccountRouteWithChildren,
+  AuthenticatedAppHelpRoute: AuthenticatedAppHelpRouteWithChildren,
   AuthenticatedAppNotificationsRoute:
     AuthenticatedAppNotificationsRouteWithChildren,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
@@ -711,6 +738,7 @@ export const routeTree = rootRoute
         "/_landing-page",
         "/_authenticated/app/$vehicleId",
         "/_authenticated/app/account",
+        "/_authenticated/app/help",
         "/_authenticated/app/notifications",
         "/_authenticated/app/"
       ]
@@ -749,7 +777,6 @@ export const routeTree = rootRoute
         "/_authenticated/app/$vehicleId/dashboard/",
         "/_authenticated/app/$vehicleId/diagnostics/",
         "/_authenticated/app/$vehicleId/export/",
-        "/_authenticated/app/$vehicleId/help/",
         "/_authenticated/app/$vehicleId/location/",
         "/_authenticated/app/$vehicleId/maintenance/",
         "/_authenticated/app/$vehicleId/ownership/",
@@ -764,6 +791,12 @@ export const routeTree = rootRoute
       "filePath": "_authenticated.app.account.tsx",
       "children": [
         "/_authenticated/app/account/"
+      ]
+    },
+    "/_authenticated/app/help": {
+      "filePath": "_authenticated.app.help.tsx",
+      "children": [
+        "/_authenticated/app/help/"
       ]
     },
     "/_authenticated/app/notifications": {
@@ -782,6 +815,10 @@ export const routeTree = rootRoute
     "/_authenticated/app/account/": {
       "filePath": "_authenticated/app/account/index.tsx",
       "parent": "/_authenticated/app/account"
+    },
+    "/_authenticated/app/help/": {
+      "filePath": "_authenticated/app/help/index.tsx",
+      "parent": "/_authenticated/app/help"
     },
     "/_authenticated/app/notifications/": {
       "filePath": "_authenticated/app/notifications/index.tsx",
@@ -805,10 +842,6 @@ export const routeTree = rootRoute
     },
     "/_authenticated/app/$vehicleId/export/": {
       "filePath": "_authenticated/app/$vehicleId/export/index.tsx",
-      "parent": "/_authenticated/app/$vehicleId"
-    },
-    "/_authenticated/app/$vehicleId/help/": {
-      "filePath": "_authenticated/app/$vehicleId/help/index.tsx",
       "parent": "/_authenticated/app/$vehicleId"
     },
     "/_authenticated/app/$vehicleId/location/": {
