@@ -20,7 +20,7 @@ export function TransferHistoryItem({ transfer }: TransferHistoryItemProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ArrowUpRight className="h-4 w-4 text-green-600" />
+                <ArrowUpRight className="h-4 w-4 text-primary" />
                 <div>
                   <p className="font-medium text-sm">
                     {transfer.fromUserName || transfer.fromUserEmail || "Unknown User"}
@@ -32,8 +32,8 @@ export function TransferHistoryItem({ transfer }: TransferHistoryItemProps) {
                   </p>
                 </div>
               </div>
-              <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-                <CheckCircle className="h-3 w-3 mr-1" />
+              <Badge variant="default" className="">
+                <CheckCircle className="h-3 w-3" />
                 Completed
               </Badge>
             </div>

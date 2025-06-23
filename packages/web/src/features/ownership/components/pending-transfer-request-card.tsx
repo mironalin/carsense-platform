@@ -80,7 +80,7 @@ export function PendingTransferRequestCard({
                 disabled={isLoading}
                 className="w-full"
               >
-                <X className="h-4 w-4 mr-1" />
+                <X className="h-4 w-4" />
                 Cancel Request
               </Button>
             </motion.div>
