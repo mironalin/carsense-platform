@@ -93,19 +93,14 @@ const data = {
     },
   ],
   navFooter: [
-    // {
-    //   title: "Service Centers",
-    //   url: "/service-centers",
-    //   icon: Wrench,
-    // },
     {
       title: "Settings",
-      url: "/settings",
+      url: "/app/settings",
       icon: Settings,
     },
     {
       title: "Help",
-      url: "/help",
+      url: "/app/help",
       icon: HelpCircle,
     },
   ],
@@ -136,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavGroup label="Overview" items={data.navOverview} />
         <NavGroup label="Data & Monitoring" items={data.navDataAndMonitoring} />
         <NavGroup label="Vehicle Management" items={data.navVehicleManagement} />
-        <NavGroup items={data.navFooter} className="mt-auto" />
+        <NavGroup items={data.navFooter} className="mt-auto" isFooter={true} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

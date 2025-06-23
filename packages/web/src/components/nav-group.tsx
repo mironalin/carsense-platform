@@ -17,6 +17,7 @@ export const pathnameAtom = atom("");
 export function NavGroup({
   label,
   items,
+  isFooter = false,
   ...props
 }: {
   label?: string;
@@ -25,6 +26,7 @@ export function NavGroup({
     url: string;
     icon?: LucideIcon;
   }[];
+  isFooter?: boolean;
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   const { vehicleId } = useParams({ strict: false });
   const { pathname: currentPathname } = useLocation();
@@ -37,7 +39,7 @@ export function NavGroup({
         <SidebarGroupLabel>{label}</SidebarGroupLabel>
         <SidebarMenu>
           {items.map((item) => {
-            const fullHref = `/app/${vehicleId}${item.url}`;
+            const fullHref = isFooter ? item.url : `/app/${vehicleId}${item.url}`;
             const isActive = currentPathname === fullHref;
             if (isActive) {
               setPathname(item.title);
