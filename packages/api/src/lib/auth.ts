@@ -52,7 +52,7 @@ export const auth = betterAuth({
       clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
-  trustedOrigins: ["http://localhost:5173", "http://localhost:3000", "https://api.carsense.workers.dev", env.ANDROID_APP_REDIRECT_URI],
+  trustedOrigins: ["http://localhost:5173", "http://localhost:3000", "https://carsense.alinmiron.live", env.ANDROID_APP_REDIRECT_URI],
   plugins: [jwt(), bearer(), openAPI()],
   advanced: {
     useSecureCookies: true,
