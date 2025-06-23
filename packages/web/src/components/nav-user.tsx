@@ -114,8 +114,8 @@ export function NavUser() {
                 )}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium text-muted-foreground">{name}</span>
-                <span className="truncate text-xs">
+                <span className="truncate font-medium transition-colors">{name}</span>
+                <span className="truncate text-xs transition-colors">
                   {email}
                 </span>
               </div>
@@ -138,7 +138,7 @@ export function NavUser() {
                   <AvatarFallback className="rounded-lg">{avatarFallback}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium text-muted-foreground">{name}</span>
+                  <span className="truncate font-medium">{name}</span>
                   <span className="truncate text-xs">
                     {email}
                   </span>

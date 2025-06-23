@@ -69,14 +69,14 @@ export function VehicleSwitcher() {
                   <Car className="size-4 shrink-0" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <span className="text-sm font-medium transition-colors">
                     {vehicle.year}
                     {" "}
                     {vehicle.make}
                     {" "}
                     {vehicle.model}
                   </span>
-                  <span className="text-xs">{vehicle.licensePlate}</span>
+                  <span className="text-xs transition-colors">{vehicle.licensePlate}</span>
                 </div>
               </SelectItem>
             ))}
