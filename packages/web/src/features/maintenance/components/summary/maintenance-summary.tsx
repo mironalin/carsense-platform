@@ -65,13 +65,13 @@ export function MaintenanceSummary({ summary }: MaintenanceSummaryProps) {
           transition={{ delay: index * 0.1 }}
         >
           <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-sm font-medium">
                 {card.title}
               </CardTitle>
               <card.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent className="flex flex-col justify-between flex-1">
+            <CardContent className="flex flex-col justify-between flex-1 mt-[-0.75rem]">
               <div className="text-2xl font-bold">{card.value}</div>
               <p className="text-xs text-muted-foreground mt-2">
                 {card.description}
