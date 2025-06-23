@@ -1,0 +1,2 @@
+ALTER TABLE "locations" ADD COLUMN "diagnosticUUID" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "locations" ADD CONSTRAINT "locations_diagnosticUUID_diagnostics_uuid_fk" FOREIGN KEY ("diagnosticUUID") REFERENCES "public"."diagnostics"("uuid") ON DELETE cascade ON UPDATE no action;
