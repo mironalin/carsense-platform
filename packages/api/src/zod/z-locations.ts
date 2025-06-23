@@ -15,6 +15,15 @@ export const zLocationInsertSchema = insertLocationSchema.omit({
   timestamp: true,
 });
 
+/**
+ * Schema for bulk location creation requests (tied to diagnostic session)
+ */
+export const zBulkLocationInsertSchema = insertLocationSchema.omit({
+  uuid: true,
+  timestamp: true,
+  diagnosticUUID: true, // This will be provided in the URL parameter
+});
+
 export type LocationInsertSchema = z.infer<typeof zLocationInsertSchema>;
 
 // =============================================================================
@@ -47,6 +56,16 @@ export type LocationsListResponse = z.infer<typeof zLocationsListResponseSchema>
 // =============================================================================
 // Operation Response Schemas
 // =============================================================================
+
+/**
+ * Schema for bulk location creation response
+ */
+export const zBulkLocationsResponseSchema = z.object({
+  message: z.string().openapi({ example: "Locations created successfully" }),
+  count: z.number().openapi({ example: 5 }),
+  locations: z.array(zLocationGetResponseSchema),
+});
+export type BulkLocationsResponse = z.infer<typeof zBulkLocationsResponseSchema>;
 
 /**
  * Schema for location delete operation response

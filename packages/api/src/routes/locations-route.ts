@@ -7,11 +7,12 @@ import { z } from "zod";
 import type { AppBindings } from "../lib/types";
 
 import { db } from "../db";
+import { diagnosticsTable } from "../db/schema/diagnostics-schema";
 import { insertLocationSchema, locationsTable } from "../db/schema/locations-schema";
 import { vehiclesTable } from "../db/schema/vehicles-schema";
 import { getSessionAndUser } from "../middleware/get-session-and-user";
 import { badRequestResponseObject, notFoundResponseObject, unauthorizedResponseObject } from "../zod/z-api-responses";
-import { zLocationGetResponseSchema, zLocationInsertSchema, zLocationsListResponseSchema } from "../zod/z-locations";
+import { zBulkLocationInsertSchema, zBulkLocationsResponseSchema, zLocationGetResponseSchema, zLocationInsertSchema, zLocationsListResponseSchema } from "../zod/z-locations";
 
 const MAX_LOCATIONS_LIMIT = 100;
 
@@ -313,4 +314,166 @@ export const locationsRoute = new Hono<AppBindings>()
     logger.info({ uuid: newLocation.uuid, vehicleUUID: newLocation.vehicleUUID }, "Location created");
 
     return c.json(newLocation);
+  })
+  .post("/:diagnosticUUID/bulk", describeRoute({
+    tags: ["Locations"],
+    summary: "Create multiple locations in bulk for a diagnostic session",
+    description: "Create multiple locations for a diagnostic session in a single request. This is optimized for mobile apps that collect location data frequently during a diagnostic session.",
+    responses: {
+      201: {
+        description: "Created",
+        content: {
+          "application/json": {
+            schema: resolver(zBulkLocationsResponseSchema),
+          },
+        },
+      },
+      401: unauthorizedResponseObject,
+      404: notFoundResponseObject,
+    },
+  }), zValidator("param", z.object({
+    diagnosticUUID: z.string().uuid(),
+  })), zValidator("json", z.array(zBulkLocationInsertSchema)), async (c) => {
+    const user = c.get("user");
+    const logger = c.get("logger");
+
+    if (!user) {
+      logger.warn("Unauthorized location bulk creation attempt");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const diagnosticUUID = c.req.param("diagnosticUUID");
+    const locations = c.req.valid("json");
+
+    logger.debug({ diagnosticUUID, locationCount: locations.length }, "Bulk creating locations");
+
+    // Find the diagnostic first
+    const diagnostic = await db
+      .select()
+      .from(diagnosticsTable)
+      .where(eq(diagnosticsTable.uuid, diagnosticUUID))
+      .then(res => res[0]);
+
+    if (!diagnostic) {
+      logger.warn("Diagnostic not found for location bulk creation");
+      return c.json({ error: "Diagnostic not found" }, 404);
+    }
+
+    // If user role is 'user', verify they own the vehicle
+    if (user.role === "user") {
+      const vehicle = await db
+        .select()
+        .from(vehiclesTable)
+        .where(
+          and(
+            eq(vehiclesTable.uuid, diagnostic.vehicleUUID),
+            eq(vehiclesTable.ownerId, user.id),
+          ),
+        )
+        .then(res => res[0]);
+
+      if (!vehicle) {
+        logger.warn("User not authorized to add locations to this diagnostic");
+        return c.json({ error: "Unauthorized to modify this diagnostic" }, 401);
+      }
+    }
+
+    // Prepare the locations for insertion
+    const locationsToInsert = locations.map(location => ({
+      diagnosticUUID: diagnostic.uuid,
+      vehicleUUID: diagnostic.vehicleUUID,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      altitude: location.altitude,
+      speed: location.speed,
+      accuracy: location.accuracy,
+    }));
+
+    // Validate all locations
+    const validatedLocations = locationsToInsert.map(location => insertLocationSchema.parse(location));
+
+    // Insert all locations
+    const newLocations = await db.insert(locationsTable).values(validatedLocations).returning();
+
+    c.status(201);
+
+    logger.debug({
+      diagnosticUUID: diagnostic.uuid,
+      locationCount: newLocations.length,
+    }, "Locations bulk created");
+
+    return c.json({
+      message: "Locations created successfully",
+      count: newLocations.length,
+      locations: newLocations,
+    });
+  })
+  .get("/:diagnosticUUID/locations", describeRoute({
+    tags: ["Locations"],
+    summary: "Get all locations for a diagnostic session",
+    description: "Get all locations recorded during a specific diagnostic session",
+    responses: {
+      200: {
+        description: "OK",
+        content: {
+          "application/json": {
+            schema: resolver(zLocationsListResponseSchema),
+          },
+        },
+      },
+      401: unauthorizedResponseObject,
+      404: notFoundResponseObject,
+    },
+  }), zValidator("param", z.object({
+    diagnosticUUID: z.string().uuid(),
+  })), async (c) => {
+    const user = c.get("user");
+    const logger = c.get("logger");
+
+    if (!user) {
+      logger.warn("Unauthorized access attempt - diagnostic locations");
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const diagnosticUUID = c.req.param("diagnosticUUID");
+
+    logger.debug({ diagnosticUUID }, "Fetching diagnostic locations");
+
+    // If user role is 'user', verify they own the vehicle associated with the diagnostic
+    if (user.role === "user") {
+      const diagnostic = await db
+        .select()
+        .from(diagnosticsTable)
+        .where(eq(diagnosticsTable.uuid, diagnosticUUID))
+        .then(res => res[0]);
+
+      if (!diagnostic) {
+        logger.warn("Diagnostic not found for locations access");
+        return c.json({ error: "Diagnostic not found" }, 404);
+      }
+
+      const vehicle = await db
+        .select()
+        .from(vehiclesTable)
+        .where(
+          and(
+            eq(vehiclesTable.uuid, diagnostic.vehicleUUID),
+            eq(vehiclesTable.ownerId, user.id),
+          ),
+        )
+        .then(res => res[0]);
+
+      if (!vehicle) {
+        logger.warn("User not authorized to access this diagnostic's locations");
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+    }
+
+    const locations = await db
+      .select()
+      .from(locationsTable)
+      .where(eq(locationsTable.diagnosticUUID, diagnosticUUID))
+      .orderBy(locationsTable.timestamp);
+
+    return c.json(locations);
   });

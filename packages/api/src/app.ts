@@ -47,7 +47,7 @@ export const apiRoutes = app
   .route("/ownership-transfers", ownershipTransfersRoute)
   .route("/upload", uploadRoute);
 
-app.get("*", c => c.env.ASSETS.fetch(c.req.raw));
+// app.get("*", c => c.env.ASSETS.fetch(c.req.raw));
 
 export default app;
 export type AppType = typeof apiRoutes;
