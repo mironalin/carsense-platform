@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useRef } from "react";
 import { toast } from "sonner";
 
@@ -9,6 +10,7 @@ import { LocationEmptyState } from "../../components/shared/location-empty-state
 import { LocationRouteStats } from "./location-route-stats";
 import { LocationRouteMapCard } from "./location-route-map-card";
 import { LoaderPage } from "@/components/loader-page";
+import { containerVariants } from "../../utils/animation-variants";
 
 type LocationOverviewProps = {
   locations: LocationWithParsedDates[];
@@ -47,7 +49,12 @@ export function LocationOverview({ locations, isLoading, error }: LocationOvervi
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-3">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="grid gap-6 md:grid-cols-3"
+    >
       <LocationRouteStats
         locations={locations}
         isLoading={isLoading}
@@ -59,6 +66,6 @@ export function LocationOverview({ locations, isLoading, error }: LocationOvervi
         locations={locations}
         isLoading={isLoading}
       />
-    </div>
+    </motion.div>
   );
 } 

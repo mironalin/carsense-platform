@@ -16,7 +16,7 @@ export const itemVariants: Variants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.3,
     },
   },
 };
@@ -27,7 +27,7 @@ export const cardVariants: Variants = {
     opacity: 1, 
     scale: 1,
     transition: {
-      duration: 0.3,
+      duration: 0.2,
     },
   },
   hover: { 
