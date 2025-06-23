@@ -91,7 +91,7 @@ export function SensorChartComparison({ isLoading: initialLoading }: { isLoading
   const {
     data: diagnosticsData,
     isLoading: isLoadingDiagnostics,
-  } = useGetVehicleDiagnostics(vehicleId);
+  } = useGetVehicleDiagnostics({ vehicleId });
 
   // Extract session IDs for fetching data
   const firstSessionId = selectedSessions[0] || null;
@@ -102,23 +102,17 @@ export function SensorChartComparison({ isLoading: initialLoading }: { isLoading
   const {
     data: firstSessionData,
     isLoading: isLoadingFirstSession,
-  } = useGetVehicleSensorData(vehicleId, {
-    diagnosticId: firstSessionId || undefined,
-  });
+  } = useGetVehicleSensorData({ vehicleId, filter: { diagnosticId: firstSessionId || undefined } });
 
   const {
     data: secondSessionData,
     isLoading: isLoadingSecondSession,
-  } = useGetVehicleSensorData(vehicleId, {
-    diagnosticId: secondSessionId || undefined,
-  });
+  } = useGetVehicleSensorData({ vehicleId, filter: { diagnosticId: secondSessionId || undefined } });
 
   const {
     data: thirdSessionData,
     isLoading: isLoadingThirdSession,
-  } = useGetVehicleSensorData(vehicleId, {
-    diagnosticId: thirdSessionId || undefined,
-  });
+  } = useGetVehicleSensorData({ vehicleId, filter: { diagnosticId: thirdSessionId || undefined } });
 
   // Combine all session data into a single object
   const sessionDataMap = useMemo(() => {
