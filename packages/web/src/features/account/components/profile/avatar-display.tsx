@@ -33,7 +33,7 @@ export function AvatarDisplay({
       className={`relative ${className}`}
     >
       <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
-        <AvatarImage src={image || ""} alt={name} />
+        <AvatarImage src={image || ""} alt={name} className="object-cover" />
         <AvatarFallback className="text-2xl font-semibold">
           {avatarFallback}
         </AvatarFallback>
