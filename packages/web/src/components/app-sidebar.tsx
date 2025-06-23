@@ -93,11 +93,11 @@ const data = {
     },
   ],
   navFooter: [
-    {
-      title: "Service Centers",
-      url: "/service-centers",
-      icon: Wrench,
-    },
+    // {
+    //   title: "Service Centers",
+    //   url: "/service-centers",
+    //   icon: Wrench,
+    // },
     {
       title: "Settings",
       url: "/settings",
