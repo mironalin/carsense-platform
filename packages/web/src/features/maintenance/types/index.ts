@@ -301,3 +301,4 @@ export const SERVICE_TYPE_CATEGORIES = {
     "paint_touch_up",
   ],
 } as const;
+ 
