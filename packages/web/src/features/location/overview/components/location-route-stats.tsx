@@ -27,7 +27,7 @@ export function LocationRouteStats({
 
   return (
     <motion.div variants={itemVariants}>
-      <Card>
+      <Card className="h-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Navigation className="h-5 w-5" />
