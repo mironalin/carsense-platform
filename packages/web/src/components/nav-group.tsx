@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { Link, useLocation, useParams } from "@tanstack/react-router";
 import { atom, useAtom } from "jotai";
+import { useEffect } from "react";
 
 import {
   SidebarGroup,
@@ -33,6 +34,18 @@ export function NavGroup({
 
   const [, setPathname] = useAtom(pathnameAtom);
 
+  // Update pathname when route changes, but not during render
+  useEffect(() => {
+    const activeItem = items.find((item) => {
+      const fullHref = isFooter ? item.url : `/app/${vehicleId}${item.url}`;
+      return currentPathname === fullHref;
+    });
+
+    if (activeItem) {
+      setPathname(activeItem.title);
+    }
+  }, [currentPathname, items, vehicleId, isFooter, setPathname]);
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent className="flex flex-col">
@@ -41,9 +54,6 @@ export function NavGroup({
           {items.map((item) => {
             const fullHref = isFooter ? item.url : `/app/${vehicleId}${item.url}`;
             const isActive = currentPathname === fullHref;
-            if (isActive) {
-              setPathname(item.title);
-            }
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
