@@ -2,6 +2,7 @@ import configureOpenAPI from "./lib/configure-open-api";
 import { createApp } from "./lib/create-app";
 import { androidAuthRoute } from "./routes/android-auth-route";
 import { authRoute } from "./routes/auth-route";
+import { dashboardRoute } from "./routes/dashboard-route";
 import { diagnosticsRoute } from "./routes/diagnostics-route";
 import { dtcRoute } from "./routes/dtc-route";
 import { locationsRoute } from "./routes/locations-route";
@@ -40,6 +41,7 @@ export const apiRoutes = app
   .route("/test", testRoute)
   .route("/vehicles", vehiclesRoute)
   .route("/diagnostics", diagnosticsRoute)
+  .route("/dashboard", dashboardRoute)
   .route("/locations", locationsRoute)
   .route("/dtc", dtcRoute)
   .route("/maintenance", maintenanceRoute)
