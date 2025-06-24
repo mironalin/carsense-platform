@@ -1,25 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
+import { ErrorPage } from "@/components/error-page";
+import { LoaderPage } from "@/components/loader-page";
+import { NotFoundPage } from "@/components/not-found-page";
+import { getDashboardOverviewQueryOptions } from "@/features/dashboard/api/use-get-dashboard-overview";
+import { DashboardPage } from "@/features/dashboard/components/pages/dashboard-page";
 
-import data from "../../../../data.json";
-
-export const Route = createFileRoute(
-  "/_authenticated/app/$vehicleId/dashboard/",
-)({
-  component: RouteComponent,
+export const Route = createFileRoute("/_authenticated/app/$vehicleId/dashboard/")({
+  component: DashboardRoute,
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    queryClient.prefetchQuery(getDashboardOverviewQueryOptions({ vehicleUUID: params.vehicleId }));
+  },
+  pendingComponent: () => <LoaderPage />,
+  notFoundComponent: () => <NotFoundPage />,
+  errorComponent: () => <ErrorPage />,
 });
 
-function RouteComponent() {
-  return (
-    <>
-      <SectionCards />
-      <div className="px-4 lg:px-6">
-        <ChartAreaInteractive />
-      </div>
-      <DataTable data={data} />
-    </>
-  );
+function DashboardRoute() {
+  const { vehicleId } = Route.useParams();
+
+  return <DashboardPage vehicleId={vehicleId} />;
 }
