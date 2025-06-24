@@ -27,8 +27,8 @@ const chartVariants = {
   },
 };
 
-// Convert Card to motion.div with Card styling
-const MotionCard = motion(Card);
+// Create motion component for Card
+const MotionCard = motion.create(Card);
 
 export function SensorChartCard({
   sensor,
