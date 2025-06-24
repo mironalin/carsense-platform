@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { ChartType, ColorTheme } from "@/features/charts/overview/types";
+import type { ChartType, ColorTheme } from "../../types";
 
 const STORAGE_KEY = "carsense-chart-preferences";
 

@@ -136,7 +136,7 @@ export const maintenanceRoute = new Hono<AppBindings>()
         .then(res => res[0]);
 
       // Create the service type associations
-      const serviceTypeEntries = requestData.serviceTypes.map(serviceType => ({
+      const serviceTypeEntries = requestData.serviceTypes.map((serviceType: any) => ({
         maintenanceLogUUID: createdEntry.uuid,
         serviceType,
       }));

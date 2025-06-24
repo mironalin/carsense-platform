@@ -1,6 +1,8 @@
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { Car } from "lucide-react";
 
+import type { VehicleWithParsedDates } from "@/features/vehicles/types";
+
 import { useGetVehicles } from "@/features/vehicles/api/use-get-vehicles";
 
 import { VehicleSwitcherSkeleton } from "./skeleton/vehicle-switcher-skeleton";
@@ -59,7 +61,7 @@ export function VehicleSwitcher() {
         >
           <SelectGroup>
             <SelectLabel className="text-xs text-muted-foreground">Vehicles</SelectLabel>
-            {vehicles?.map(vehicle => (
+            {vehicles?.map((vehicle: VehicleWithParsedDates) => (
               <SelectItem
                 key={vehicle.uuid}
                 value={vehicle.uuid}

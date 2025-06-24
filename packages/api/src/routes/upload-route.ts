@@ -1,13 +1,16 @@
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator as zValidator } from "hono-openapi/zod";
+import { Buffer } from "node:buffer";
 import { z } from "zod";
 
 import type { AppBindings } from "../lib/types";
+
+import env from "../../env";
 import { getSessionAndUser } from "../middleware/get-session-and-user";
-import { 
-  badRequestResponseObject, 
-  unauthorizedResponseObject 
+import {
+  badRequestResponseObject,
+  unauthorizedResponseObject,
 } from "../zod/z-api-responses";
 import {
   zImageDeleteResponseSchema,
@@ -16,7 +19,6 @@ import {
   zImageUploadSchema,
   zUploadErrorResponseSchema,
 } from "../zod/z-upload";
-import env from "../../env";
 
 /**
  * Get the appropriate R2 public URL based on environment
@@ -85,13 +87,13 @@ export const uploadRoute = new Hono<AppBindings>()
       return c.json({ error: "Storage URL not configured" }, 500);
     }
 
-    logger.info("R2 bindings available", { 
-      hasBucket: !!c.env.R2_BUCKET, 
-      publicUrl: c.env.R2_PUBLIC_URL 
+    logger.info("R2 bindings available", {
+      hasBucket: !!c.env.R2_BUCKET,
+      publicUrl: c.env.R2_PUBLIC_URL,
     });
 
     try {
-      const { image, filename } = c.req.valid("json");
+      const { image } = c.req.valid("json");
 
       // Extract image data and type (validation already done by Zod schema)
       const [header, base64Data] = image.split(",");
@@ -103,7 +105,7 @@ export const uploadRoute = new Hono<AppBindings>()
 
       // Convert base64 to buffer
       const imageBuffer = Buffer.from(base64Data, "base64");
-      
+
       // Check file size (max 5MB)
       const maxSize = 5 * 1024 * 1024;
       if (imageBuffer.length > maxSize) {
@@ -136,12 +138,12 @@ export const uploadRoute = new Hono<AppBindings>()
       const baseUrl = getR2PublicUrl(c);
       const imageUrl = `${baseUrl}/${key}`;
 
-      logger.info({ 
-        userId: user.id, 
-        key, 
-        size: imageBuffer.length, 
-        baseUrl, 
-        environment: env.NODE_ENV 
+      logger.info({
+        userId: user.id,
+        key,
+        size: imageBuffer.length,
+        baseUrl,
+        environment: env.NODE_ENV,
       }, "Image uploaded successfully");
 
       return c.json({
@@ -149,21 +151,21 @@ export const uploadRoute = new Hono<AppBindings>()
         imageUrl,
         message: "Image uploaded successfully",
       });
-
-    } catch (error) {
-      logger.error({ 
+    }
+    catch (error) {
+      logger.error({
         error: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
-        userId: user?.id 
+        userId: user?.id,
       }, "Image upload failed");
-      
+
       if (error instanceof z.ZodError) {
         return c.json({ error: "Invalid request data", details: error.errors }, 400);
       }
-      
-      return c.json({ 
+
+      return c.json({
         error: "Internal server error",
-        details: error instanceof Error ? error.message : String(error)
+        details: error instanceof Error ? error.message : String(error),
       }, 500);
     }
   })
@@ -209,14 +211,14 @@ export const uploadRoute = new Hono<AppBindings>()
 
     try {
       const { imageUrl } = c.req.valid("json");
-      
+
       // Check if URL is from either production or development bucket
       const baseUrl = getR2PublicUrl(c);
       const isValidUrl = imageUrl && (
-        imageUrl.includes(c.env.R2_PUBLIC_URL) || 
-        (c.env.R2_DEV_PUBLIC_URL && imageUrl.includes(c.env.R2_DEV_PUBLIC_URL))
+        imageUrl.includes(c.env.R2_PUBLIC_URL)
+        || (c.env.R2_DEV_PUBLIC_URL && imageUrl.includes(c.env.R2_DEV_PUBLIC_URL))
       );
-      
+
       if (!isValidUrl) {
         logger.warn({ imageUrl, baseUrl }, "Invalid image URL for deletion");
         return c.json({ error: "Invalid image URL" }, 400);
@@ -226,10 +228,11 @@ export const uploadRoute = new Hono<AppBindings>()
       let key: string;
       if (c.env.R2_DEV_PUBLIC_URL && imageUrl.includes(c.env.R2_DEV_PUBLIC_URL)) {
         key = imageUrl.replace(`${c.env.R2_DEV_PUBLIC_URL}/`, "");
-      } else {
+      }
+      else {
         key = imageUrl.replace(`${c.env.R2_PUBLIC_URL}/`, "");
       }
-      
+
       // Verify the image belongs to the user
       if (!key.startsWith(`profile-images/${user.id}/`)) {
         return c.json({ error: "Unauthorized to delete this image" }, 403);
@@ -244,9 +247,9 @@ export const uploadRoute = new Hono<AppBindings>()
         success: true,
         message: "Image deleted successfully",
       });
-
-    } catch (error) {
+    }
+    catch (error) {
       logger.error({ error, userId: user?.id }, "Image deletion failed");
       return c.json({ error: "Internal server error" }, 500);
     }
-  }); 
+  });

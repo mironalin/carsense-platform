@@ -141,7 +141,7 @@ export function SensorChartComparison({ isLoading: initialLoading }: { isLoading
       return result;
 
     selectedSessions.forEach((sessionId: string, index: number) => {
-      const session = diagnosticsData.find(d => d.uuid === sessionId);
+      const session = diagnosticsData.find((d: any) => d.uuid === sessionId);
       if (session) {
         const date = new Date(session.createdAt);
         result[sessionId] = `${date.toLocaleDateString()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;

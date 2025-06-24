@@ -14,7 +14,7 @@ export async function getLatestDiagnosticQuery(vehicleId: string) {
   const data = await response.json();
 
   return data.length > 0
-    ? data.sort((a, b) =>
+    ? data.sort((a: any, b: any) =>
       new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
     )[0]
     : null;

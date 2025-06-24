@@ -7,7 +7,6 @@ import {
   Clock,
   Info,
   Loader2,
-  Shield,
   Tag,
   Zap,
 } from "lucide-react";
