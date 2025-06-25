@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_authenticated/app/")({
       throw redirect({ to: "/app/register-vehicle" });
     }
     else {
-      throw redirect({ to: "/app/$vehicleId/dashboard", params: { vehicleId: vehicles[vehicles.length - 1].uuid } });
+      throw redirect({ to: "/app/$vehicleId/analytics", params: { vehicleId: vehicles[vehicles.length - 1].uuid } });
     }
   },
 });
