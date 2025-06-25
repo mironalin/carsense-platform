@@ -1,11 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute(
-  "/_authenticated/app/$vehicleId/analytics/",
-)({
-  component: RouteComponent,
+import { ErrorPage } from "@/components/error-page";
+import { LoaderPage } from "@/components/loader-page";
+import { NotFoundPage } from "@/components/not-found-page";
+import { getDashboardOverviewQueryOptions } from "@/features/dashboard/api/use-get-dashboard-overview";
+import { DashboardPage } from "@/features/dashboard/components/pages/dashboard-page";
+
+export const Route = createFileRoute("/_authenticated/app/$vehicleId/analytics/")({
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    queryClient.prefetchQuery(getDashboardOverviewQueryOptions({ vehicleUUID: params.vehicleId }));
+  },
+  pendingComponent: () => <LoaderPage />,
+  notFoundComponent: () => <NotFoundPage />,
+  errorComponent: () => <ErrorPage />,
+  component: AnalyticsRoute,
 });
 
-function RouteComponent() {
-  return <div>Hello "/_authenticated/dashboard/$vehicleId/analytics/"!</div>;
+function AnalyticsRoute() {
+  const { vehicleId } = Route.useParams();
+
+  return <DashboardPage vehicleId={vehicleId} />;
 }

@@ -25,7 +25,7 @@ export function useRespondToTransfer() {
 
       return response.json();
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (variables) => {
       // Invalidate and refetch transfer requests
       queryClient.invalidateQueries({ queryKey: ["transfer-requests"] });
 
@@ -36,14 +36,10 @@ export function useRespondToTransfer() {
       queryClient.invalidateQueries({ queryKey: ["vehicle-transfer-history"] });
 
       const actionText = variables.action === "accept" ? "accepted" : "rejected";
-      toast.success(`Transfer request ${actionText}`, {
-        description: data.message,
-      });
+      toast.success(`Transfer request ${actionText}`);
     },
-    onError: (error: Error) => {
-      toast.error("Failed to respond to transfer request", {
-        description: error.message,
-      });
+    onError: () => {
+      toast.error("Failed to respond to transfer request");
     },
   });
 }

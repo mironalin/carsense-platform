@@ -2,6 +2,8 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
+import type { TransferRequest } from "@/features/ownership/api/use-get-transfer-requests";
+
 import { ErrorPage } from "@/components/error-page";
 import { LoaderPage } from "@/components/loader-page";
 import { NotFoundPage } from "@/components/not-found-page";
@@ -27,7 +29,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { vehicleId } = useParams({ from: "/_authenticated/app/$vehicleId/ownership/" });
 
-  const { data: transferRequests, isLoading: transfersLoading } = useGetTransferRequests();
+  const { data: transferRequests, isLoading: transfersLoading } = useGetTransferRequests({ suspense: true });
   const { data: vehicle, isLoading: vehicleLoading } = useGetVehicleById({ vehicleId });
   const { data: vehicleHistory, isLoading: historyLoading } = useGetVehicleTransferHistory({ vehicleUUID: vehicleId });
   const cancelTransferMutation = useCancelTransferRequest();
@@ -46,8 +48,8 @@ function RouteComponent() {
   };
 
   // Filter requests for this specific vehicle
-  const vehicleRequests = transferRequests?.sent?.filter(req => req.vehicleUUID === vehicleId) || [];
-  const pendingRequest = vehicleRequests.find(req => req.status === "pending");
+  const vehicleRequests = transferRequests?.sent?.filter((req: TransferRequest) => req.vehicleUUID === vehicleId) || [];
+  const pendingRequest = vehicleRequests.find((req: TransferRequest) => req.status === "pending");
   const hasActiveRequest = !!pendingRequest;
 
   const isLoading = transfersLoading || vehicleLoading || historyLoading;
