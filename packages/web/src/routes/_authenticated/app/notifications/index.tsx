@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import type { TransferRequest } from "@/features/ownership/api/use-get-transfer-requests";
+
 import { ErrorPage } from "@/components/error-page";
 import { LoaderPage } from "@/components/loader-page";
 import { NotFoundPage } from "@/components/not-found-page";
@@ -27,7 +29,7 @@ function RouteComponent() {
   const [activeTab, setActiveTab] = useState("all");
 
   const { data: notifications, isLoading } = useGetNotifications();
-  const { data: transferRequestsData } = useGetTransferRequests();
+  const { data: transferRequestsData } = useGetTransferRequests({ suspense: true });
   const respondToTransferMutation = useRespondToTransfer();
   const markNotificationsReadMutation = useMarkNotificationsRead();
   const deleteNotificationMutation = useDeleteNotification();
@@ -92,7 +94,7 @@ function RouteComponent() {
   const isTransferRequestPending = (transferRequestUUID: string) => {
     if (!transferRequestsData)
       return false;
-    const request = transferRequestsData.received.find(req => req.uuid === transferRequestUUID);
+    const request = transferRequestsData.received.find((req: TransferRequest) => req.uuid === transferRequestUUID);
     return request?.status === "pending" && new Date(request.expiresAt) > new Date();
   };
 
