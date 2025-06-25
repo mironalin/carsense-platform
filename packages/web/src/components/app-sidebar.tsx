@@ -33,15 +33,15 @@ import { VehicleSwitcher } from "./vehicle-switcher";
 const data = {
   navOverview: [
     {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: Car,
-    },
-    {
       title: "Analytics",
       url: "/analytics",
       icon: BarChart3,
     },
+    // {
+    //   title: "Analytics",
+    //   url: "/analytics",
+    //   icon: BarChart3,
+    // },
     {
       title: "Vehicle Status",
       url: "/vehicle-status",
