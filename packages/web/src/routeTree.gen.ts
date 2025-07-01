@@ -17,6 +17,8 @@ import { Route as AuthImport } from './routes/_auth'
 import { Route as LandingPageIndexImport } from './routes/_landing-page/index'
 import { Route as AuthSignUpImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInImport } from './routes/_auth/sign-in'
+import { Route as AuthResetPasswordImport } from './routes/_auth/reset-password'
+import { Route as AuthForgotPasswordImport } from './routes/_auth/forgot-password'
 import { Route as AuthenticatedAppIndexImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAppSettingsImport } from './routes/_authenticated.app.settings'
 import { Route as AuthenticatedAppRegisterVehicleImport } from './routes/_authenticated.app.register-vehicle'
@@ -75,6 +77,18 @@ const AuthSignUpRoute = AuthSignUpImport.update({
 const AuthSignInRoute = AuthSignInImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthResetPasswordRoute = AuthResetPasswordImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthForgotPasswordRoute = AuthForgotPasswordImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -271,6 +285,20 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof LandingPageImport
       parentRoute: typeof rootRoute
+    }
+    '/_auth/forgot-password': {
+      id: '/_auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordImport
+      parentRoute: typeof AuthImport
     }
     '/_auth/sign-in': {
       id: '/_auth/sign-in'
@@ -474,11 +502,15 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
 }
@@ -644,6 +676,8 @@ const LandingPageRouteWithChildren = LandingPageRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof LandingPageRouteWithChildren
+  '/forgot-password': typeof AuthForgotPasswordRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/': typeof LandingPageIndexRoute
@@ -676,6 +710,8 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '': typeof AuthenticatedRouteWithChildren
+  '/forgot-password': typeof AuthForgotPasswordRoute
+  '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/': typeof LandingPageIndexRoute
@@ -705,6 +741,8 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_landing-page': typeof LandingPageRouteWithChildren
+  '/_auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_landing-page/': typeof LandingPageIndexRoute
@@ -739,6 +777,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/forgot-password'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/'
@@ -770,6 +810,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
+    | '/forgot-password'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-up'
     | '/'
@@ -797,6 +839,8 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_authenticated'
     | '/_landing-page'
+    | '/_auth/forgot-password'
+    | '/_auth/reset-password'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_landing-page/'
@@ -858,6 +902,8 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth.tsx",
       "children": [
+        "/_auth/forgot-password",
+        "/_auth/reset-password",
         "/_auth/sign-in",
         "/_auth/sign-up"
       ]
@@ -879,6 +925,14 @@ export const routeTree = rootRoute
       "children": [
         "/_landing-page/"
       ]
+    },
+    "/_auth/forgot-password": {
+      "filePath": "_auth/forgot-password.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/reset-password": {
+      "filePath": "_auth/reset-password.tsx",
+      "parent": "/_auth"
     },
     "/_auth/sign-in": {
       "filePath": "_auth/sign-in.tsx",

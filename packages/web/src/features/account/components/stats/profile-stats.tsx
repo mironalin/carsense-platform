@@ -2,15 +2,17 @@ import { motion } from "framer-motion";
 import { User } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import type { ProfileStats } from "../../types";
+
 import { staggerContainer } from "../../utils/animation-variants";
-import { StatItem } from "./stat-item";
 import { EmailVerificationNotice } from "./email-verification-notice";
+import { StatItem } from "./stat-item";
 import { getStatItemsConfig } from "./stat-items-config";
 
-interface ProfileStatsProps {
+type ProfileStatsProps = {
   stats: ProfileStats;
-}
+};
 
 export function ProfileStats({ stats }: ProfileStatsProps) {
   const statItems = getStatItemsConfig(stats);
@@ -30,7 +32,7 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
           animate="animate"
           className="space-y-4"
         >
-          {statItems.map((item) => (
+          {statItems.map(item => (
             <StatItem
               key={item.label}
               icon={item.icon}
@@ -38,7 +40,6 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
               value={item.value}
               color={item.color}
               bgColor={item.bgColor}
-              showVerifiedBadge={item.showVerifiedBadge}
               showAdminBadge={item.showAdminBadge}
             />
           ))}
@@ -48,4 +49,4 @@ export function ProfileStats({ stats }: ProfileStatsProps) {
       </CardContent>
     </Card>
   );
-} 
+}

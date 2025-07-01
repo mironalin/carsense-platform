@@ -16,6 +16,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
+import env from "../../../../env";
 import { FieldErrorIconTooltip } from "./field-error-icon-tooltip";
 
 const formSchema = z.object({
@@ -80,6 +81,7 @@ export function SignInForm({
         {
           email: value.email,
           password: value.password,
+          callbackURL: `${env.API_PROD_URL}/app`,
         },
         {
           onSuccess: handleMobileSuccess,
@@ -112,7 +114,7 @@ export function SignInForm({
   const handleSocialSignIn = async (provider: "github" | "google") => {
     setSocialLoginProviderPending(provider);
     await authClient.signIn.social(
-      { provider },
+      { provider, callbackURL: `${env.API_PROD_URL}/app` },
       {
         onSuccess: handleMobileSuccess,
         onError: (ctx: any) => {
@@ -186,12 +188,12 @@ export function SignInForm({
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor={field.name}>Password</Label>
-                    <a
-                      href="#"
+                    <Link
+                      to="/forgot-password"
                       className="ml-auto text-sm underline-offset-4 hover:underline"
                     >
                       Forgot your password?
-                    </a>
+                    </Link>
                   </div>
                   <div className="relative flex items-center">
                     <Input

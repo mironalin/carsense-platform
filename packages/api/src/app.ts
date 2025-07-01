@@ -10,6 +10,7 @@ import { maintenanceRoute } from "./routes/maintenance-route";
 import { notificationsRoute } from "./routes/notifications-route";
 import { ownershipTransfersRoute } from "./routes/ownership-transfers-route";
 import { sessionStatusRoute } from "./routes/session-status-route";
+import { testAuthRoute } from "./routes/test-auth-route";
 import { testRoute } from "./routes/test-route";
 import { uploadRoute } from "./routes/upload-route";
 import { vehiclesRoute } from "./routes/vehicles-route";

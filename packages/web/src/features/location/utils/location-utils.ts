@@ -125,14 +125,14 @@ export function calculateRouteStats(locations: LocationWithParsedDates[]) {
 
   const startTime = locations[0]?.timestamp;
   const endTime = locations[locations.length - 1]?.timestamp;
-  const duration = locations.length > 1 
-    ? endTime.getTime() - startTime.getTime() 
+  const duration = locations.length > 1
+    ? endTime.getTime() - startTime.getTime()
     : 0;
 
   const speedValues = locations.filter(loc => loc.speed && loc.speed > 0).map(loc => loc.speed!);
   const maxSpeed = speedValues.length > 0 ? Math.max(...speedValues) : 0;
-  const avgSpeed = speedValues.length > 0 
-    ? speedValues.reduce((sum, speed) => sum + speed, 0) / speedValues.length 
+  const avgSpeed = speedValues.length > 0
+    ? speedValues.reduce((sum, speed) => sum + speed, 0) / speedValues.length
     : 0;
 
   return {
@@ -149,10 +149,10 @@ export function calculateRouteStats(locations: LocationWithParsedDates[]) {
  * Check if location data has valid coordinates
  */
 export function hasValidCoordinates(location: LocationWithParsedDates): boolean {
-  return location.latitude !== null && 
-         location.longitude !== null && 
-         !isNaN(location.latitude) && 
-         !isNaN(location.longitude);
+  return location.latitude !== null
+    && location.longitude !== null
+    && !Number.isNaN(location.latitude)
+    && !Number.isNaN(location.longitude);
 }
 
 /**

@@ -1,10 +1,12 @@
-import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { statsVariants, staggerItem } from "../../utils/animation-variants";
+import { motion } from "framer-motion";
 
-interface StatItemProps {
+import { Badge } from "@/components/ui/badge";
+
+import { staggerItem, statsVariants } from "../../utils/animation-variants";
+
+type StatItemProps = {
   icon: LucideIcon;
   label: string;
   value: string;
@@ -12,7 +14,7 @@ interface StatItemProps {
   bgColor: string;
   showVerifiedBadge?: boolean;
   showAdminBadge?: boolean;
-}
+};
 
 export function StatItem({
   icon: Icon,
@@ -20,7 +22,6 @@ export function StatItem({
   value,
   color,
   bgColor,
-  showVerifiedBadge = false,
   showAdminBadge = false,
 }: StatItemProps) {
   return (
@@ -45,11 +46,6 @@ export function StatItem({
               <p className="text-base font-semibold truncate">
                 {value}
               </p>
-              {showVerifiedBadge && (
-                <Badge variant="secondary" className="text-xs">
-                  Verified
-                </Badge>
-              )}
               {showAdminBadge && (
                 <Badge variant="default" className="text-xs">
                   Admin
@@ -61,4 +57,4 @@ export function StatItem({
       </motion.div>
     </motion.div>
   );
-} 
+}

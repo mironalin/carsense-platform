@@ -69,26 +69,26 @@ export function LocationPage({ vehicleId }: LocationPageProps) {
       {/* Error Alerts */}
       {diagnosticsError && (
         <motion.div variants={itemVariants}>
-          <Alert variant="destructive">
+        <Alert variant="destructive">
             <MapPin className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              Failed to load diagnostic sessions. Please try again later.
-            </AlertDescription>
-          </Alert>
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            Failed to load diagnostic sessions. Please try again later.
+          </AlertDescription>
+        </Alert>
         </motion.div>
       )}
 
       {/* No Diagnostics Available */}
       {!isLoadingDiagnostics && (!diagnosticsData || diagnosticsData.length === 0) && (
         <motion.div variants={itemVariants}>
-          <Alert>
-            <MapPin className="h-4 w-4" />
+        <Alert>
+          <MapPin className="h-4 w-4" />
             <AlertTitle>No diagnostic sessions found</AlertTitle>
-            <AlertDescription>
+          <AlertDescription>
               No diagnostic sessions available for this vehicle. Start a diagnostic session to view location data.
-            </AlertDescription>
-          </Alert>
+          </AlertDescription>
+        </Alert>
         </motion.div>
       )}
 
@@ -109,21 +109,21 @@ export function LocationPage({ vehicleId }: LocationPageProps) {
                 onSessionChange={handleDiagnosticSessionChange}
                 isLoading={isLoadingDiagnostics}
               />
-            </div>
+                </div>
 
             <TabsContent value="overview" className="space-y-4">
               <LocationOverview 
-                locations={processedLocations} 
+                      locations={processedLocations}
                 isLoading={isLoadingLocations}
                 error={locationsError}
               />
             </TabsContent>
 
             <TabsContent value="playback">
-              <LocationPlayback
-                locations={processedLocations}
-                isLoading={isLoadingLocations}
-              />
+        <LocationPlayback
+          locations={processedLocations}
+          isLoading={isLoadingLocations}
+        />
             </TabsContent>
           </Tabs>
         </motion.div>

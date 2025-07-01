@@ -14,12 +14,15 @@ const EnvSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
   ML_SERVICE_URL: z.string().default("http://localhost:8000/api/v1"),
   ML_SERVICE_JWT_SECRET: z.string().default("shared-secret-with-main-backend"),
   ANDROID_APP_REDIRECT_URI: z.string().default("carsense://auth"),
   LOCAL_API_DEV_URL: z.string().default("http://localhost:3000"),
   LOCAL_WEB_DEV_URL: z.string().default("http://localhost:5173"),
   PROD_DEV_URL: z.string().default("https://carsense.alinmiron.live"),
+  RESEND_API_KEY: z.string(),
 });
 
 export type env = z.infer<typeof EnvSchema>;

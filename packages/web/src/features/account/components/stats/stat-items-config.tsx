@@ -1,9 +1,10 @@
-import { Calendar, CheckCircle, Shield, User, XCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+import { Calendar, CheckCircle, Shield, User, XCircle } from "lucide-react";
 
 import type { ProfileStats } from "../../types";
 
-export interface StatItemConfig {
+export type StatItemConfig = {
   icon: LucideIcon;
   label: string;
   value: string;
@@ -11,7 +12,7 @@ export interface StatItemConfig {
   bgColor: string;
   showVerifiedBadge?: boolean;
   showAdminBadge?: boolean;
-}
+};
 
 export function getStatItemsConfig(stats: ProfileStats): StatItemConfig[] {
   return [
@@ -27,10 +28,9 @@ export function getStatItemsConfig(stats: ProfileStats): StatItemConfig[] {
       label: "Email Status",
       value: stats.emailVerified ? "Verified" : "Unverified",
       color: stats.emailVerified ? "text-green-600 dark:text-green-400" : "text-destructive",
-      bgColor: stats.emailVerified 
-        ? "bg-green-50 dark:bg-green-950/20" 
+      bgColor: stats.emailVerified
+        ? "bg-green-50 dark:bg-green-950/20"
         : "bg-destructive/5",
-      showVerifiedBadge: stats.emailVerified,
     },
     {
       icon: Shield,
@@ -48,4 +48,4 @@ export function getStatItemsConfig(stats: ProfileStats): StatItemConfig[] {
       bgColor: "bg-chart-3/5",
     },
   ];
-} 
+}

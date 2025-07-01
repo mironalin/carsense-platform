@@ -76,13 +76,13 @@ export function LocationPlayback({ locations, isLoading, make, model }: Location
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Alert>
-          <MapPin className="h-4 w-4" />
-          <AlertTitle>No location data available</AlertTitle>
-          <AlertDescription>
-            No location data found for this diagnostic session
-          </AlertDescription>
-        </Alert>
+      <Alert>
+        <MapPin className="h-4 w-4" />
+        <AlertTitle>No location data available</AlertTitle>
+        <AlertDescription>
+          No location data found for this diagnostic session
+        </AlertDescription>
+      </Alert>
       </motion.div>
     );
   }
@@ -94,118 +94,118 @@ export function LocationPlayback({ locations, isLoading, make, model }: Location
       animate="visible"
     >
       <motion.div variants={itemVariants}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Location Playback
-            </CardTitle>
-            <CardDescription>
-              Interactive playback of the vehicle's route during the diagnostic session
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Playback Timeline */}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="h-5 w-5" />
+          Location Playback
+        </CardTitle>
+        <CardDescription>
+          Interactive playback of the vehicle's route during the diagnostic session
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Playback Timeline */}
             <motion.div variants={itemVariants}>
-              <LocationPlaybackTimeline
-                elapsedTime={elapsedTime}
-                timeRange={timeRange}
-                progress={progress}
-                currentTime={currentTime}
-                onSliderChange={handleSliderChange}
-              />
+        <LocationPlaybackTimeline
+          elapsedTime={elapsedTime}
+          timeRange={timeRange}
+          progress={progress}
+          currentTime={currentTime}
+          onSliderChange={handleSliderChange}
+        />
             </motion.div>
 
-            {/* Playback Controls */}
+        {/* Playback Controls */}
             <motion.div variants={itemVariants}>
-              <LocationPlaybackControls
-                isPlaying={isPlaying}
-                playbackSpeed={playbackSpeed}
-                isLooping={isLooping}
-                onPlay={play}
-                onPause={pause}
-                onStop={stop}
-                onRestart={restart}
-                onSpeedChange={setPlaybackSpeed}
-                onLoopToggle={toggleLoop}
-              />
+        <LocationPlaybackControls
+          isPlaying={isPlaying}
+          playbackSpeed={playbackSpeed}
+          isLooping={isLooping}
+          onPlay={play}
+          onPause={pause}
+          onStop={stop}
+          onRestart={restart}
+          onSpeedChange={setPlaybackSpeed}
+          onLoopToggle={toggleLoop}
+        />
             </motion.div>
 
-            {/* Current Location Info */}
-            {currentLocation && (
+        {/* Current Location Info */}
+        {currentLocation && (
               <motion.div 
                 variants={itemVariants}
                 className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-lg"
               >
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Position</p>
-                  <p className="text-sm font-medium">
-                    {currentIndex + 1}
-                    {" "}
-                    /
-                    {sortedLocations.length}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Speed</p>
-                  <p className="text-sm font-medium">
-                    {currentLocation.speed ? `${currentLocation.speed.toFixed(1)} km/h` : "N/A"}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Altitude</p>
-                  <p className="text-sm font-medium">
-                    {currentLocation.altitude ? `${currentLocation.altitude.toFixed(1)} m` : "N/A"}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Accuracy</p>
-                  <p className="text-sm font-medium">
-                    {currentLocation.accuracy ? `${currentLocation.accuracy.toFixed(1)} m` : "N/A"}
-                  </p>
-                </div>
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground">Position</p>
+              <p className="text-sm font-medium">
+                {currentIndex + 1}
+                {" "}
+                /
+                {sortedLocations.length}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground">Speed</p>
+              <p className="text-sm font-medium">
+                {currentLocation.speed ? `${currentLocation.speed.toFixed(1)} km/h` : "N/A"}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground">Altitude</p>
+              <p className="text-sm font-medium">
+                {currentLocation.altitude ? `${currentLocation.altitude.toFixed(1)} m` : "N/A"}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground">Accuracy</p>
+              <p className="text-sm font-medium">
+                {currentLocation.accuracy ? `${currentLocation.accuracy.toFixed(1)} m` : "N/A"}
+              </p>
+            </div>
               </motion.div>
-            )}
+        )}
 
-            {/* Map Controls */}
+        {/* Map Controls */}
             <motion.div variants={itemVariants} className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCenterOnCurrent}
-                disabled={!currentLocation}
-                className="flex-1"
-              >
-                <Target className="mr-2 h-4 w-4" />
-                Center on Current
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleFitToBounds}
-                className="flex-1"
-              >
-                <MapPin className="mr-2 h-4 w-4" />
-                Fit to Route
-              </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCenterOnCurrent}
+            disabled={!currentLocation}
+            className="flex-1"
+          >
+            <Target className="mr-2 h-4 w-4" />
+            Center on Current
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleFitToBounds}
+            className="flex-1"
+          >
+            <MapPin className="mr-2 h-4 w-4" />
+            Fit to Route
+          </Button>
             </motion.div>
 
-            {/* Playback Map */}
+        {/* Playback Map */}
             <motion.div variants={itemVariants}>
-              <LocationPlaybackMap
-                ref={mapRef}
-                locations={sortedLocations}
-                currentLocation={currentLocation}
-                currentIndex={currentIndex}
-                make={make}
-                model={model}
-                className="h-[500px] w-full"
-                showFullRoute={true}
-                showTrail={true}
-              />
+        <LocationPlaybackMap
+          ref={mapRef}
+          locations={sortedLocations}
+          currentLocation={currentLocation}
+          currentIndex={currentIndex}
+          make={make}
+          model={model}
+          className="h-[500px] w-full"
+          showFullRoute={true}
+          showTrail={true}
+        />
             </motion.div>
-          </CardContent>
-        </Card>
+      </CardContent>
+    </Card>
       </motion.div>
     </motion.div>
   );

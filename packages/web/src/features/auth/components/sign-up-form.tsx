@@ -16,6 +16,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
+import env from "../../../../env";
 import { FieldErrorIconTooltip } from "./field-error-icon-tooltip";
 
 const signUpFormSchema = z
@@ -55,6 +56,7 @@ export function SignUpForm({
           email: value.email,
           password: value.password,
           name: `${value.firstName} ${value.lastName}`,
+          callbackURL: `${env.API_PROD_URL}/app`,
         },
         {
           onSuccess: () => {
@@ -72,7 +74,7 @@ export function SignUpForm({
   const handleSocialSignUp = async (provider: "github" | "google") => {
     setSocialSignUpProviderPending(provider);
     await authClient.signIn.social(
-      { provider },
+      { provider, callbackURL: `${env.API_PROD_URL}/app` },
       {
         onSuccess: () => {
           navigate({ to: "/app" });
