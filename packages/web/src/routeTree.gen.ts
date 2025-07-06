@@ -11,7 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LandingPageImport } from './routes/_landing-page'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as LandingPageIndexImport } from './routes/_landing-page/index'
@@ -19,6 +18,7 @@ import { Route as AuthSignUpImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordImport } from './routes/_auth/reset-password'
 import { Route as AuthForgotPasswordImport } from './routes/_auth/forgot-password'
+import { Route as LandingPageDownloadIndexImport } from './routes/_landing-page/download/index'
 import { Route as AuthenticatedAppIndexImport } from './routes/_authenticated/app/index'
 import { Route as AuthenticatedAppSettingsImport } from './routes/_authenticated.app.settings'
 import { Route as AuthenticatedAppRegisterVehicleImport } from './routes/_authenticated.app.register-vehicle'
@@ -47,11 +47,6 @@ import { Route as AuthenticatedAppVehicleIdAnalyticsIndexImport } from './routes
 
 // Create/Update Routes
 
-const LandingPageRoute = LandingPageImport.update({
-  id: '/_landing-page',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRoute,
@@ -63,9 +58,9 @@ const AuthRoute = AuthImport.update({
 } as any)
 
 const LandingPageIndexRoute = LandingPageIndexImport.update({
-  id: '/',
+  id: '/_landing-page/',
   path: '/',
-  getParentRoute: () => LandingPageRoute,
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthSignUpRoute = AuthSignUpImport.update({
@@ -90,6 +85,12 @@ const AuthForgotPasswordRoute = AuthForgotPasswordImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
+} as any)
+
+const LandingPageDownloadIndexRoute = LandingPageDownloadIndexImport.update({
+  id: '/_landing-page/download/',
+  path: '/download/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexImport.update({
@@ -279,13 +280,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
-    '/_landing-page': {
-      id: '/_landing-page'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof LandingPageImport
-      parentRoute: typeof rootRoute
-    }
     '/_auth/forgot-password': {
       id: '/_auth/forgot-password'
       path: '/forgot-password'
@@ -319,7 +313,7 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LandingPageIndexImport
-      parentRoute: typeof LandingPageImport
+      parentRoute: typeof rootRoute
     }
     '/_authenticated/app/$vehicleId': {
       id: '/_authenticated/app/$vehicleId'
@@ -369,6 +363,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app'
       preLoaderRoute: typeof AuthenticatedAppIndexImport
       parentRoute: typeof AuthenticatedImport
+    }
+    '/_landing-page/download/': {
+      id: '/_landing-page/download/'
+      path: '/download'
+      fullPath: '/download'
+      preLoaderRoute: typeof LandingPageDownloadIndexImport
+      parentRoute: typeof rootRoute
     }
     '/_authenticated/app/$vehicleId/': {
       id: '/_authenticated/app/$vehicleId/'
@@ -662,20 +663,8 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface LandingPageRouteChildren {
-  LandingPageIndexRoute: typeof LandingPageIndexRoute
-}
-
-const LandingPageRouteChildren: LandingPageRouteChildren = {
-  LandingPageIndexRoute: LandingPageIndexRoute,
-}
-
-const LandingPageRouteWithChildren = LandingPageRoute._addFileChildren(
-  LandingPageRouteChildren,
-)
-
 export interface FileRoutesByFullPath {
-  '': typeof LandingPageRouteWithChildren
+  '': typeof AuthenticatedRouteWithChildren
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
@@ -688,6 +677,7 @@ export interface FileRoutesByFullPath {
   '/app/register-vehicle': typeof AuthenticatedAppRegisterVehicleRouteWithChildren
   '/app/settings': typeof AuthenticatedAppSettingsRouteWithChildren
   '/app': typeof AuthenticatedAppIndexRoute
+  '/download': typeof LandingPageDownloadIndexRoute
   '/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
   '/app/account/': typeof AuthenticatedAppAccountIndexRoute
   '/app/help/': typeof AuthenticatedAppHelpIndexRoute
@@ -716,6 +706,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof AuthSignUpRoute
   '/': typeof LandingPageIndexRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/download': typeof LandingPageDownloadIndexRoute
   '/app/$vehicleId': typeof AuthenticatedAppVehicleIdIndexRoute
   '/app/account': typeof AuthenticatedAppAccountIndexRoute
   '/app/help': typeof AuthenticatedAppHelpIndexRoute
@@ -740,7 +731,6 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/_landing-page': typeof LandingPageRouteWithChildren
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
@@ -753,6 +743,7 @@ export interface FileRoutesById {
   '/_authenticated/app/register-vehicle': typeof AuthenticatedAppRegisterVehicleRouteWithChildren
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRouteWithChildren
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_landing-page/download/': typeof LandingPageDownloadIndexRoute
   '/_authenticated/app/$vehicleId/': typeof AuthenticatedAppVehicleIdIndexRoute
   '/_authenticated/app/account/': typeof AuthenticatedAppAccountIndexRoute
   '/_authenticated/app/help/': typeof AuthenticatedAppHelpIndexRoute
@@ -789,6 +780,7 @@ export interface FileRouteTypes {
     | '/app/register-vehicle'
     | '/app/settings'
     | '/app'
+    | '/download'
     | '/app/$vehicleId/'
     | '/app/account/'
     | '/app/help/'
@@ -816,6 +808,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/'
     | '/app'
+    | '/download'
     | '/app/$vehicleId'
     | '/app/account'
     | '/app/help'
@@ -838,7 +831,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_authenticated'
-    | '/_landing-page'
     | '/_auth/forgot-password'
     | '/_auth/reset-password'
     | '/_auth/sign-in'
@@ -851,6 +843,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/register-vehicle'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/'
+    | '/_landing-page/download/'
     | '/_authenticated/app/$vehicleId/'
     | '/_authenticated/app/account/'
     | '/_authenticated/app/help/'
@@ -875,13 +868,15 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  LandingPageRoute: typeof LandingPageRouteWithChildren
+  LandingPageIndexRoute: typeof LandingPageIndexRoute
+  LandingPageDownloadIndexRoute: typeof LandingPageDownloadIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  LandingPageRoute: LandingPageRouteWithChildren,
+  LandingPageIndexRoute: LandingPageIndexRoute,
+  LandingPageDownloadIndexRoute: LandingPageDownloadIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -896,7 +891,8 @@ export const routeTree = rootRoute
       "children": [
         "/_auth",
         "/_authenticated",
-        "/_landing-page"
+        "/_landing-page/",
+        "/_landing-page/download/"
       ]
     },
     "/_auth": {
@@ -920,12 +916,6 @@ export const routeTree = rootRoute
         "/_authenticated/app/"
       ]
     },
-    "/_landing-page": {
-      "filePath": "_landing-page.tsx",
-      "children": [
-        "/_landing-page/"
-      ]
-    },
     "/_auth/forgot-password": {
       "filePath": "_auth/forgot-password.tsx",
       "parent": "/_auth"
@@ -943,8 +933,7 @@ export const routeTree = rootRoute
       "parent": "/_auth"
     },
     "/_landing-page/": {
-      "filePath": "_landing-page/index.tsx",
-      "parent": "/_landing-page"
+      "filePath": "_landing-page/index.tsx"
     },
     "/_authenticated/app/$vehicleId": {
       "filePath": "_authenticated.app.$vehicleId.tsx",
@@ -1003,6 +992,9 @@ export const routeTree = rootRoute
     "/_authenticated/app/": {
       "filePath": "_authenticated/app/index.tsx",
       "parent": "/_authenticated"
+    },
+    "/_landing-page/download/": {
+      "filePath": "_landing-page/download/index.tsx"
     },
     "/_authenticated/app/$vehicleId/": {
       "filePath": "_authenticated/app/$vehicleId/index.tsx",
